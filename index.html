@@ -854,7 +854,7 @@ function createView() {
   document.querySelectorAll('[data-dur]').forEach((x) => x.onclick = () => { durSel = x.dataset.dur; const v = document.getElementById('lgn').value; createView(); document.getElementById('lgn').value = v; });
   document.getElementById('lgok').onclick = async () => {
     haptic('medium');
-    try { const el = document.getElementById('lgn'); const r = await api('league_create', { name: el.value.trim() || el.placeholder, dur: durSel }); st = await api('state'); openLeague(r.id); }
+    try { const el = document.getElementById('lgn'); const r = await api('league_create', { name: el.value.trim() || el.placeholder, dur: durSel }); st = await api('state'); openLeague(r.id); setTimeout(showInter, 1200); }
     catch (e) { toast(t('e_' + e.code) !== 'e_' + e.code ? t('e_' + e.code) : t('err')); }
   };
 }
