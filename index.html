@@ -304,6 +304,18 @@ html.shell .nav { position: relative; flex: 0 0 auto; }
 .sheet .card { width: 100%; max-width: 480px; margin: 0 0 calc(10px + env(safe-area-inset-bottom, 0px)); }
 .sheet p { margin: 8px 0; font-size: 15px; line-height: 1.45; }
 .whylink { text-align: center; font-size: 13px; color: var(--mute); text-decoration: underline; cursor: pointer; margin: 10px 0 0; position: relative; z-index: 1; }
+.card.prem { background: linear-gradient(160deg, rgba(255,200,61,.16), rgba(255,200,61,.02) 55%), var(--card); border-color: rgba(255,200,61,.45); }
+.prem-h { display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 24px; color: var(--gold); letter-spacing: .5px; }
+.prem-b { margin: 8px 0 0; font-size: 13px; line-height: 1.7; color: var(--ink); opacity: .9; }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.plan { border: 1px solid rgba(255,200,61,.35); border-radius: 16px; padding: 12px 4px 10px; text-align: center; background: rgba(255,200,61,.06); color: var(--ink); font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.plan small { font-size: 12px; font-weight: 700; color: var(--mute); }
+.plan b { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; line-height: 1.1; color: var(--gold); }
+.plan .tag { font-size: 10px; font-weight: 800; border-radius: 999px; padding: 2px 8px; background: rgba(255,200,61,.18); color: var(--gold); }
+.plan.best { background: linear-gradient(180deg, #ffd75e, #ffb800); border-color: transparent; transform: translateY(-3px); box-shadow: 0 8px 22px rgba(255,184,0,.25); }
+.plan.best small, .plan.best b { color: #1a1300; }
+.plan.best .tag { background: #1a1300; color: #ffd75e; }
+.plan:active { transform: scale(.97); }
 .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: #24402f; color: var(--ink); padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; z-index: 9; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 .skel { height: 120px; border-radius: 20px; background: linear-gradient(90deg, #13241a, #1a3324, #13241a); background-size: 200% 100%; animation: sk 1.2s infinite; margin-bottom: 12px; }
 @keyframes sk { to { background-position: -200% 0; } }
@@ -778,13 +790,17 @@ function premiumCard() {
   if (st.me.premium) {
     const life = st.me.premiumUntil && new Date(st.me.premiumUntil).getUTCFullYear() >= 2099;
     const d = st.me.premiumUntil ? new Date(st.me.premiumUntil).toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-    return `<div class="card" style="border-color:rgba(255,200,61,.5)"><div class="label">👑 ${esc(t('pmT'))}</div><p style="margin:0;font-weight:800;color:var(--gold)">${esc(life ? t('pmLife') : t('pmActive').replace('{d}', d))}</p><p class="note" style="text-align:left">${esc(t('pmB1'))} · ${esc(t('pmB2'))}</p></div>`;
+    return `<div class="card prem"><div class="prem-h">👑 ${esc(t('pmT'))}</div><p style="margin:6px 0 0;font-weight:800;color:var(--gold)">${esc(life ? t('pmLife') : t('pmActive').replace('{d}', d))}</p><p class="note" style="text-align:left">${esc(t('pmB1'))} · ${esc(t('pmB2'))}</p></div>`;
   }
-  return `<div class="card" style="border-color:rgba(255,200,61,.5)"><div class="label">👑 ${esc(t('pmT'))}</div>
-    <div style="font-size:14px;line-height:1.8">${esc(t('pmB1'))}<br>${esc(t('pmB2'))}<br>${esc(t('pmB3'))}</div>
-    <button class="btn gold" data-pm="m">${esc(t('pmM'))}</button>
-    <button class="btn gold" data-pm="y" style="margin-top:8px">${esc(t('pmY'))}</button>
-    <button class="btn ghost" data-pm="l" style="margin-top:8px">♾️ ${esc(t('pmL'))}</button></div>`;
+  const plan = (k, s, best) => {
+    const [name, rest] = String(s).split(' · ');
+    const m = /^(.*?)\s*(\(.*\))?$/.exec(rest || '');
+    const disc = m && m[2] ? m[2].replace(/[()]/g, '') : '';
+    return `<button class="plan ${best ? 'best' : ''}" data-pm="${k}"><small>${k === 'l' ? '♾️ ' : ''}${esc(name)}</small><b>${esc(m ? m[1] : rest)}</b>${disc ? `<span class="tag">${esc(disc)}</span>` : ''}</button>`;
+  };
+  return `<div class="card prem"><div class="prem-h">👑 ${esc(t('pmT'))}</div>
+    <div class="prem-b">${esc(t('pmB1'))}<br>${esc(t('pmB2'))}<br>${esc(t('pmB3'))}</div>
+    <div class="plans">${plan('m', t('pmM'))}${plan('y', t('pmY'), true)}${plan('l', t('pmL'))}</div></div>`;
 }
 async function buyPremium(plan) {
   haptic('medium');
