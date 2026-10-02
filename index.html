@@ -290,6 +290,7 @@ html.shell, html.shell body { height: 100%; overflow: hidden; }
 html.shell body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; min-height: 0; }
 html.shell #app { flex: 1 1 auto; width: 100%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding-bottom: 24px; box-sizing: border-box; }
 html.shell .nav { position: relative; flex: 0 0 auto; }
+.brand { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: #24402f; color: var(--ink); padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; z-index: 9; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 .skel { height: 120px; border-radius: 20px; background: linear-gradient(90deg, #13241a, #1a3324, #13241a); background-size: 200% 100%; animation: sk 1.2s infinite; margin-bottom: 12px; }
 @keyframes sk { to { background-position: -200% 0; } }
@@ -377,6 +378,11 @@ async function doInstall() {
   if (r && r.outcome === 'accepted') { try { localStorage.setItem('ds_installed', '1'); } catch (e) {} toast(t('instDone')); api('ev', { k: 'pwa_install' }).catch(() => {}); }
   render();
 }
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('.brand');
+  if (!b || !st || !st.me || !st.me.country) return;
+  haptic(); view = 'match'; leagueView = null; render(); scrollTop0();
+});
 function scrollTop0() { window.scrollTo(0, 0); const a = document.getElementById('app'); if (a) a.scrollTop = 0; }
 const openLink = (u) => { if (IN_TG) tg.openTelegramLink(u); else window.open(u, '_blank'); };
 async function shareLink(url, text) {
