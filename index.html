@@ -352,8 +352,8 @@ try {
   TOKEN = localStorage.getItem('ds_token');
 } catch (e) {}
 const DS_INTER = 'int-51534'; // Adsgram interstitial block
-// Interstitial (Adsgram) after a validation or a change of the score, or after creating a league:
-// not on the player's first day, 2 a day at most, 20 seconds between two ads, never for Premium. Telegram only.
+// Interstitial (Adsgram): once a day, after the first validation of the score (not on changes),
+// not on the player's first day, never for Premium. Telegram only.
 // TADS fullscreen (widget 12430): the interstitial in Telegram
 const TADS_FS = 12430;
 // a way out of the fullscreen ad: our close button after 5 seconds, and Telegram's Back button
@@ -404,7 +404,7 @@ function showInter() {
     const n = c.d === today ? c.n || 0 : 0;
     const owner = !!(st && st.me && st.me.id === 7057960224); // the owner sees real ads without the daily limit
     // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
-    if (!owner && !TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 2 || Date.now() - (c.at || 0) < 20000)) return;
+    if (!owner && !TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
     if (window.Adsgram) window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => api('ev', { k: 'ad_inter_none' }).catch(() => {}));
   } catch (e) {}
@@ -872,7 +872,7 @@ function createView() {
   document.querySelectorAll('[data-dur]').forEach((x) => x.onclick = () => { durSel = x.dataset.dur; const v = document.getElementById('lgn').value; createView(); document.getElementById('lgn').value = v; });
   document.getElementById('lgok').onclick = async () => {
     haptic('medium');
-    try { const el = document.getElementById('lgn'); const r = await api('league_create', { name: el.value.trim() || el.placeholder, dur: durSel }); st = await api('state'); openLeague(r.id); setTimeout(showInter, 1200); }
+    try { const el = document.getElementById('lgn'); const r = await api('league_create', { name: el.value.trim() || el.placeholder, dur: durSel }); st = await api('state'); openLeague(r.id); }
     catch (e) { toast(t('e_' + e.code) !== 'e_' + e.code ? t('e_' + e.code) : t('err')); }
   };
 }
@@ -995,7 +995,8 @@ function bind() {
   const lock = document.getElementById('lock');
   if (lock) lock.onclick = async () => {
     lock.disabled = true; haptic('medium');
-    try { st = await api('pick', { home, away }); editing = false; setTimeout(showInter, 900); try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
+    const firstPick = !st.pick;
+    try { st = await api('pick', { home, away }); editing = false; if (firstPick) setTimeout(showInter, 900); try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
     catch (e) { toast(e.code === 'started' ? t('errStarted') : t('err')); lock.disabled = false; if (e.code === 'started') load(); }
   };
   const edit = document.getElementById('edit'); if (edit) edit.onclick = () => { editing = true; render(); };
