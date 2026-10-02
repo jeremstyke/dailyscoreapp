@@ -24,7 +24,7 @@
 <script src="https://sad.adsgram.ai/js/sad.min.js" async></script>
 <!-- InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.3), from The Moneytizer: web and Android app only, never inside Telegram -->
 <script type="text/javascript">
-if (!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) && location.search.indexOf('nocmp') < 0) {
+if (!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData)) {
 (function() {
   var host = "www.themoneytizer.com";
   var element = document.createElement('script');
@@ -286,7 +286,10 @@ select { width: 100%; padding: 13px; border-radius: 14px; border: 1px solid var(
 .row[data-pid] { cursor: pointer; }
 #qc-cmp2-persistent-link, .qc-cmp2-persistent-link { display: none !important; }
 html, body { transform: none !important; filter: none !important; perspective: none !important; contain: none !important; }
-#nav.nav { position: fixed !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; -webkit-transform: translateZ(0); transform: translateZ(0); }
+html.shell, html.shell body { height: 100%; overflow: hidden; }
+html.shell body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; min-height: 0; }
+html.shell #app { flex: 1 1 auto; width: 100%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding-bottom: 24px; box-sizing: border-box; }
+html.shell .nav { position: relative; flex: 0 0 auto; }
 .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: #24402f; color: var(--ink); padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; z-index: 9; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 .skel { height: 120px; border-radius: 20px; background: linear-gradient(90deg, #13241a, #1a3324, #13241a); background-size: 200% 100%; animation: sk 1.2s infinite; margin-bottom: 12px; }
 @keyframes sk { to { background-position: -200% 0; } }
@@ -301,6 +304,7 @@ tg.ready(); tg.expand();
 try { tg.setHeaderColor('#0b1a12'); tg.setBackgroundColor('#0b1a12'); } catch (e) {}
 const BOT = 'DailyScorefootbot';
 const IN_TG = !!(tg && tg.initData);
+if (!IN_TG) document.documentElement.classList.add('shell');
 const API = IN_TG ? '' : 'https://pote-ia-bot-en-production.up.railway.app';
 let IS_ANDROID = false;
 try {
@@ -373,6 +377,7 @@ async function doInstall() {
   if (r && r.outcome === 'accepted') { try { localStorage.setItem('ds_installed', '1'); } catch (e) {} toast(t('instDone')); api('ev', { k: 'pwa_install' }).catch(() => {}); }
   render();
 }
+function scrollTop0() { window.scrollTo(0, 0); const a = document.getElementById('app'); if (a) a.scrollTop = 0; }
 const openLink = (u) => { if (IN_TG) tg.openTelegramLink(u); else window.open(u, '_blank'); };
 async function shareLink(url, text) {
   if (IN_TG) return tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text));
@@ -631,7 +636,7 @@ async function openProfile(pid, back) {
   navBar();
   document.getElementById('bk').onclick = back || (() => render());
   document.querySelectorAll('[data-b]').forEach((x) => x.onclick = () => { haptic(); const b = DSB.find((y) => y[0] === x.dataset.b); toast((x.classList.contains('on') ? '✅ ' : '🔒 ') + b[1] + ' ' + bLabel(b)); });
-  window.scrollTo(0, 0);
+  scrollTop0();
 }
 const fmtDay = (d) => { try { return new Date(d + 'T12:00:00Z').toLocaleDateString(lang, { day: 'numeric', month: 'short' }); } catch (e) { return d; } };
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -705,9 +710,9 @@ let view = 'match';
 function navBar() {
   const items = [['match', '⚽', 'tMatch'], ['rank', '🏆', 'tRank'], ['leagues', '👥', 'tLeagues'], ['profile', '🏅', 'tProfile']];
   let nav = document.getElementById('nav');
-  if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.documentElement.appendChild(nav); }
+  if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.getElementById('app').insertAdjacentElement('afterend', nav); }
   nav.innerHTML = '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
-  nav.querySelectorAll('[data-nav]').forEach((x) => x.onclick = () => { haptic(); view = x.dataset.nav; leagueView = null; render(); window.scrollTo(0, 0); });
+  nav.querySelectorAll('[data-nav]').forEach((x) => x.onclick = () => { haptic(); view = x.dataset.nav; leagueView = null; render(); scrollTop0(); });
 }
 function premiumCard() {
   if (!IN_TG) return '';
@@ -775,7 +780,7 @@ function bind() {
   document.querySelectorAll('[data-pid]').forEach((x) => x.onclick = () => { haptic(); openProfile(x.dataset.pid); });
   const myp = document.getElementById('myprof'); if (myp) myp.onclick = () => { haptic(); openProfile(st.me.pid); };
   document.querySelectorAll('[data-pm]').forEach((x) => x.onclick = () => buyPremium(x.dataset.pm));
-  const gopm = document.getElementById('gopm'); if (gopm) gopm.onclick = () => { haptic(); view = 'profile'; render(); window.scrollTo(0, 0); };
+  const gopm = document.getElementById('gopm'); if (gopm) gopm.onclick = () => { haptic(); view = 'profile'; render(); scrollTop0(); };
   const trtg = document.getElementById('trendtg'); if (trtg) trtg.onclick = () => { haptic(); window.open('https://t.me/' + BOT + '?start=src_' + (IS_ANDROID ? 'android' : 'web') + '_trend', '_blank'); };
   document.querySelectorAll('[data-lg]').forEach((x) => x.onclick = () => { haptic(); openLeague(Number(x.dataset.lg)); });
   const lgc = document.getElementById('lgc'); if (lgc) lgc.onclick = () => { haptic(); createView(); };
@@ -787,7 +792,7 @@ function bind() {
   const set = document.getElementById('set'); if (set) set.onclick = () => { setupView(); };
   document.querySelectorAll('[data-ext]').forEach((x) => x.onclick = () => { haptic(); try { tg.openLink(x.dataset.ext); } catch (e) { window.open(x.dataset.ext, '_blank'); } });
   const hf = document.getElementById('hfire'); if (hf) hf.onclick = () => { haptic(); view = 'profile'; leagueView = null; render(); const sc = document.getElementById('streakcard'); if (sc) sc.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
-  const ht = document.getElementById('htrophy'); if (ht) ht.onclick = () => { haptic(); view = 'rank'; leagueView = null; render(); window.scrollTo(0, 0); };
+  const ht = document.getElementById('htrophy'); if (ht) ht.onclick = () => { haptic(); view = 'rank'; leagueView = null; render(); scrollTop0(); };
   const set2 = document.getElementById('set2'); if (set2) set2.onclick = () => { setupView(); };
 }
 async function loadTrend() { try { trendData = await api('trend'); render(); return true; } catch (e) { return false; } }
@@ -822,13 +827,6 @@ async function load() {
 setInterval(() => { if (st && st.match && ['IN_PLAY', 'PAUSED', 'LIVE'].includes(st.match.live_status) && st.match.status !== 'FINISHED' && view === 'match' && !leagueView) load(); }, 60000);
 setInterval(() => { const el = document.getElementById('cd'); if (el && st && st.match) { const ms = new Date(st.match.kickoff).getTime() - Date.now(); if (ms <= 0) load(); else el.textContent = countdown(ms); } }, 30000);
 load();
-// temporary: ?navdebug shows how the phone places the bottom menu
-if (location.search.indexOf('navdebug') >= 0) setInterval(() => {
-  const n = document.getElementById('nav'); if (!n) return;
-  const r = n.getBoundingClientRect(), cs = getComputedStyle(n), b = getComputedStyle(document.body), ht = getComputedStyle(document.documentElement);
-  let d = document.getElementById('navdbg'); if (!d) { d = document.createElement('pre'); d.id = 'navdbg'; d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;margin:0;padding:6px;font:11px monospace;background:#ff0;color:#000;white-space:pre-wrap'; document.documentElement.appendChild(d); }
-  d.textContent = 'nav pos=' + cs.position + ' top=' + Math.round(r.top) + ' bottom=' + Math.round(r.bottom) + ' | innerH=' + innerHeight + ' vv=' + (window.visualViewport ? Math.round(visualViewport.height) + '@' + visualViewport.scale.toFixed(2) : '-') + ' scrollY=' + Math.round(scrollY) + ' docH=' + document.documentElement.scrollHeight + '\nbody: pos=' + b.position + ' tf=' + b.transform + ' ov=' + b.overflow + ' h=' + b.height + ' | html: tf=' + ht.transform + ' ov=' + ht.overflow + ' h=' + ht.height + ' | parent=' + (n.parentNode && n.parentNode.nodeName);
-}, 700);
 checkAppUpdate();
 // Android app: count this phone once (first opening), for the install counter
 if (IS_ANDROID) { try { if (!localStorage.getItem('ds_inst')) { const d = Array.from(crypto.getRandomValues(new Uint8Array(12)), (x) => x.toString(16).padStart(2, '0')).join(''); fetch('https://pote-ia-bot-en-production.up.railway.app/ds/install', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d }) }).then(() => localStorage.setItem('ds_inst', d)).catch(() => {}); } } catch (e) {} }
