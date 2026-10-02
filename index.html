@@ -21,6 +21,7 @@
 <meta name="apple-mobile-web-app-title" content="Daily Score">
 <meta property="og:image" content="https://dailyscoreapp.com/icon-512.png">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js" async></script>
 <!-- InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.3), from The Moneytizer: web and Android app only, never inside Telegram -->
 <script type="text/javascript">
 if (!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData)) {
@@ -350,7 +351,8 @@ try {
   if (hp.get('lg')) { localStorage.setItem('ds_lg', JSON.stringify({ c: hp.get('lg'), r: hp.get('r') || null })); history.replaceState(null, '', location.pathname); }
   TOKEN = localStorage.getItem('ds_token');
 } catch (e) {}
-// Interstitial (TADS fullscreen) after a validation or a change of the score, or after creating a league:
+const DS_INTER = 'int-51534'; // Adsgram interstitial block
+// Interstitial (Adsgram) after a validation or a change of the score, or after creating a league:
 // not on the player's first day, 2 a day at most, 20 seconds between two ads, never for Premium. Telegram only.
 // TADS fullscreen (widget 12430): the interstitial in Telegram
 const TADS_FS = 12430;
@@ -404,7 +406,7 @@ function showInter() {
     // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
     if (!owner && !TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 2 || Date.now() - (c.at || 0) < 20000)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
-    showTadsFullscreen().catch(() => {});
+    if (window.Adsgram) window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => api('ev', { k: 'ad_inter_none' }).catch(() => {}));
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
