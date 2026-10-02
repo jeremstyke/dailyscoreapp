@@ -24,7 +24,7 @@
 <script src="https://sad.adsgram.ai/js/sad.min.js" async></script>
 <!-- InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.3), from The Moneytizer: web and Android app only, never inside Telegram -->
 <script type="text/javascript">
-if (!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData)) {
+if (!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) && location.search.indexOf('nocmp') < 0) {
 (function() {
   var host = "www.themoneytizer.com";
   var element = document.createElement('script');
@@ -822,6 +822,13 @@ async function load() {
 setInterval(() => { if (st && st.match && ['IN_PLAY', 'PAUSED', 'LIVE'].includes(st.match.live_status) && st.match.status !== 'FINISHED' && view === 'match' && !leagueView) load(); }, 60000);
 setInterval(() => { const el = document.getElementById('cd'); if (el && st && st.match) { const ms = new Date(st.match.kickoff).getTime() - Date.now(); if (ms <= 0) load(); else el.textContent = countdown(ms); } }, 30000);
 load();
+// temporary: ?navdebug shows how the phone places the bottom menu
+if (location.search.indexOf('navdebug') >= 0) setInterval(() => {
+  const n = document.getElementById('nav'); if (!n) return;
+  const r = n.getBoundingClientRect(), cs = getComputedStyle(n), b = getComputedStyle(document.body), ht = getComputedStyle(document.documentElement);
+  let d = document.getElementById('navdbg'); if (!d) { d = document.createElement('pre'); d.id = 'navdbg'; d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;margin:0;padding:6px;font:11px monospace;background:#ff0;color:#000;white-space:pre-wrap'; document.documentElement.appendChild(d); }
+  d.textContent = 'nav pos=' + cs.position + ' top=' + Math.round(r.top) + ' bottom=' + Math.round(r.bottom) + ' | innerH=' + innerHeight + ' vv=' + (window.visualViewport ? Math.round(visualViewport.height) + '@' + visualViewport.scale.toFixed(2) : '-') + ' scrollY=' + Math.round(scrollY) + ' docH=' + document.documentElement.scrollHeight + '\nbody: pos=' + b.position + ' tf=' + b.transform + ' ov=' + b.overflow + ' h=' + b.height + ' | html: tf=' + ht.transform + ' ov=' + ht.overflow + ' h=' + ht.height + ' | parent=' + (n.parentNode && n.parentNode.nodeName);
+}, 700);
 checkAppUpdate();
 // Android app: count this phone once (first opening), for the install counter
 if (IS_ANDROID) { try { if (!localStorage.getItem('ds_inst')) { const d = Array.from(crypto.getRandomValues(new Uint8Array(12)), (x) => x.toString(16).padStart(2, '0')).join(''); fetch('https://pote-ia-bot-en-production.up.railway.app/ds/install', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ d }) }).then(() => localStorage.setItem('ds_inst', d)).catch(() => {}); } } catch (e) {} }
