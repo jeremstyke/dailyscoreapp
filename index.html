@@ -285,6 +285,8 @@ select { width: 100%; padding: 13px; border-radius: 14px; border: 1px solid var(
 .avatar.ini { display: grid; place-items: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 40px; color: var(--lime); }
 .row[data-pid] { cursor: pointer; }
 #qc-cmp2-persistent-link, .qc-cmp2-persistent-link { display: none !important; }
+html, body { transform: none !important; filter: none !important; perspective: none !important; contain: none !important; }
+#nav.nav { position: fixed !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; -webkit-transform: translateZ(0); transform: translateZ(0); }
 .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: #24402f; color: var(--ink); padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; z-index: 9; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 .skel { height: 120px; border-radius: 20px; background: linear-gradient(90deg, #13241a, #1a3324, #13241a); background-size: 200% 100%; animation: sk 1.2s infinite; margin-bottom: 12px; }
 @keyframes sk { to { background-position: -200% 0; } }
@@ -703,7 +705,7 @@ let view = 'match';
 function navBar() {
   const items = [['match', '⚽', 'tMatch'], ['rank', '🏆', 'tRank'], ['leagues', '👥', 'tLeagues'], ['profile', '🏅', 'tProfile']];
   let nav = document.getElementById('nav');
-  if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.body.appendChild(nav); }
+  if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.documentElement.appendChild(nav); }
   nav.innerHTML = '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
   nav.querySelectorAll('[data-nav]').forEach((x) => x.onclick = () => { haptic(); view = x.dataset.nav; leagueView = null; render(); window.scrollTo(0, 0); });
 }
