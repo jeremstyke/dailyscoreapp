@@ -112,6 +112,11 @@ select { width: 100%; padding: 13px; border-radius: 14px; border: 1px solid var(
 .live { display: inline-flex; align-items: center; gap: 6px; color: #ff5b5b; font-weight: 800; letter-spacing: 1px; }
 .live i { width: 9px; height: 9px; border-radius: 50%; background: #ff5b5b; animation: blink 1.2s infinite; }
 .mood { text-align: center; font-weight: 800; margin-top: 8px; position: relative; z-index: 1; }
+.sso { display: flex; align-items: center; width: 100%; max-width: 320px; height: 44px; margin: 10px auto 0; padding: 0 16px 0 4px; border-radius: 999px; background: #131314; border: 1px solid #8e918f; color: #e3e3e3; font: 500 15px/1 Roboto, Inter, system-ui, sans-serif; cursor: pointer; text-decoration: none; }
+.sso .ic { width: 36px; height: 36px; border-radius: 50%; background: #fff; display: grid; place-items: center; flex: 0 0 auto; }
+.sso .ic svg { width: 20px; height: 20px; }
+.sso span.tx { flex: 1; text-align: center; padding-right: 20px; }
+.sso:active { opacity: .85; }
 .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: #24402f; color: var(--ink); padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; z-index: 9; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 .skel { height: 120px; border-radius: 20px; background: linear-gradient(90deg, #13241a, #1a3324, #13241a); background-size: 200% 100%; animation: sk 1.2s infinite; margin-bottom: 12px; }
 @keyframes sk { to { background-position: -200% 0; } }
@@ -270,9 +275,9 @@ function loginView() {
     <p class="muted" style="margin:0 0 6px">${esc(t('wText'))}</p>
     <p class="muted" style="margin:0 0 10px;font-size:13px">${esc(t('rules'))}</p>
     <div id="gbtn" style="display:flex;justify-content:center;margin-top:14px;min-height:44px"></div>
-    <button class="btn ghost" id="gh">${GH_ICON.replace('#f2f7f3', '#10200f').replace(/13/g, '18')} &nbsp;${esc(t('wGh'))}</button>
-    ${ON_ANDROID_WEB ? `<a class="btn ghost" href="${APK_PAGE}" style="display:block;text-decoration:none;text-align:center">📲 ${esc(t('apkBtn'))}</a>` : ''}
-    <button class="btn ghost" id="tgp">${TG_ICON.replace(/13/g, '18')} &nbsp;${esc(t('wTg'))}</button>
+    <button class="sso" id="gh"><span class="ic">${GH_ICON.replace('#f2f7f3', '#181717').replace(/width="13" height="13"/, 'width="20" height="20"')}</span><span class="tx">${esc(t('wGh'))}</span></button>
+    ${ON_ANDROID_WEB ? `<a class="sso" href="${APK_PAGE}"><span class="ic" style="font-size:19px">📲</span><span class="tx">${esc(t('apkBtn'))}</span></a>` : ''}
+    <button class="sso" id="tgp"><span class="ic">${TG_ICON.replace(/width="13" height="13"/, 'width="22" height="22"')}</span><span class="tx">${esc(t('wTg'))}</span></button>
     <p class="muted" style="margin:16px 0 0;font-size:12px">by <a href="https://t.me/jeremstyke" style="color:var(--lime)">@jeremstyke</a> · <a href="https://dailyscoreapp.com/privacy.html" style="color:var(--mute)">Privacy</a></p>
   </div>`;
   if (window.__loginErr) { window.__loginErr = false; toast(t('wErr')); }
