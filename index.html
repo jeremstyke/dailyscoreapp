@@ -373,7 +373,8 @@ function showInter() {
     const today = new Date().toISOString().slice(0, 10);
     let c = {}; try { c = JSON.parse(localStorage.getItem('ds_inter3') || '{}'); } catch (e) {}
     const n = c.d === today ? c.n || 0 : 0;
-    if (!TADS_DEBUG() && (n >= 3 || Date.now() - (c.at || 0) < 20000)) return; // no limit on the owner's test account
+    const owner = !!(st && st.me && st.me.id === 7057960224); // the owner sees real ads without the daily limit
+    if (!owner && !TADS_DEBUG() && (n >= 3 || Date.now() - (c.at || 0) < 20000)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
     showTadsFullscreen().catch(() => {});
   } catch (e) {}
