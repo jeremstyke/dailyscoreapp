@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Score for Android - free download (APK)</title>
+<meta name="description" content="Download Daily Score for Android: the free football prediction game. One big match a day, world rankings, leagues with friends.">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="theme-color" content="#0b1a12">
+<style>
+body{margin:0;background:#0b1a12;color:#f2f7f3;font-family:system-ui,sans-serif;line-height:1.55}
+.w{max-width:520px;margin:0 auto;padding:28px 18px 50px;text-align:center}
+img.logo{width:150px;height:150px;border-radius:50%}
+h1{font-size:26px;margin:14px 0 6px}
+p.sub{color:#9fb7a8;margin:0 0 22px}
+a.btn{display:block;background:#c6ff3d;color:#10200f;text-decoration:none;font-weight:800;font-size:18px;padding:16px;border-radius:16px;margin:10px 0}
+a.alt{display:block;color:#f2f7f3;text-decoration:none;font-weight:700;padding:13px;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin:10px 0}
+ol{text-align:left;background:#13241a;border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:16px 16px 16px 36px;color:#d6e3da}
+.small{color:#9fb7a8;font-size:13px;margin-top:22px}
+.small a{color:#9fb7a8}
+</style></head>
+<body><div class="w">
+<img class="logo" src="icon-512.png" alt="Daily Score">
+<h1 id="t">Daily Score for Android</h1>
+<p class="sub" id="s">The free football prediction game: one big match a day, world rankings and leagues with friends.</p>
+<a class="btn" id="dl" href="https://pote-ia-bot-en-production.up.railway.app/ds/apk?src=page">📲 Download the app (APK, 4 MB)</a>
+<a class="alt" id="web" href="./">🌐 Play in the browser</a>
+<a class="alt" href="https://t.me/DailyScorefootbot?start=src_android_page">✈️ Play on Telegram</a>
+<ol id="steps">
+<li>Download the file, then open it.</li>
+<li>If Android asks, allow installing apps from this source.</li>
+<li>Tap Install, then open Daily Score and sign in with Google.</li>
+</ol>
+<p class="small"><span id="v"></span> · The game updates itself automatically. · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · by <a href="https://t.me/jeremstyke">@jeremstyke</a></p>
+</div>
+<script>
+const T = {
+  fr: ['Daily Score pour Android', "Le jeu de pronostics foot gratuit : un grand match par jour, classements mondiaux et ligues entre amis.", "📲 Télécharger l'appli (APK, 4 Mo)", '🌐 Jouer dans le navigateur', ['Télécharge le fichier, puis ouvre-le.', "Si Android le demande, autorise l'installation d'applications depuis cette source.", 'Appuie sur Installer, ouvre Daily Score et connecte-toi avec Google.']],
+  es: ['Daily Score para Android', 'El juego gratuito de pronósticos de fútbol: un gran partido al día, clasificaciones mundiales y ligas con amigos.', '📲 Descargar la app (APK, 4 MB)', '🌐 Jugar en el navegador', ['Descarga el archivo y ábrelo.', 'Si Android lo pide, permite instalar apps de esta fuente.', 'Pulsa Instalar, abre Daily Score y entra con Google.']],
+  pt: ['Daily Score para Android', 'O jogo grátis de palpites de futebol: um grande jogo por dia, rankings mundiais e ligas com amigos.', '📲 Baixar o app (APK, 4 MB)', '🌐 Jogar no navegador', ['Baixe o arquivo e abra-o.', 'Se o Android pedir, permita instalar apps desta fonte.', 'Toque em Instalar, abra o Daily Score e entre com o Google.']],
+  de: ['Daily Score für Android', 'Das kostenlose Fußball-Tippspiel: jeden Tag ein großes Spiel, Weltranglisten und Ligen mit Freunden.', '📲 App herunterladen (APK, 4 MB)', '🌐 Im Browser spielen', ['Lade die Datei herunter und öffne sie.', 'Wenn Android fragt, erlaube die Installation aus dieser Quelle.', 'Tippe auf Installieren, öffne Daily Score und melde dich mit Google an.']],
+  it: ['Daily Score per Android', 'Il gioco gratuito di pronostici calcio: una grande partita al giorno, classifiche mondiali e leghe con gli amici.', "📲 Scarica l'app (APK, 4 MB)", '🌐 Gioca nel browser', ['Scarica il file e aprilo.', "Se Android lo chiede, consenti l'installazione da questa fonte.", 'Tocca Installa, apri Daily Score e accedi con Google.']],
+  ar: ['Daily Score لأندرويد', 'لعبة توقعات كرة القدم المجانية: مباراة كبيرة كل يوم، ترتيب عالمي ودوريات مع الأصدقاء.', '📲 تحميل التطبيق (APK، 4 ميغابايت)', '🌐 العب في المتصفح', ['حمّل الملف ثم افتحه.', 'إذا طلب أندرويد ذلك، اسمح بتثبيت التطبيقات من هذا المصدر.', 'اضغط تثبيت، افتح Daily Score وسجّل الدخول عبر Google.']],
+  tr: ['Android için Daily Score', 'Ücretsiz futbol tahmin oyunu: her gün büyük bir maç, dünya sıralamaları ve arkadaşlarla ligler.', '📲 Uygulamayı indir (APK, 4 MB)', '🌐 Tarayıcıda oyna', ['Dosyayı indir ve aç.', 'Android sorarsa bu kaynaktan yüklemeye izin ver.', "Yükle'ye dokun, Daily Score'u aç ve Google ile giriş yap."]],
+  ru: ['Daily Score для Android', 'Бесплатная игра прогнозов на футбол: один большой матч в день, мировые рейтинги и лиги с друзьями.', '📲 Скачать приложение (APK, 4 МБ)', '🌐 Играть в браузере', ['Скачай файл и открой его.', 'Если Android спросит, разреши установку из этого источника.', 'Нажми «Установить», открой Daily Score и войди через Google.']],
+};
+const l = (navigator.language || 'en').slice(0, 2), x = T[l];
+if (x) { document.documentElement.lang = l; if (l === 'ar') document.documentElement.dir = 'rtl'; document.getElementById('t').textContent = x[0]; document.getElementById('s').textContent = x[1]; document.getElementById('dl').textContent = x[2]; document.getElementById('web').textContent = x[3]; document.getElementById('steps').innerHTML = x[4].map((s) => '<li>' + s + '</li>').join(''); }
+fetch('android.json', { cache: 'no-store' }).then((r) => r.json()).then((j) => { document.getElementById('v').textContent = 'v' + j.version; }).catch(() => {});
+</script>
+</body></html>
