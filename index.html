@@ -460,6 +460,27 @@ document.addEventListener('click', (e) => {
 let gumClicked = false;
 document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('#gumbuy')) { gumClicked = true; try { api('ev', { k: 'gumroad_click' }).catch(() => {}); } catch (err) {} } });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && gumClicked && !IN_TG) { load(); setTimeout(load, 8000); } });
+// Players who opened the mini app directly cannot get messages from the bot (reminders, goals, results):
+// Telegram's own permission popup, at the first opening, then again after 3 days if refused, 3 times at most.
+let writeAsked = false;
+function askWriteAccess() {
+  if (!IN_TG || writeAsked || !st || !st.me || st.me.botOk || !st.me.country) return;
+  const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
+  if (u && u.allows_write_to_pm) { api('write_ok').catch(() => {}); st.me.botOk = true; return; }
+  if (!tg.requestWriteAccess) return;
+  let w = {}; try { w = JSON.parse(localStorage.getItem('ds_wa') || '{}'); } catch (e) {}
+  if ((w.n || 0) >= 3 || Date.now() - (w.at || 0) < 3 * 86400000) return;
+  writeAsked = true;
+  setTimeout(() => {
+    try {
+      tg.requestWriteAccess((ok) => {
+        try { localStorage.setItem('ds_wa', JSON.stringify({ n: (w.n || 0) + 1, at: Date.now() })); } catch (e) {}
+        api('ev', { k: ok ? 'write_yes' : 'write_no' }).catch(() => {});
+        if (ok) { st.me.botOk = true; api('write_ok').catch(() => {}); }
+      });
+    } catch (e) {}
+  }, 1500);
+}
 function scrollTop0() { window.scrollTo(0, 0); const a = document.getElementById('app'); if (a) a.scrollTop = 0; }
 const openLink = (u) => { if (IN_TG) tg.openTelegramLink(u); else window.open(u, '_blank'); };
 async function shareLink(url, text) {
@@ -989,6 +1010,7 @@ function render() {
   ${view === 'match' ? notifCard() + installCard(false) + matchCard() + trendCard() + voteCard() + lastCard() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard()}`;
   navBar();
   bind();
+  askWriteAccess();
 }
 function bind() {
   document.querySelectorAll('[data-s]').forEach((b) => b.onclick = () => {
