@@ -332,7 +332,8 @@ try { tg.setHeaderColor('#0b1a12'); tg.setBackgroundColor('#0b1a12'); } catch (e
 const BOT = 'DailyScorefootbot';
 const IN_TG = !!(tg && tg.initData);
 if (!IN_TG) document.documentElement.classList.add('shell');
-const API = IN_TG ? '' : 'https://pote-ia-bot-en-production.up.railway.app';
+// the game can run on dailyscoreapp.com (web, Android app, and Telegram) or on the server itself
+const API = location.hostname.endsWith('railway.app') ? '' : 'https://pote-ia-bot-en-production.up.railway.app';
 let IS_ANDROID = false;
 try {
   if (new URLSearchParams(location.search).get('src') === 'android' || document.referrer.startsWith('android-app://')) sessionStorage.setItem('ds_android', '1');
