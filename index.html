@@ -374,7 +374,7 @@ function showInter() {
     const today = new Date().toISOString().slice(0, 10);
     let c = {}; try { c = JSON.parse(localStorage.getItem('ds_inter3') || '{}'); } catch (e) {}
     const n = c.d === today ? c.n || 0 : 0;
-    if (n >= 3 || Date.now() - (c.at || 0) < 20000) return;
+    if (!TADS_DEBUG() && (n >= 3 || Date.now() - (c.at || 0) < 20000)) return; // no limit on the owner's test account
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
     // A/B test: TADS and Adsgram take turns; when the chosen one has no ad, the other one steps in
     const k = Number(localStorage.getItem('ds_alt') || 0); localStorage.setItem('ds_alt', String(k + 1));
