@@ -687,9 +687,9 @@ function notifCard() {
   if (!ns.length) return '';
   const nm = (n) => n.params.name || '?';
   const line = (n) => n.kind === 'friend_req' ? esc(t('nfFrReq').replace('{name}', nm(n))) + ` <button class="chip" style="cursor:pointer;color:var(--lime);font-family:inherit" data-facc="${esc(n.params.pid || '')}">${esc(t('frAccept'))}</button>`
-    : n.kind === 'friend_ok' ? esc(t('nfFrOk').replace('{name}', nm(n)))
+    : n.kind === 'friend_ok' ? esc(t('nfFrOk').replace('{name}', nm(n))) + (n.params.pid ? ` <button class="chip" style="cursor:pointer;color:var(--lime);font-family:inherit" data-pid="${esc(n.params.pid)}">👤</button>` : '')
     : n.kind === 'tease' ? esc(t('nfTease').replace('{name}', nm(n)).replace('{text}', TEASES[n.params.k] ? TEASES[n.params.k][lang] || TEASES[n.params.k].en : '')) + ` <button class="chip" style="cursor:pointer;color:var(--lime);font-family:inherit" data-pid="${esc(n.params.pid || '')}">${esc(t('nfReply'))}</button>`
-    : esc(t('nfJoin').replace('{name}', nm(n)).replace('{league}', n.params.league || '').replace('{n}', n.params.n || ''));
+    : esc(t('nfJoin').replace('{name}', nm(n)).replace('{league}', n.params.league || '').replace('{n}', n.params.n || '')) + (n.params.lg ? ` <button class="chip" style="cursor:pointer;color:var(--lime);font-family:inherit" data-golg="${Number(n.params.lg)}">🏆</button>` : '');
   return `<div class="card" style="border-color:rgba(198,255,61,.45)"><div class="label">🔔 Notifications</div>
     ${ns.map((n) => `<p style="margin:6px 0">${line(n)}</p>`).join('')}
     <button class="btn ghost" id="nfok">OK 👍</button></div>`;
@@ -1035,6 +1035,7 @@ function bind() {
   document.querySelectorAll('[data-vote]').forEach((x) => x.onclick = () => castVote(x.dataset.vote));
   const why = document.getElementById('why'); if (why) why.onclick = openWhy;
   document.querySelectorAll('[data-facc]').forEach((x) => x.onclick = (e) => { e.stopPropagation(); friendAction('friend_accept', x.dataset.facc, () => { x.outerHTML = '✅'; loadFriends(); }); });
+  document.querySelectorAll('[data-golg]').forEach((x) => x.onclick = () => { haptic(); view = 'leagues'; openLeague(Number(x.dataset.golg)); });
   const nfok = document.getElementById('nfok'); if (nfok) nfok.onclick = () => { haptic(); st.notifs = []; api('notifs_seen').catch(() => {}); render(); };
   const ig = document.getElementById('instgo'); if (ig) ig.onclick = doInstall;
   const il = document.getElementById('instlater'); if (il) il.onclick = () => { haptic(); try { localStorage.setItem('ds_inst_later', String(Date.now())); } catch (e) {} render(); };
@@ -1073,6 +1074,18 @@ async function buyTrend() {
     });
   } catch (e) { toast(t('err')); }
 }
+// a bot button can open a precise place: ?go=profile&pid=… (friend request, tease) or ?go=league&lg=…
+let goDone = false;
+function goTo() {
+  if (goDone || !st || !st.me || !st.me.country) return;
+  goDone = true;
+  const q = new URLSearchParams(location.search);
+  const go = q.get('go');
+  if (!go) return;
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+  if (go === 'profile' && q.get('pid')) { view = 'leagues'; openProfile(q.get('pid')); }
+  else if (go === 'league' && Number(q.get('lg'))) { view = 'leagues'; openLeague(Number(q.get('lg'))); }
+}
 async function load() {
   if (!IN_TG && !TOKEN) return loginView();
   await finishWebLink();
@@ -1082,6 +1095,7 @@ async function load() {
     if (pref && !IN_TG) api('ref_set', { ref: pref }).catch(() => {});
     let pend = null; try { pend = JSON.parse(localStorage.getItem('ds_lg') || 'null'); localStorage.removeItem('ds_lg'); } catch (e) {}
     if (pend && pend.c && st.me.country) doJoin(pend.c, pend.r);
+    goTo();
   }
   catch (e) { document.getElementById('app').innerHTML = `<div class="card center"><p>${esc(t('err'))}</p><button class="btn go" onclick="load()">↻</button></div>`; }
 }
