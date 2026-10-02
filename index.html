@@ -515,7 +515,7 @@ function profileCard() {
     <div class="stat"><b>${st.me.picks || 0}</b><span>⚽</span></div></div>
     <button class="btn ghost" id="set2">⚙️ ${esc(t('settings2'))}</button>
     ${ON_ANDROID_WEB ? `<a class="btn ghost" href="${APK_PAGE}" style="display:block;text-decoration:none;text-align:center;margin-top:8px">📲 ${esc(t('apkBtn'))}</a>` : ''}
-    ${IN_TG && tg.platform === 'android' ? `<button class="btn ghost" style="margin-top:8px" data-ext="${APK_PAGE}">📲 ${esc(t('apkBtn'))}</button>` : ''}</div>`;
+    ${IN_TG ? `<button class="btn ghost" style="margin-top:8px" data-ext="https://dailyscoreapp.com/?src=tg_app">🌐 ${esc(t('webBtn'))}</button>` : ''}</div>`;
 }
 function render() {
   if (!st.me.country) return setupView();
