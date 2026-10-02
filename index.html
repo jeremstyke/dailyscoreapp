@@ -353,15 +353,32 @@ try {
 // Adsgram interstitial after a validation or a change of the score, from the very first pick (so moderators see it):
 // 3 a day at most and 20 seconds between two ads (Adsgram refuses apps where every click leads to an ad). Telegram only.
 const DS_INTER = 'int-51534';
+// TADS fullscreen (widget 12430): the interstitial in Telegram
+const TADS_FS = 12430;
+function showTadsFullscreen() {
+  return new Promise((resolve, reject) => {
+    loadTads(() => {
+      try {
+        let box = document.getElementById('tads-container-' + TADS_FS);
+        if (!box) { box = document.createElement('div'); box.id = 'tads-container-' + TADS_FS; document.body.appendChild(box); }
+        let none = false;
+        const c = window.tads.init({ widgetId: TADS_FS, type: 'FULLSCREEN', debug: false, onAdsNotFound: () => { none = true; reject(new Error('none')); } });
+        c.loadAd().then(() => { if (none) return; c.showAd(); api('ev', { k: 'ad_tads_fs' }).catch(() => {}); resolve(); }).catch(reject);
+      } catch (e) { reject(e); }
+    }, () => reject(new Error('script')));
+  });
+}
 function showInter() {
   try {
-    if (!IN_TG || !window.Adsgram || (st && st.me && st.me.premium)) return;
+    if (!IN_TG || (st && st.me && st.me.premium)) return;
     const today = new Date().toISOString().slice(0, 10);
     let c = {}; try { c = JSON.parse(localStorage.getItem('ds_inter3') || '{}'); } catch (e) {}
     const n = c.d === today ? c.n || 0 : 0;
     if (n >= 3 || Date.now() - (c.at || 0) < 20000) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
-    window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => {});
+    showTadsFullscreen().catch(() => {
+      if (window.Adsgram) window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => {});
+    });
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
@@ -675,13 +692,17 @@ function placeAd() {
   tadsState = 'loading';
   const start = () => {
     try {
-      const c = window.tads.init({ widgetId: TADS_ID, debug: false, onAdsNotFound: () => { tadsState = 'none'; if (tadsNode) tadsNode.remove(); } });
+      const c = window.tads.init({ widgetId: TADS_ID, type: 'STATIC', debug: false, onAdsNotFound: () => { tadsState = 'none'; if (tadsNode) tadsNode.remove(); } });
       c.loadAd().then(() => { tadsState = 'shown'; c.showAd(); api('ev', { k: 'ad_tads' }).catch(() => {}); }).catch(() => { tadsState = 'none'; if (tadsNode) tadsNode.remove(); });
     } catch (e) { tadsState = 'none'; }
   };
-  if (window.tads) return start();
-  const s = document.createElement('script'); s.src = 'https://w.tads.me/widget.js'; s.async = true; s.onload = start; s.onerror = () => { tadsState = 'none'; };
-  document.body.appendChild(s);
+  loadTads(start, () => { tadsState = 'none'; });
+}
+function loadTads(ok, ko) {
+  if (window.tads) return ok();
+  let s = document.querySelector('script[src="https://w.tads.me/widget.js"]');
+  if (!s) { s = document.createElement('script'); s.src = 'https://w.tads.me/widget.js'; s.async = true; document.body.appendChild(s); }
+  s.addEventListener('load', ok); s.addEventListener('error', ko || (() => {}));
 }
 function voteCard() {
   const v = st.vote;
