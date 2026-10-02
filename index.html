@@ -376,9 +376,10 @@ function showInter() {
     const n = c.d === today ? c.n || 0 : 0;
     if (n >= 3 || Date.now() - (c.at || 0) < 20000) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
-    showTadsFullscreen().catch(() => {
-      if (window.Adsgram) window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => {});
-    });
+    // A/B test: TADS and Adsgram take turns; when the chosen one has no ad, the other one steps in
+    const k = Number(localStorage.getItem('ds_alt') || 0); localStorage.setItem('ds_alt', String(k + 1));
+    const adsgram = () => new Promise((ok, ko) => { if (!window.Adsgram) return ko(new Error('none')); window.Adsgram.init({ blockId: DS_INTER }).show().then(() => { api('ev', { k: 'ad_inter' }).catch(() => {}); ok(); }).catch(ko); });
+    (k % 2 === 0 ? showTadsFullscreen().catch(adsgram) : adsgram().catch(() => showTadsFullscreen())).catch(() => {});
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
