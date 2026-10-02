@@ -311,6 +311,8 @@ html.shell .nav { position: relative; flex: 0 0 auto; }
 <script>
 const tg = window.Telegram.WebApp;
 tg.ready(); tg.expand();
+// scrolling down inside the game must not close or minimize the mini app (Telegram 7.7+)
+try { if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); } catch (e) {}
 try { tg.setHeaderColor('#0b1a12'); tg.setBackgroundColor('#0b1a12'); } catch (e) {}
 const BOT = 'DailyScorefootbot';
 const IN_TG = !!(tg && tg.initData);
