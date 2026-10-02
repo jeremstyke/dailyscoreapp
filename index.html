@@ -488,15 +488,16 @@ function loginView() {
 }
 function hideNav() { const n = document.getElementById('nav'); if (n) n.remove(); }
 function setupView() {
-  hideNav();
+  const isSettings = !!(st.me && st.me.country);
+  if (!isSettings) hideNav();
   const l0 = st.me.lang && S[st.me.lang] ? st.me.lang : 'en';
   const c0 = st.me.country || st.me.suggestedCountry || 'GB';
   lang = l0; applyLang();
   const cs = [...COUNTRIES].sort((a, b) => countryName(a).localeCompare(countryName(b), lang));
-  document.getElementById('app').innerHTML = `
-  <div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b><span class="beta">BETA</span></div></div>
-  <div class="card"><div class="big" style="font-size:40px">⚽</div>
-    <h2 class="center" style="margin:6px 0 4px">${esc(t('setupTitle'))}</h2>
+  document.getElementById('app').innerHTML = (isSettings ? backBar() : `
+  <div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b><span class="beta">BETA</span></div></div>`) + `
+  <div class="card"><div class="big" style="font-size:40px">${isSettings ? '⚙️' : '⚽'}</div>
+    <h2 class="center" style="margin:6px 0 4px">${esc(isSettings ? t('settings2') : t('setupTitle'))}</h2>
     <p class="center muted" style="margin:0 0 16px">${esc(t('setupText'))}</p>
     <div class="label">${esc(t('language'))}</div>
     <select id="sl">${Object.entries(LANGS).map(([k, v]) => `<option value="${k}" ${k === l0 ? 'selected' : ''}>${v}</option>`).join('')}</select>
@@ -508,6 +509,7 @@ function setupView() {
     ${!IN_TG ? `<button class="btn ghost" id="cookies">🍪 ${esc(t('cookiesBtn'))}</button>` : ''}
     ${!IN_TG && st.me.country ? `<button class="btn ghost" id="lout">${esc(t('logout'))}</button>` : ''}
   </div>`;
+  if (isSettings) { view = 'profile'; navBar(); const bk = document.getElementById('bk'); if (bk) bk.onclick = () => { haptic(); lang = st.me.lang || lang; applyLang(); render(); scrollTop0(); }; }
   document.querySelectorAll('[data-lk]').forEach((x) => x.onclick = () => (x.dataset.lk === 'tg' ? startLink() : startWebLink()));
   const ck = document.getElementById('cookies'); if (ck) ck.onclick = () => { try { window.__tcfapi('displayConsentUi', 2, () => {}); } catch (e) { toast(t('err')); } };
   const lo = document.getElementById('lout'); if (lo) lo.onclick = () => { try { localStorage.removeItem('ds_token'); } catch (e) {} TOKEN = null; loginView(); };
