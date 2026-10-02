@@ -678,7 +678,7 @@ function openTease(pid, name, left) {
 }
 // TADS native banner (widget 12429): Telegram only, never for Premium, loaded once per visit and moved between renders
 const TADS_ID = 12429;
-const TADS_DEBUG = () => !!(st && st.me && st.me.id === 7057960224); // test ads for the owner's account only
+const TADS_DEBUG = () => false; // set to the owner's id check to get TADS test ads and no daily limit on that account
 let tadsNode = null, tadsState = 'idle';
 function adSlot() { return IN_TG && st && st.me && !st.me.premium && tadsState !== 'none' ? '<div id="adslot" style="max-width:480px;margin:0 auto 6px;max-height:140px;overflow:hidden"></div>' : ''; }
 function fitNav() {
