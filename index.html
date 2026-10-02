@@ -316,6 +316,8 @@ html.shell .nav { position: relative; flex: 0 0 auto; }
 .plan.best small, .plan.best b { color: #1a1300; }
 .plan.best .tag { background: #1a1300; color: #ffd75e; }
 .plan:active { transform: scale(.97); }
+.dstask { display: block; }
+.dstask-btn { display: inline-block; padding: 7px 14px; border-radius: 99px; background: var(--lime); color: #10200f; font-weight: 800; font-size: 13px; }
 .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: #24402f; color: var(--ink); padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; z-index: 9; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 .skel { height: 120px; border-radius: 20px; background: linear-gradient(90deg, #13241a, #1a3324, #13241a); background-size: 200% 100%; animation: sk 1.2s infinite; margin-bottom: 12px; }
 @keyframes sk { to { background-position: -200% 0; } }
@@ -725,15 +727,18 @@ function placeAd() {
   const slot = document.getElementById('adslot');
   if (!slot) return;
   if (tadsNode) { slot.appendChild(tadsNode); return; }
-  tadsNode = document.createElement('div'); tadsNode.id = 'tads-container-' + TADS_ID; slot.appendChild(tadsNode);
+  const w = document.createElement('div');
+  w.innerHTML = '<adsgram-task data-block-id="task-51590" class="dstask"><span slot="reward"></span><div slot="button" class="dstask-btn">▶</div><div slot="claim" class="dstask-btn">🎁</div><div slot="done" class="dstask-btn">✓</div></adsgram-task>';
+  tadsNode = w.firstChild;
   tadsState = 'loading';
-  const start = () => {
-    try {
-      const c = window.tads.init({ widgetId: TADS_ID, type: 'STATIC', debug: TADS_DEBUG(), onAdsNotFound: () => { tadsState = 'none'; api('ev', { k: 'ad_tads_none' }).catch(() => {}); if (tadsNode) tadsNode.remove(); } });
-      c.loadAd().then((r) => { tadsState = 'shown'; c.showAd(); api('ev', { k: 'ad_tads' }).catch(() => {}); setTimeout(() => { if (tadsNode && !tadsNode.innerHTML.trim()) api('ev', { k: 'ad_tads_empty' }).catch(() => {}); }, 3000); }).catch(() => { tadsState = 'none'; api('ev', { k: 'ad_tads_err' }).catch(() => {}); if (tadsNode) tadsNode.remove(); });
-    } catch (e) { tadsState = 'none'; }
-  };
-  loadTads(start, () => { tadsState = 'none'; });
+  let failed = false;
+  const fail = (k) => { failed = true; tadsState = 'none'; api('ev', { k: 'ad_task_' + k }).catch(() => {}); if (tadsNode) tadsNode.remove(); fitNav(); };
+  tadsNode.addEventListener('onBannerNotFound', () => fail('none'));
+  tadsNode.addEventListener('onError', () => fail('err'));
+  tadsNode.addEventListener('onTooLongSession', () => fail('long'));
+  slot.appendChild(tadsNode);
+  // a real display is counted 4 seconds after mounting, if no failure came in
+  setTimeout(() => { if (!failed && tadsNode && tadsNode.isConnected) { tadsState = 'shown'; api('ev', { k: 'ad_task' }).catch(() => {}); } }, 4000);
 }
 function loadTads(ok, ko) {
   if (window.tads) return ok();
