@@ -268,6 +268,7 @@ const INTER_ON = false, TASK_ON = false, RICH_RW = false; // RichAds: only the e
 // RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
 let richCtl = null, richLoading = null;
 function loadRich() {
+  if (!RICH_ON) return Promise.reject(new Error('off'));
   if (richCtl) return Promise.resolve(richCtl);
   if (richLoading) return richLoading;
   richLoading = new Promise((ok, ko) => {
@@ -1262,7 +1263,8 @@ function houseBanner() {
 }
 // RichAds embedded banner: a slot with the id the manager gave (409039), kept across re-renders; "Your ad here" shows while it is empty
 let richBanEl = null;
-function richBannerOn() { return IN_TG && st && st.me && !st.me.premium && !!st.me.country; }
+const RICH_ON = false; // RichAds removed: its script showed every format at once
+function richBannerOn() { return RICH_ON && IN_TG && st && st.me && !st.me.premium && !!st.me.country; }
 function richBannerFilled() { return !!(richBanEl && richBanEl.offsetHeight > 20); }
 function placeRichBanner(nav) {
   if (!richBannerOn()) return;
