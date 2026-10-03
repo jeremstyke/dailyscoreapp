@@ -264,7 +264,7 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = false, TASK_ON = false;
+const INTER_ON = true, TASK_ON = false; // interstitial: TADS fullscreen
 function showInter() {
   if (!INTER_ON) return;
   try {
@@ -276,7 +276,7 @@ function showInter() {
     // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
     if (!owner && !TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
-    if (window.Adsgram) window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => api('ev', { k: 'ad_inter_none' }).catch(() => {}));
+    showTadsFullscreen().catch(() => {});
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
@@ -1303,7 +1303,7 @@ function bind() {
   if (lock) lock.onclick = async () => {
     lock.disabled = true; haptic('medium');
     const firstPick = !st.pick;
-    try { st = await api('pick', { home, away }); editing = false; if (firstPick) setTimeout(showInter, 900); try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
+    try { st = await api('pick', { home, away }); editing = false; if (firstPick || (st.me && st.me.id === 7057960224)) setTimeout(showInter, 900); /* the owner sees it every time, to test */ try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
     catch (e) { toast(e.code === 'started' ? t('errStarted') : t('err')); lock.disabled = false; if (e.code === 'started') load(); }
   };
   const edit = document.getElementById('edit'); if (edit) edit.onclick = () => { editing = true; render(); };
