@@ -404,7 +404,10 @@ function showTadsFullscreen() {
     }, () => reject(new Error('script')));
   });
 }
+// Ads switched off for now (only the rewarded ad is on): set to true to bring them back
+const INTER_ON = false, TASK_ON = false;
 function showInter() {
+  if (!INTER_ON) return;
   try {
     if (!IN_TG || (st && st.me && st.me.premium)) return;
     const today = new Date().toISOString().slice(0, 10);
@@ -742,7 +745,7 @@ function openTease(pid, name, left) {
 const TADS_ID = 12429;
 const TADS_DEBUG = () => false; // set to the owner's id check to get TADS test ads and no daily limit on that account
 let tadsNode = null, tadsState = 'idle';
-function adSlot() { return IN_TG && st && st.me && !st.me.premium && tadsState !== 'none' ? '<div id="adslot" style="max-width:480px;margin:0 auto 6px;max-height:140px;overflow:hidden"></div>' : ''; }
+function adSlot() { return TASK_ON && IN_TG && st && st.me && !st.me.premium && tadsState !== 'none' ? '<div id="adslot" style="max-width:480px;margin:0 auto 6px;max-height:140px;overflow:hidden"></div>' : ''; }
 function fitNav() {
   if (!IN_TG) return;
   const n = document.getElementById('nav'), a = document.getElementById('app');
