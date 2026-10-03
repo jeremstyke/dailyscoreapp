@@ -1262,8 +1262,9 @@ function igBanner() {
 // Telegram: a banner selling the ad space (contact @jeremju, the owner's personal account); never for Premium
 const AD_CONTACT = 'https://t.me/jeremju';
 let hbSeen = false;
+const HOUSE_ON = false; // "Your ad here" banner removed
 function houseBanner() {
-  if (!IN_TG || !st || !st.me || st.me.premium || !st.me.country) return '';
+  if (!HOUSE_ON || !IN_TG || !st || !st.me || st.me.premium || !st.me.country) return '';
   if (!hbSeen) { hbSeen = true; api('ev', { k: 'house_view' }).catch(() => {}); }
   return `<div class="igban" id="hbban" style="background:linear-gradient(135deg,rgba(198,255,61,.12),rgba(255,255,255,.04));border-color:rgba(198,255,61,.35)"><div style="min-width:0"><b>${esc(t('hbT'))}</b><small>${esc(t('hbB'))}</small></div><span class="iggo" style="background:var(--lime);color:#10200f">${esc(t('hbGo'))}</span></div>`;
 }
