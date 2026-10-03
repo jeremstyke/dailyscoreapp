@@ -926,7 +926,7 @@ async function openShareCard() {
     }
     if (e.target.closest('#shsend')) {
       api('ev', { k: 'share_result' }).catch(() => {});
-      if (IN_TG) return tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text));
+      if (IN_TG) return tgShare(text, link);
       try {
         const file = new File([await (await fetch(img)).blob()], 'daily-score.jpg', { type: 'image/jpeg' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) return await navigator.share({ files: [file], text: text + ' ' + link });
@@ -938,6 +938,16 @@ async function openShareCard() {
   document.body.appendChild(d);
 }
 // Challenge before the match: my pick sent to any chat, with my invitation link (the friend becomes my godchild and my friend)
+// Telegram's own share window (prepared message with a Play button); the old share link stays as a fallback for older apps
+async function tgShare(text, link) {
+  try {
+    if (typeof tg.shareMessage === 'function') {
+      const r = await api('challenge_msg', text ? { text } : {});
+      if (r && r.id) { tg.shareMessage(r.id); return; }
+    }
+  } catch (e) {}
+  tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text || ''));
+}
 function challengeFriends() {
   haptic('medium');
   const m = st.match, p = st.pick;
@@ -945,7 +955,7 @@ function challengeFriends() {
   const text = t('chTxt').replace('{m}', `${m.home} - ${m.away}`).replace('{p}', `${p.home}-${p.away}`);
   const link = IN_TG ? 'https://t.me/' + BOT + '?start=ref_' + st.me.id : WEB + '#ref=' + st.me.id;
   api('ev', { k: 'challenge' }).catch(() => {});
-  if (IN_TG) return tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text));
+  if (IN_TG) return tgShare('', link);
   if (navigator.share) return navigator.share({ text, url: link }).catch(() => {});
   try { navigator.clipboard.writeText(text + '\n' + link); toast('✅'); } catch (e) {}
 }
