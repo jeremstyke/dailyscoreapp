@@ -485,8 +485,9 @@ function nameChange() {
     if (e.target === d || e.target.id === 'nmx') return d.remove();
     if (e.target.id === 'nmgo') {
       const name = d.querySelector('#nmi').value.trim(); if (name.length < 2 || name === st.me.name) return;
+      const bt = d.querySelector('#nmgo'); if (bt.disabled) return; bt.disabled = true;
       try { await api('name_request', { name }); st.me.namePending = name; d.remove(); toast(t('nmSent')); setupView(); }
-      catch (er) { toast(er.code === 'limit' ? t('nmLimit') : t('err')); }
+      catch (er) { bt.disabled = false; toast(er.code === 'limit' ? t('nmLimit') : t('err')); }
     }
   };
   document.body.appendChild(d);
