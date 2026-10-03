@@ -1169,7 +1169,14 @@ async function buyTrend() {
   if ((st.trendPaid || st.me.premium) && await loadTrend()) return;
   if (IS_ANDROID && !(st.me.freeTrends > 0)) { toast(t('andTrend')); view = 'leagues'; render(); return; }
   if (!IN_TG && !(st.me.freeTrends > 0)) { if (isWebOnly()) return startLink(); toast(t('buyOnTg')); openLink('https://t.me/' + BOT + '?start=src_web_trend'); return; }
-  if (st.me.freeTrends > 0) { try { trendData = await api('trend_free'); st.me.freeTrends--; st.trendPaid = true; render(); return; } catch (e) {} }
+  if (st.me.freeTrends > 0) {
+    // a gift is used: never fall back to the Stars payment; if the answer got lost, check whether the trend is unlocked
+    try { trendData = await api('trend_free'); st.me.freeTrends--; st.trendPaid = true; render(); return; }
+    catch (e) {
+      try { st = await api('state'); if (st.trendPaid && await loadTrend()) { render(); return; } } catch (er) {}
+      toast(t('err')); render(); return;
+    }
+  }
   try {
     const r = await api('trend_invoice');
     if (!r.link) return toast(t('err'));
