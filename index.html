@@ -940,13 +940,19 @@ async function openShareCard() {
 }
 // Challenge before the match: my pick sent to any chat, with my invitation link (the friend becomes my godchild and my friend)
 // Telegram's own share window (prepared message with a Play button); the old share link stays as a fallback for older apps
+let shareWatch = false;
 async function tgShare(text, link) {
+  const ev = (k) => api('ev', { k }).catch(() => {});
+  if (!shareWatch && tg.onEvent) { shareWatch = true; try { tg.onEvent('shareMessageFailed', (e) => ev('sh_fail_' + String((e && e.error) || 'x').toLowerCase().replace(/[^a-z_]/g, '').slice(0, 14))); tg.onEvent('shareMessageSent', () => ev('sh_sent')); } catch (e) {} }
   try {
     if (typeof tg.shareMessage === 'function') {
+      ev('sh_try');
       const r = await api('challenge_msg', text ? { text } : {});
-      if (r && r.id) { tg.shareMessage(r.id); return; }
-    }
-  } catch (e) {}
+      if (r && r.id) { ev('sh_prep_ok'); tg.shareMessage(r.id); return; }
+      ev('sh_prep_noid');
+    } else ev('sh_nofn');
+  } catch (e) { ev('sh_prep_err'); }
+  ev('sh_fallback');
   tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text || ''));
 }
 function challengeFriends() {
