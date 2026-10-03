@@ -279,6 +279,21 @@ function loadRich() {
   });
   return richLoading;
 }
+// owner only: list the RichAds controller functions once, to wire the banner and playable formats
+let richListed = false;
+async function richListForOwner() {
+  if (richListed || !IN_TG || !st || !st.me || st.me.id !== 7057960224) return;
+  richListed = true;
+  try {
+    const c = await loadRich();
+    const names = new Set(); let p = c;
+    while (p && p !== Object.prototype) { Object.getOwnPropertyNames(p).forEach((n) => { if (n !== 'constructor') names.add(n + (typeof c[n] === 'function' ? '()' : '')); }); p = Object.getPrototypeOf(p); }
+    const d = document.createElement('div'); d.className = 'sheet';
+    d.innerHTML = `<div class="card"><div class="label">RichAds</div><p style="font-size:13px;line-height:1.6;word-break:break-word;margin:0 0 10px">${esc([...names].join(', '))}</p><button class="btn go" id="rlx">OK</button></div>`;
+    d.querySelector('#rlx').onclick = () => d.remove();
+    document.body.appendChild(d);
+  } catch (e) { toast('RichAds: ' + (e && e.message || 'error')); }
+}
 async function showRichAds() {
   const owner = !!(st && st.me && st.me.id === 7057960224);
   try {
@@ -1319,6 +1334,7 @@ function render() {
   ${view === 'match' ? notifCard() + guardCard() + pushCard() + installCard(false) + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + (liveNow() ? '' : voteCard()) + lastCard() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard()}`;
   navBar();
   bind();
+  setTimeout(richListForOwner, 1500);
   askWriteAccess();
 }
 function bind() {
