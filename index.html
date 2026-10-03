@@ -425,6 +425,7 @@ async function googleButton() {
   } catch (e) {}
 }
 // Email sign-in: name + email, then a 6-digit code received by email
+const EMAIL_ON = false; // turned on once dailyscoreapp.com is verified on Resend
 const inputCss = 'width:100%;box-sizing:border-box;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font:inherit;font-size:16px;margin:0 0 10px';
 async function emailCall(path, body) {
   const r = await fetch(API + '/ds/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, lang, android: IS_ANDROID ? 1 : 0 }) });
@@ -481,7 +482,7 @@ function loginView() {
     <button class="sso" id="gh"><span class="ic">${GH_ICON.replace('#f2f7f3', '#181717').replace(/width="13" height="13"/, 'width="20" height="20"')}</span><span class="tx">${esc(t('wGh'))}</span></button>
     ${ON_ANDROID_WEB ? `<a class="sso" href="${APK_PAGE}"><span class="ic" style="font-size:19px">📲</span><span class="tx">${esc(t('apkBtn'))}</span></a>` : ''}
     <button class="sso" id="tgp"><span class="ic">${TG_ICON.replace(/width="13" height="13"/, 'width="22" height="22"')}</span><span class="tx">${esc(t('wTg'))}</span></button>
-    <button class="sso" id="emp"><span class="ic" style="font-size:19px">📧</span><span class="tx">${esc(t('emBtn'))}</span></button>
+    ${EMAIL_ON ? `<button class="sso" id="emp"><span class="ic" style="font-size:19px">📧</span><span class="tx">${esc(t('emBtn'))}</span></button>` : ''}
     <p class="muted" style="margin:16px 0 0;font-size:12px">by <a href="https://t.me/jeremstyke" style="color:var(--lime)">@jeremstyke</a> · <a href="https://dailyscoreapp.com/privacy.html" style="color:var(--mute)">Privacy</a></p>
   </div>`;
   if (window.__loginErr) { window.__loginErr = false; toast(t('wErr')); }
@@ -489,7 +490,7 @@ function loginView() {
   document.getElementById('gh').onclick = () => { location.href = API + '/ds/gh/login?lang=' + lang; };
   googleButton();
   document.getElementById('tgp').onclick = () => { window.open('https://t.me/' + BOT + '?start=src_web', '_blank'); };
-  document.getElementById('emp').onclick = () => emailView();
+  const emp = document.getElementById('emp'); if (emp) emp.onclick = () => emailView();
 }
 function hideNav() { const n = document.getElementById('nav'); if (n) n.remove(); }
 function setupView() {
