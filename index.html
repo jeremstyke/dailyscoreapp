@@ -275,14 +275,14 @@ function loadRich() {
   richLoading = new Promise((ok, ko) => {
     const s = document.createElement('script');
     s.src = 'https://richinfo.co/richpartners/telegram/js/tg-ob.js';
-    s.onload = () => { try { window.TelegramAdsController = new TelegramAdsController(); window.TelegramAdsController.initialize({ pubId: '1024502', appId: '9135', debug: !!(st && st.me && st.me.id === 7057960224) }); richCtl = window.TelegramAdsController; ok(richCtl); } catch (e) { ko(e); } };
+    s.onload = () => { try { window.TelegramAdsController = new TelegramAdsController(); window.TelegramAdsController.initialize({ pubId: '1024502', appId: '9135', debug: false }); richCtl = window.TelegramAdsController; ok(richCtl); } catch (e) { ko(e); } };
     s.onerror = ko;
     document.head.appendChild(s);
   });
   return richLoading;
 }
 async function showRichAds() {
-  const owner = !!(st && st.me && st.me.id === 7057960224);
+  const owner = false;
   try {
     const c = await loadRich();
     const fn = ['triggerInterstitialBanner'].find((k) => typeof c[k] === 'function');
@@ -303,9 +303,8 @@ function showInter() {
     const today = new Date().toISOString().slice(0, 10);
     let c = {}; try { c = JSON.parse(localStorage.getItem('ds_inter3') || '{}'); } catch (e) {}
     const n = c.d === today ? c.n || 0 : 0;
-    const owner = !!(st && st.me && st.me.id === 7057960224); // the owner sees real ads without the daily limit
     // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
-    if (!owner && !TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
+    if (!TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
     if (window.Adsgram) window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => api('ev', { k: 'ad_inter_none' }).catch(() => {}));
   } catch (e) {}
@@ -1356,7 +1355,7 @@ function bind() {
   if (lock) lock.onclick = async () => {
     lock.disabled = true; haptic('medium');
     const firstPick = !st.pick;
-    try { st = await api('pick', { home, away }); editing = false; if (firstPick || (st.me && st.me.id === 7057960224)) setTimeout(showInter, 900); /* the owner sees it every time, to test */ try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
+    try { st = await api('pick', { home, away }); editing = false; if (firstPick) setTimeout(showInter, 900); try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
     catch (e) { toast(e.code === 'started' ? t('errStarted') : t('err')); lock.disabled = false; if (e.code === 'started') load(); }
   };
   const edit = document.getElementById('edit'); if (edit) edit.onclick = () => { editing = true; render(); };
