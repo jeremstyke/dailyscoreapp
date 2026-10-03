@@ -383,7 +383,12 @@ function askWriteAccess() {
 function scrollTop0() { window.scrollTo(0, 0); const a = document.getElementById('app'); if (a) a.scrollTop = 0; }
 const openLink = (u) => { if (IN_TG) tg.openTelegramLink(u); else window.open(u, '_blank'); };
 async function shareLink(url, text) {
-  if (IN_TG) return tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text));
+  if (IN_TG) {
+    // the bot sends a native "send to a friend" button (league invitation or referral): works on every Telegram app
+    const lg = /[?&]start=lg_([A-Z0-9]+)/i.exec(url);
+    try { const r = await api('share_dm', lg ? { kind: 'league', code: lg[1] } : { kind: 'invite' }); if (r && r.ok) { toast(t('chDm')); return; } } catch (e) {}
+    return tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text));
+  }
   if (navigator.share) { try { await navigator.share({ title: 'Daily Score', text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(text + ' ' + url); toast(t('copied')); } catch (e) { window.prompt('', text + ' ' + url); }
 }
