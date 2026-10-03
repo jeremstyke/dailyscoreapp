@@ -264,7 +264,36 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = false, TASK_ON = false; // TADS fullscreen turned off again: adult ads despite the category filters
+const INTER_ON = true, TASK_ON = false; // interstitial: RichAds (TADS fullscreen turned off: adult ads)
+// RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
+let richCtl = null, richLoading = null;
+function loadRich() {
+  if (richCtl) return Promise.resolve(richCtl);
+  if (richLoading) return richLoading;
+  richLoading = new Promise((ok, ko) => {
+    const s = document.createElement('script');
+    s.src = 'https://richinfo.co/richpartners/telegram/js/tg-ob.js';
+    s.onload = () => { try { window.TelegramAdsController = new TelegramAdsController(); window.TelegramAdsController.initialize({ pubId: '1024502', appId: '9135' }); richCtl = window.TelegramAdsController; ok(richCtl); } catch (e) { ko(e); } };
+    s.onerror = ko;
+    document.head.appendChild(s);
+  });
+  return richLoading;
+}
+async function showRichAds() {
+  const owner = !!(st && st.me && st.me.id === 7057960224);
+  try {
+    const c = await loadRich();
+    const fn = ['triggerInterstitialBanner', 'triggerInterstitialVideo', 'triggerNativeNotification'].find((k) => typeof c[k] === 'function');
+    if (!fn) {
+      api('ev', { k: 'ra_nofn' }).catch(() => {});
+      if (owner) { const names = []; let p = c; while (p && p !== Object.prototype) { names.push(...Object.getOwnPropertyNames(p)); p = Object.getPrototypeOf(p); } toast('RichAds: ' + [...new Set(names)].filter((n) => n !== 'constructor').slice(0, 30).join(', ')); }
+      return;
+    }
+    const r = c[fn]();
+    api('ev', { k: 'ad_rich' }).catch(() => {});
+    if (r && r.catch) r.catch(() => api('ev', { k: 'ad_rich_none' }).catch(() => {}));
+  } catch (e) { api('ev', { k: 'ad_rich_err' }).catch(() => {}); if (owner) toast('RichAds: ' + (e && e.message || 'error')); }
+}
 function showInter() {
   if (!INTER_ON) return;
   try {
@@ -276,7 +305,7 @@ function showInter() {
     // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
     if (!owner && !TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
-    showTadsFullscreen().catch(() => {});
+    showRichAds();
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
