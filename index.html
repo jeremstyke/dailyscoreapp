@@ -273,32 +273,17 @@ function loadRich() {
   richLoading = new Promise((ok, ko) => {
     const s = document.createElement('script');
     s.src = 'https://richinfo.co/richpartners/telegram/js/tg-ob.js';
-    s.onload = () => { try { window.TelegramAdsController = new TelegramAdsController(); window.TelegramAdsController.initialize({ pubId: '1024502', appId: '9135' }); richCtl = window.TelegramAdsController; ok(richCtl); } catch (e) { ko(e); } };
+    s.onload = () => { try { window.TelegramAdsController = new TelegramAdsController(); window.TelegramAdsController.initialize({ pubId: '1024502', appId: '9135', debug: !!(st && st.me && st.me.id === 7057960224) }); richCtl = window.TelegramAdsController; ok(richCtl); } catch (e) { ko(e); } };
     s.onerror = ko;
     document.head.appendChild(s);
   });
   return richLoading;
 }
-// owner only: list the RichAds controller functions once, to wire the banner and playable formats
-let richListed = false;
-async function richListForOwner() {
-  if (richListed || !IN_TG || !st || !st.me || st.me.id !== 7057960224) return;
-  richListed = true;
-  try {
-    const c = await loadRich();
-    const names = new Set(); let p = c;
-    while (p && p !== Object.prototype) { Object.getOwnPropertyNames(p).forEach((n) => { if (n !== 'constructor') names.add(n + (typeof c[n] === 'function' ? '()' : '')); }); p = Object.getPrototypeOf(p); }
-    const d = document.createElement('div'); d.className = 'sheet';
-    d.innerHTML = `<div class="card"><div class="label">RichAds</div><p style="font-size:13px;line-height:1.6;word-break:break-word;margin:0 0 10px">${esc([...names].join(', '))}</p><button class="btn go" id="rlx">OK</button></div>`;
-    d.querySelector('#rlx').onclick = () => d.remove();
-    document.body.appendChild(d);
-  } catch (e) { toast('RichAds: ' + (e && e.message || 'error')); }
-}
 async function showRichAds() {
   const owner = !!(st && st.me && st.me.id === 7057960224);
   try {
     const c = await loadRich();
-    const fn = ['triggerInterstitialBanner', 'triggerInterstitialVideo', 'triggerNativeNotification'].find((k) => typeof c[k] === 'function');
+    const fn = ['triggerInterstitialBanner'].find((k) => typeof c[k] === 'function');
     if (!fn) {
       api('ev', { k: 'ra_nofn' }).catch(() => {});
       if (owner) { const names = []; let p = c; while (p && p !== Object.prototype) { names.push(...Object.getOwnPropertyNames(p)); p = Object.getPrototypeOf(p); } toast('RichAds: ' + [...new Set(names)].filter((n) => n !== 'constructor').slice(0, 30).join(', ')); }
@@ -1024,8 +1009,16 @@ async function castVote(id) {
 const DS_REWARD = '51588';
 const isLive = (m) => !!m && m.status !== 'FINISHED' && !m.settled && (['IN_PLAY', 'PAUSED', 'LIVE'].includes(m.live_status) || (Date.now() >= new Date(m.kickoff).getTime() && Date.now() < new Date(m.kickoff).getTime() + 3 * 3600000));
 async function watchRewarded() {
-  if (!window.Adsgram) return toast(t('rwNone'));
   haptic('medium');
+  try {
+    const c = await loadRich();
+    if (typeof c.triggerInterstitialVideo !== 'function') throw new Error('nofn');
+    await c.triggerInterstitialVideo();
+    api('ev', { k: 'rw_rich' }).catch(() => {});
+    trendData = await api('trend_rich'); st.trendPaid = true; render();
+    return;
+  } catch (e) { api('ev', { k: 'rw_rich_none' }).catch(() => {}); }
+  if (!window.Adsgram) return toast(t('rwNone'));
   try {
     const r = await window.Adsgram.init({ blockId: DS_REWARD }).show();
     if (r && r.done === false) return toast(t('rwSkip')); // closed before the end: no reward
@@ -1334,7 +1327,6 @@ function render() {
   ${view === 'match' ? notifCard() + guardCard() + pushCard() + installCard(false) + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + (liveNow() ? '' : voteCard()) + lastCard() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard()}`;
   navBar();
   bind();
-  setTimeout(richListForOwner, 1500);
   askWriteAccess();
 }
 function bind() {
