@@ -1387,7 +1387,7 @@ function bind() {
     catch (e) { toast(e.code === 'started' ? t('errStarted') : t('err')); lock.disabled = false; if (e.code === 'started') load(); }
   };
   const edit = document.getElementById('edit'); if (edit) edit.onclick = () => { editing = true; render(); };
-  const share = document.getElementById('share'); if (share) share.onclick = challengeFriends; // my pick + my invitation link
+  const share = document.getElementById('share'); if (share) share.onclick = challengeOthers; // my pick + my invitation link, straight to Telegram's share window
   const tr = document.getElementById('trend'); if (tr) tr.onclick = buyTrend;
   const rw = document.getElementById('rwad'); if (rw) rw.onclick = watchRewarded;
   document.querySelectorAll('[data-vote]').forEach((x) => x.onclick = () => castVote(x.dataset.vote));
