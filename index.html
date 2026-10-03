@@ -265,7 +265,7 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = false, TASK_ON = false, RICH_RW = false, RW_ON = true, LIFE_MODE = 'replace'; // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
+const INTER_ON = false, TASK_ON = false, RICH_RW = false, RW_ON = true, LIFE_MODE = 'ten'; // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
 // RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
 let richCtl = null, richLoading = null;
 function loadRich() {
