@@ -1051,7 +1051,9 @@ async function watchRewarded() {
     trendData = await api('trend_rich'); st.trendPaid = true; render();
     return;
   } catch (e) { api('ev', { k: 'rw_rich_none' }).catch(() => {}); }
-  if (!window.Adsgram) return toast(t('rwNone'));
+  // no video available (Adsgram not approved yet, or no ad right now): the one-time lifetime offer instead, if never seen
+  const noAd = async () => { if (IN_TG && st.me && !st.me.premium && !st.me.lifeSeen && await lifeOffer(false)) return; toast(t('rwNone')); };
+  if (!window.Adsgram) return noAd();
   try {
     const r = await window.Adsgram.init({ blockId: DS_REWARD }).show();
     if (r && r.done === false) return toast(t('rwSkip')); // closed before the end: no reward
@@ -1060,7 +1062,7 @@ async function watchRewarded() {
       await new Promise((ok) => setTimeout(ok, 1500));
       try { st = await api('state'); if (st.trendPaid) { await loadTrend(); render(); return; } } catch (e) {}
     }
-  } catch (e) { toast(e && e.error === false ? t('rwSkip') : t('rwNone')); } // Adsgram: error false = the player closed the video, true = no ad
+  } catch (e) { if (e && e.error === false) toast(t('rwSkip')); else noAd(); } // Adsgram: error false = the player closed the video, true = no ad
 }
 function trendCard() {
   if (!st.match) return '';
