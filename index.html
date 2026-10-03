@@ -264,7 +264,7 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = true, TASK_ON = false; // interstitial: RichAds (TADS fullscreen turned off: adult ads)
+const INTER_ON = false, TASK_ON = false, RICH_RW = false; // RichAds: only the embedded banner for now (interstitial and rewarded video off)
 // RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
 let richCtl = null, richLoading = null;
 function loadRich() {
@@ -1010,7 +1010,7 @@ const DS_REWARD = '51588';
 const isLive = (m) => !!m && m.status !== 'FINISHED' && !m.settled && (['IN_PLAY', 'PAUSED', 'LIVE'].includes(m.live_status) || (Date.now() >= new Date(m.kickoff).getTime() && Date.now() < new Date(m.kickoff).getTime() + 3 * 3600000));
 async function watchRewarded() {
   haptic('medium');
-  try {
+  if (RICH_RW) try {
     const c = await loadRich();
     if (typeof c.triggerInterstitialVideo !== 'function') throw new Error('nofn');
     await c.triggerInterstitialVideo();
@@ -1260,12 +1260,24 @@ function houseBanner() {
   if (!hbSeen) { hbSeen = true; api('ev', { k: 'house_view' }).catch(() => {}); }
   return `<div class="igban" id="hbban" style="background:linear-gradient(135deg,rgba(198,255,61,.12),rgba(255,255,255,.04));border-color:rgba(198,255,61,.35)"><div style="min-width:0"><b>${esc(t('hbT'))}</b><small>${esc(t('hbB'))}</small></div><span class="iggo" style="background:var(--lime);color:#10200f">${esc(t('hbGo'))}</span></div>`;
 }
+// RichAds embedded banner: a slot with the id the manager gave (409039), kept across re-renders; "Your ad here" shows while it is empty
+let richBanEl = null;
+function richBannerOn() { return IN_TG && st && st.me && !st.me.premium && !!st.me.country; }
+function richBannerFilled() { return !!(richBanEl && richBanEl.offsetHeight > 20); }
+function placeRichBanner(nav) {
+  if (!richBannerOn()) return;
+  if (!richBanEl) {
+    richBanEl = document.createElement('div'); richBanEl.id = '409039'; richBanEl.style.cssText = 'max-width:480px;margin:0 auto 6px;overflow:hidden';
+    loadRich().then(() => { api('ev', { k: 'rich_banner' }).catch(() => {}); [2500, 6000, 12000].forEach((ms) => setTimeout(navBar, ms)); }).catch(() => {});
+  }
+  nav.insertBefore(richBanEl, nav.firstChild);
+}
 function navBar() {
   const items = [['match', '⚽', 'tMatch'], ['rank', '🏆', 'tRank'], ['leagues', '👥', 'tLeagues'], ['profile', '🏅', 'tProfile']];
   let nav = document.getElementById('nav');
   if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.getElementById('app').insertAdjacentElement('afterend', nav); }
-  nav.innerHTML = adSlot() + igBanner() + houseBanner() + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
-  placeAd(); fitNav();
+  nav.innerHTML = adSlot() + igBanner() + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
+  placeRichBanner(nav); placeAd(); fitNav();
   const igb = document.getElementById('igban'); if (igb) igb.onclick = () => { haptic(); api('ev', { k: 'ig_click' }).catch(() => {}); };
   const hbb = document.getElementById('hbban'); if (hbb) hbb.onclick = () => { haptic(); api('ev', { k: 'house_click' }).catch(() => {}); tg.openTelegramLink(AD_CONTACT); };
   nav.querySelectorAll('[data-nav]').forEach((x) => x.onclick = () => { haptic(); view = x.dataset.nav; leagueView = null; render(); scrollTop0(); });
