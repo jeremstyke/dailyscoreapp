@@ -264,7 +264,7 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = false, TASK_ON = false, RICH_RW = false; // RichAds: only the embedded banner for now (interstitial and rewarded video off)
+const INTER_ON = true, TASK_ON = true, RICH_RW = false; // Adsgram: interstitial (int-51534) and Task (task-51590) on; RichAds off
 // RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
 let richCtl = null, richLoading = null;
 function loadRich() {
@@ -306,7 +306,7 @@ function showInter() {
     // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
     if (!owner && !TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
-    showRichAds();
+    if (window.Adsgram) window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => api('ev', { k: 'ad_inter_none' }).catch(() => {}));
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
@@ -1031,6 +1031,11 @@ async function watchRewarded() {
   } catch (e) { toast(e && e.error === false ? t('rwSkip') : t('rwNone')); } // Adsgram: error false = the player closed the video, true = no ad
 }
 function trendCard() {
+  let html = trendCardInner();
+  if (html && IN_TG && st.me && st.me.id === 7057960224 && !html.includes('id="rwad"')) html = html.replace(/<\/div>\s*$/, '<button class="btn ghost" id="rwad" style="margin-top:10px">🧪 Test : vidéo récompensée (admin)</button></div>');
+  return html;
+}
+function trendCardInner() {
   if (!st.match) return '';
   // web and Android app: for now, the trend + AI prediction is a Telegram feature
   if (!IN_TG && !st.me.premium) return `<div class="card"><div class="label">📊 ${esc(t('trendNote'))}</div><p style="margin:0 0 4px;font-size:14px">🤖 ${esc(t('tgOnlyNote'))}</p><button class="btn ghost" id="trendtg">${TG_ICON} &nbsp;${esc(t('openTg'))}</button>${st.me.pid ? `<button class="btn gold" id="gopm" style="margin-top:8px">👑 Premium · ${esc(t('pmWeb'))}</button>` : ''}</div>`;
