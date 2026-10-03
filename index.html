@@ -1034,8 +1034,8 @@ async function castVote(id) {
   haptic('medium');
   try { const r = await api('vote', { id: Number(id) }); if (r.vote) { st.vote = r.vote; render(); toast(t('voteOk')); } } catch (e) { toast(t('err')); }
 }
-// rewarded ad (Adsgram 51588): Adsgram tells the server the ad was watched, then the trend opens for today
-const DS_REWARD = '51588';
+// rewarded ad (Adsgram 51754): Adsgram tells the server the ad was watched, then the trend opens for today
+const DS_REWARD = '51754';
 const isLive = (m) => !!m && m.status !== 'FINISHED' && !m.settled && (['IN_PLAY', 'PAUSED', 'LIVE'].includes(m.live_status) || (Date.now() >= new Date(m.kickoff).getTime() && Date.now() < new Date(m.kickoff).getTime() + 3 * 3600000));
 async function watchRewarded() {
   haptic('medium');
