@@ -27,7 +27,7 @@
 
 - 🏆 **Rankings**: world, country and friends, by day, week, month and all time, with tie-breaks (exact scores, accuracy, speed)
 - 👥 **Private leagues** with a chat wall, invitations and notifications
-- 🌍 **Public leagues**: join a world or country league in one tap, or create your own with a description, a start date, a duration (7 days to 1 year), a photo or logo, a website (brands, bars, clubs) and a pinned message. *Free during the launch season; public leagues, photo and website will become paid options later.*
+- 🌍 **Public leagues** (free): join a world or country league in one tap, or create your own with a description, a start date, a duration (7 days to 1 year) and a pinned message. Leagues can also show a **photo or logo** and a **website** (brands, bars, clubs): *free during the launch season, these two options will later become paid for new leagues only (leagues already created keep them).*
 - ⚔️ **Challenges**: challenge your friends on today's match, in private or in any Telegram chat
 - 📡 **Live score** with goal alerts, and the full detail of past matches (how everyone predicted, who found the exact score)
 - 🤖 **Trend and AI prediction**: what everyone picked and the AI's pick for the match
