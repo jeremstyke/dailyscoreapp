@@ -629,13 +629,13 @@ function setupView() {
     ${[['tg', TG_ICON, 'Telegram', st.me.tg], ['go', G_ICON, 'Google', st.me.hasGo], ['gh', GH_ICON, 'GitHub', st.me.hasGh]].map(([k, ic, n, ok]) => `<div class="lrow" style="cursor:default"><div>${ic} &nbsp;<b>${n}</b></div><div>${ok ? '✅' : (k === 'tg' && IN_TG) ? '' : `<button class="chip" style="cursor:pointer;color:var(--lime);font-family:inherit;border-color:rgba(198,255,61,.4)" data-lk="${k}">${esc(t('linkShort'))}</button>`}</div></div>`).join('')}` : ''}
     ${st.me.country ? `<div class="label" style="margin-top:16px">👤 ${esc(t('nmBtn').replace('✏️ ', ''))}</div>${st.me.namePending ? `<div class="note" style="text-align:left;margin:0 0 6px">${esc(t('nmPending').replace('{n}', st.me.namePending))}</div>` : ''}<button class="btn ghost" id="nmb">${esc(t('nmBtn'))}</button>
     <button class="btn ghost" id="kmine" style="margin-top:8px">${esc(t('kMine'))}</button>` : ''}
-    ${IN_TG && st.me.id === 7057960224 ? `<button class="btn ghost" id="lftest" style="margin-top:8px">🧪 Test : écran Premium à vie</button>` : ''}
+    ${IN_TG && st.me.id === 7057960224 ? `<button class="btn ghost" id="lftest" style="margin-top:8px">🧪 Test : vidéo récompensée Adsgram</button>` : ''}
     ${!IN_TG && st.me.country ? `<button class="btn ghost" id="lout" style="margin-top:8px">${esc(t('logout'))}</button>` : ''}
   </div>`;
   if (isSettings) { view = 'profile'; navBar(); const bk = document.getElementById('bk'); if (bk) bk.onclick = () => { haptic(); lang = st.me.lang || lang; applyLang(); render(); scrollTop0(); }; }
   document.querySelectorAll('[data-lk]').forEach((x) => x.onclick = () => (x.dataset.lk === 'tg' ? startLink() : startWebLink()));
   const nmb = document.getElementById('nmb'); if (nmb) nmb.onclick = nameChange;
-  const lft = document.getElementById('lftest'); if (lft) lft.onclick = () => lifeOffer(true);
+  const lft = document.getElementById('lftest'); if (lft) lft.onclick = testRewarded;
   const km = document.getElementById('kmine'); if (km) km.onclick = () => newKey(true);
   const lo = document.getElementById('lout'); if (lo) lo.onclick = () => { try { localStorage.removeItem('ds_token'); } catch (e) {} TOKEN = null; loginView(); };
   document.getElementById('sl').onchange = (e) => { lang = e.target.value; st.me.lang = lang; setupView(); };
@@ -1366,6 +1366,15 @@ function premiumCard() {
   return `<div class="card prem"><div class="prem-h">👑 ${esc(t('pmT'))}</div>
     <div class="prem-b">${esc(t('pmB1'))}<br>${esc(t('pmB2'))}<br>${esc(t('pmB3'))}</div>
     <div class="plans">${plan('m', t('pmM'))}${plan('y', t('pmY'), true)}${plan('l', t('pmL'))}</div></div>`;
+}
+// owner's test: the Adsgram rewarded video (block 51754), the script is loaded only on demand
+async function testRewarded() {
+  haptic('medium');
+  try {
+    if (!window.Adsgram) await new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'https://sad.adsgram.ai/js/sad.min.js'; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+    const r = await window.Adsgram.init({ blockId: DS_REWARD }).show();
+    toast(r && r.done ? '✅ Vidéo regardée jusqu’au bout' : '⏹️ Vidéo fermée');
+  } catch (e) { toast('Adsgram : ' + ((e && (e.description || e.state)) || 'pas de pub')); }
 }
 async function lifeOffer(test) {
   if (!IN_TG || !st || !st.me || (st.me.premium && !test) || document.querySelector('.sheet')) return false;
