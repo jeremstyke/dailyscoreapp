@@ -15,17 +15,13 @@
 <body>
 <p>⚽ <a id="go" href="/">Daily Score</a></p>
 <script>
-// short link (bio, posts): the click is counted with its source and language, then the visitor lands on the match of the day in his language
+// short link for X: the home page in the visitor's language, with the source "x" (counted by the page itself)
 (function () {
   var LANGS = ['en', 'fr', 'es', 'pt', 'de', 'it', 'ar', 'tr', 'ru'];
-  var q = new URLSearchParams(location.search);
-  var src = (q.get('s') || document.documentElement.getAttribute('data-src') || 'go').replace(/[^a-z0-9_]/gi, '').slice(0, 30);
   var l = (navigator.language || 'en').slice(0, 2).toLowerCase(); if (LANGS.indexOf(l) < 0) l = 'en';
-  var hit = 'https://pote-ia-bot-en-production.up.railway.app/ds/hit?s=' + encodeURIComponent(src) + '&l=' + l;
-  try { if (navigator.sendBeacon) navigator.sendBeacon(hit); else fetch(hit, { mode: 'no-cors', keepalive: true }); } catch (e) {}
-  var dest = '/?src=' + encodeURIComponent(src);
+  var dest = '/' + l + '/?src=x';
   document.getElementById('go').href = dest;
-  setTimeout(function () { location.replace(dest); }, 150);
+  location.replace(dest);
 })();
 </script>
 </body>
