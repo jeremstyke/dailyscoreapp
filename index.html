@@ -765,7 +765,7 @@ function openTease(pid, name, left) {
 // TADS native banner (widget 12429): Telegram only, never for Premium, loaded once per visit and moved between renders
 const TADS_ID = 12429;
 const TADS_DEBUG = () => false; // set to the owner's id check to get TADS test ads and no daily limit on that account
-let tadsNode = null, tadsState = 'idle';
+let tadsNode = null, tadsState = 'idle', taskRetry = null;
 function adSlot() { return TASK_ON && IN_TG && st && st.me && !st.me.premium && tadsState !== 'none' ? '<div id="adslot" style="max-width:480px;margin:0 auto 6px;max-height:140px;overflow:hidden"></div>' : ''; }
 function fitNav() {
   if (!IN_TG) return;
@@ -784,7 +784,11 @@ function placeAd() {
   tadsNode = w.firstChild;
   tadsState = 'loading';
   let failed = false;
-  const fail = (k) => { failed = true; tadsState = 'none'; api('ev', { k: 'ad_task_' + k }).catch(() => {}); if (tadsNode) tadsNode.remove(); navBar(); }; // no task: the Instant Gaming banner takes its place
+  const fail = (k) => {
+    failed = true; tadsState = 'none'; api('ev', { k: 'ad_task_' + k }).catch(() => {}); if (tadsNode) tadsNode.remove(); navBar(); // no task: the Instant Gaming banner takes its place
+    // try again in 10 minutes, in case Adsgram has a task by then
+    clearTimeout(taskRetry); taskRetry = setTimeout(() => { if (tadsState === 'none' && !document.hidden) { tadsNode = null; tadsState = 'idle'; navBar(); } }, 10 * 60000);
+  };
   tadsNode.addEventListener('onBannerNotFound', () => fail('none'));
   tadsNode.addEventListener('onError', () => fail('err'));
   tadsNode.addEventListener('onTooLongSession', () => fail('long'));
