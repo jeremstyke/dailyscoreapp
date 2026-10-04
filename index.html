@@ -783,7 +783,7 @@ function placeAd() {
   tadsNode = w.firstChild;
   tadsState = 'loading';
   let failed = false;
-  const fail = (k) => { failed = true; tadsState = 'none'; api('ev', { k: 'ad_task_' + k }).catch(() => {}); if (tadsNode) tadsNode.remove(); fitNav(); };
+  const fail = (k) => { failed = true; tadsState = 'none'; api('ev', { k: 'ad_task_' + k }).catch(() => {}); if (tadsNode) tadsNode.remove(); navBar(); }; // no task: the Instant Gaming banner takes its place
   tadsNode.addEventListener('onBannerNotFound', () => fail('none'));
   tadsNode.addEventListener('onError', () => fail('err'));
   tadsNode.addEventListener('onTooLongSession', () => fail('long'));
@@ -1307,7 +1307,8 @@ let view = 'match';
 const IG_URL = 'https://www.instant-gaming.com/?igr=jeremymultigaming';
 let igSeen = false;
 function igBanner() {
-  if (IN_TG || !st || !st.me || st.me.premium || !st.me.country) return '';
+  if (!st || !st.me || st.me.premium || !st.me.country) return '';
+  if (IN_TG && TASK_ON && tadsState !== 'none') return ''; // Telegram: the Adsgram Task comes first, Instant Gaming is the fallback
   if (!igSeen) { igSeen = true; api('ev', { k: 'ig_view' }).catch(() => {}); }
   return `<a class="igban" id="igban" href="${IG_URL}" target="_blank" rel="noopener sponsored"><div style="min-width:0"><span class="igtag">${esc(t('igTag'))} · Instant Gaming</span><b>${esc(t('igT'))}</b><small>${esc(t('igB'))}</small></div><span class="iggo">${esc(t('igGo'))}</span></a>`;
 }
@@ -1339,7 +1340,7 @@ function navBar() {
   if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.getElementById('app').insertAdjacentElement('afterend', nav); }
   nav.innerHTML = adSlot() + igBanner() + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
   placeRichBanner(nav); placeAd(); fitNav();
-  const igb = document.getElementById('igban'); if (igb) igb.onclick = () => { haptic(); api('ev', { k: 'ig_click' }).catch(() => {}); };
+  const igb = document.getElementById('igban'); if (igb) igb.onclick = (e) => { haptic(); api('ev', { k: 'ig_click' }).catch(() => {}); if (IN_TG) { e.preventDefault(); try { tg.openLink(IG_URL); } catch (er) { window.open(IG_URL, '_blank'); } } };
   const hbb = document.getElementById('hbban'); if (hbb) hbb.onclick = () => { haptic(); api('ev', { k: 'house_click' }).catch(() => {}); tg.openTelegramLink(AD_CONTACT); };
   nav.querySelectorAll('[data-nav]').forEach((x) => x.onclick = () => { haptic(); view = x.dataset.nav; leagueView = null; render(); scrollTop0(); });
 }
