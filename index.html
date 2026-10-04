@@ -214,6 +214,7 @@ const API = location.hostname.endsWith('railway.app') ? '' : 'https://pote-ia-bo
 let IS_ANDROID = false;
 try {
   if (new URLSearchParams(location.search).get('src') === 'android' || document.referrer.startsWith('android-app://')) sessionStorage.setItem('ds_android', '1');
+  try { const s0 = (new URLSearchParams(location.search).get('src') || '').replace(/[^a-z0-9_]/gi, '').slice(0, 30); if (s0 && !['android', 'tg_app'].includes(s0) && !localStorage.getItem('ds_src')) localStorage.setItem('ds_src', s0); } catch (e) {}
   IS_ANDROID = !IN_TG && sessionStorage.getItem('ds_android') === '1';
   const qv = new URLSearchParams(location.search).get('v'); if (qv) sessionStorage.setItem('ds_appv', qv);
 } catch (e) {}
@@ -486,7 +487,7 @@ async function googleButton() {
     }
     google.accounts.id.initialize({ client_id: GOOGLE_ID, callback: async (resp) => {
       try {
-        const r = await fetch(API + '/ds/api/google_login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ credential: resp.credential, lang, android: IS_ANDROID ? 1 : 0 }) });
+        const r = await fetch(API + '/ds/api/google_login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ credential: resp.credential, lang, android: IS_ANDROID ? 1 : 0, src: (() => { try { return localStorage.getItem('ds_src') || ''; } catch (e) { return ''; } })() }) });
         const j = await r.json();
         if (!j.token) throw new Error('google');
         localStorage.setItem('ds_token', j.token); TOKEN = j.token; load();
@@ -567,7 +568,7 @@ function nameChange() {
 const EMAIL_ON = false; // turned on once dailyscoreapp.com is verified on Resend
 const inputCss = 'width:100%;box-sizing:border-box;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font:inherit;font-size:16px;margin:0 0 10px';
 async function emailCall(path, body) {
-  const r = await fetch(API + '/ds/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, lang, android: IS_ANDROID ? 1 : 0 }) });
+  const r = await fetch(API + '/ds/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, lang, android: IS_ANDROID ? 1 : 0, src: (() => { try { return localStorage.getItem('ds_src') || ''; } catch (e) { return ''; } })() }) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw Object.assign(new Error(j.error || 'err'), { code: j.error });
   return j;
