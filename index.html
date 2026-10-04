@@ -265,7 +265,7 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = false, TASK_ON = false, RICH_RW = false, RW_ON = true, LIFE_FALLBACK = true; // until Adsgram approves: no video available -> the one-time lifetime offer instead (turn off once the videos work) // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
+const INTER_ON = false, TASK_ON = false, RICH_RW = false, RW_ON = true, LIFE_FALLBACK = true, AG_READY = false; // AG_READY: Adsgram block 51754 approved (until then, Adsgram is never called: it would show 'block not active') // until Adsgram approves: no video available -> the one-time lifetime offer instead (turn off once the videos work) // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
 // RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
 let richCtl = null, richLoading = null;
 function loadRich() {
@@ -1058,7 +1058,7 @@ async function watchRewarded() {
   } catch (e) { api('ev', { k: 'rw_rich_none' }).catch(() => {}); }
   // no video available (Adsgram not approved yet, or no ad right now): the one-time lifetime offer instead, if never seen
   const noAd = async () => { if (LIFE_FALLBACK && IN_TG && st.me && !st.me.premium && !st.me.lifeSeen && await lifeOffer(false)) return; toast(t('rwNone')); };
-  if (!window.Adsgram) return noAd();
+  if (!AG_READY || !window.Adsgram) return noAd();
   try {
     const r = await window.Adsgram.init({ blockId: DS_REWARD }).show();
     if (r && r.done === false) return toast(t('rwSkip')); // closed before the end: no reward
@@ -1074,7 +1074,7 @@ function trendCard() {
   // web and Android app: for now, the trend + AI prediction is a Telegram feature
   if (!IN_TG && !st.me.premium) return `<div class="card"><div class="label">📊 ${esc(t('trendNote'))}</div><p style="margin:0 0 4px;font-size:14px">🤖 ${esc(t('tgOnlyNote'))}</p><button class="btn ghost" id="trendtg">${TG_ICON} &nbsp;${esc(t('openTg'))}</button>${st.me.pid ? `<button class="btn gold" id="gopm" style="margin-top:8px">👑 Premium · ${esc(t('pmWeb'))}</button>` : ''}</div>`;
   if (!trendData && st.me.premium) return `<div class="card"><div class="label">📊 ${esc(t('trendNote'))}</div><button class="btn gold" id="trend">👑 ${esc(t('pmTrend'))}</button></div>`;
-  if (!trendData) return `<div class="card"><div class="label">📊 ${esc(t('trendNote'))}</div><button class="btn gold" id="trend">📊 ${esc(t('trend'))} · ${st.me.freeTrends > 0 && !st.trendPaid ? '🎁 ' + esc(t('free')) + ' (' + st.me.freeTrends + ')' : IN_TG ? '5 ⭐' : IS_ANDROID ? '🎁' : '5 ⭐ ' + esc(t('tgOnly'))}</button>${RW_ON && IN_TG && !st.trendPaid ? `<button class="btn ghost" id="rwad" style="margin-top:8px">${esc(t('rwBtn'))}</button>` : ''}${IN_TG ? `<div class="note" style="cursor:pointer;text-decoration:underline" id="gopm">${esc(t('pmOr'))}</div>` : ''}</div>`;
+  if (!trendData) return `<div class="card"><div class="label">📊 ${esc(t('trendNote'))}</div><button class="btn gold" id="trend">📊 ${esc(t('trend'))} · ${st.me.freeTrends > 0 && !st.trendPaid ? '🎁 ' + esc(t('free')) + ' (' + st.me.freeTrends + ')' : IN_TG ? '5 ⭐' : IS_ANDROID ? '🎁' : '5 ⭐ ' + esc(t('tgOnly'))}</button>${RW_ON && IN_TG && !st.trendPaid && (AG_READY || !st.me.lifeSeen) ? `<button class="btn ghost" id="rwad" style="margin-top:8px">${esc(t('rwBtn'))}</button>` : ''}${IN_TG ? `<div class="note" style="cursor:pointer;text-decoration:underline" id="gopm">${esc(t('pmOr'))}</div>` : ''}</div>`;
   const d = trendData;
   const bars = d.n ? [['homeW', d.home], ['draw', d.draw], ['awayW', d.away]].map(([k, v]) => `<div class="bar"><div>${esc(t(k))}<div class="track"><div class="fill" style="width:${v}%"></div></div></div><div class="pct">${v}%</div></div>`).join('')
     + `<div class="label" style="margin-top:12px">${esc(t('topScores'))}</div>` + d.top.map((x) => `<div class="bar"><div><b>${esc(x.score)}</b></div><div class="pct">${x.pct}%</div></div>`).join('')
