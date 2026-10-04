@@ -1377,10 +1377,22 @@ async function testRewarded() {
     toast(r && r.done ? '✅ Vidéo regardée jusqu’au bout' : '⏹️ Vidéo fermée');
   } catch (e) { toast('Adsgram : ' + ((e && (e.description || e.state)) || 'pas de pub')); }
 }
-// the lifetime offer shown instead of a video: when the player closes it, today's trend opens (like a rewarded ad)
-async function offerInsteadOfAd() {
+// until Adsgram approves: an Instant Gaming full-screen ad (affiliate link) instead of the video; closing it opens today's trend
+function offerInsteadOfAd() {
   const unlock = async () => { try { trendData = await api('trend_offer'); st.trendPaid = true; render(); } catch (e) { toast(t('err')); } };
-  if (!(await lifeOffer('repeat', unlock))) unlock();
+  api('ev', { k: 'ig_inter' }).catch(() => {});
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center;background:linear-gradient(160deg,#2a1300,#0b0b0b 70%);color:#fff';
+  d.innerHTML = `<button id="igx" style="position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:20px;cursor:pointer">✕</button>
+    <div style="font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#ffb347;margin-bottom:14px">${esc(t('igTag'))} · Instant Gaming</div>
+    <div style="font-size:72px;line-height:1">🎮</div>
+    <div style="font-size:26px;font-weight:900;margin:16px 0 8px">${esc(t('igT').replace(/^🎮\s*/, ''))}</div>
+    <div style="font-size:15px;opacity:.85;max-width:320px;margin-bottom:26px">${esc(t('igB'))}</div>
+    <button id="iggo" style="border:0;border-radius:99px;padding:15px 34px;background:#ff8a1f;color:#1d0f00;font-weight:900;font-size:17px;cursor:pointer">${esc(t('igGo'))} →</button>`;
+  const close = () => { d.remove(); unlock(); };
+  d.querySelector('#igx').onclick = close;
+  d.querySelector('#iggo').onclick = () => { api('ev', { k: 'ig_inter_click' }).catch(() => {}); try { tg.openLink(IG_URL); } catch (e) { window.open(IG_URL, '_blank'); } close(); };
+  document.body.appendChild(d);
 }
 async function lifeOffer(test, onClose) {
   if (!IN_TG || !st || !st.me || (st.me.premium && !test) || document.querySelector('.sheet')) return false;
