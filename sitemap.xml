@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://dailyscoreapp.com/</loc></url>
-<url><loc>https://dailyscoreapp.com/android.html</loc></url>
-<url><loc>https://dailyscoreapp.com/privacy.html</loc></url>
-<url><loc>https://dailyscoreapp.com/terms.html</loc></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<url><loc>https://dailyscoreapp.com/fr/</loc><lastmod>2026-10-04</lastmod><changefreq>weekly</changefreq><priority>1.0</priority>
+<xhtml:link rel="alternate" hreflang="fr" href="https://dailyscoreapp.com/fr/"/><xhtml:link rel="alternate" hreflang="en" href="https://dailyscoreapp.com/en/"/></url>
+<url><loc>https://dailyscoreapp.com/en/</loc><lastmod>2026-10-04</lastmod><changefreq>weekly</changefreq><priority>1.0</priority>
+<xhtml:link rel="alternate" hreflang="fr" href="https://dailyscoreapp.com/fr/"/><xhtml:link rel="alternate" hreflang="en" href="https://dailyscoreapp.com/en/"/></url>
+<url><loc>https://dailyscoreapp.com/</loc><lastmod>2026-10-04</lastmod><priority>0.8</priority></url>
+<url><loc>https://dailyscoreapp.com/android.html</loc><priority>0.6</priority></url>
+<url><loc>https://dailyscoreapp.com/privacy.html</loc><priority>0.2</priority></url>
+<url><loc>https://dailyscoreapp.com/terms.html</loc><priority>0.2</priority></url>
 </urlset>
