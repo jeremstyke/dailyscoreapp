@@ -27,6 +27,7 @@
 
 - 🏆 **Rankings**: world, country and friends, by day, week, month and all time, with tie-breaks (exact scores, accuracy, speed)
 - 👥 **Private leagues** with a chat wall, invitations and notifications
+- 🌍 **Public leagues**: join a world or country league in one tap, or create your own with a description, a start date, a duration (7 days to 1 year), a photo or logo, a website (brands, bars, clubs) and a pinned message. *Free during the launch season; public leagues, photo and website will become paid options later.*
 - ⚔️ **Challenges**: challenge your friends on today's match, in private or in any Telegram chat
 - 📡 **Live score** with goal alerts, and the full detail of past matches (how everyone predicted, who found the exact score)
 - 🤖 **Trend and AI prediction**: what everyone picked and the AI's pick for the match
@@ -52,6 +53,8 @@ One account everywhere: Telegram, Google, GitHub or a guest key.
 - [Play football predictions in a Telegram group](https://dailyscoreapp.com/en/guide/play-football-predictions-in-a-telegram-group/)
 - [Daily Score rules: points, rankings and tie-breaks](https://dailyscoreapp.com/en/guide/daily-score-rules/)
 - [📅 Prediction of the day](https://dailyscoreapp.com/en/prediction-of-the-day/)
+- [📰 Blog: all the news of Daily Score](https://dailyscoreapp.com/en/blog/)
+- [🏆 Join the Daily Score World League](https://t.me/DailyScorefootbot?start=lg_WORLD1)
 
 ## About this repository
 
