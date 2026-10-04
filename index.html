@@ -1401,7 +1401,7 @@ function pickPhoto(cb) {
 const lgPhotoUrl = (L) => `${API}/ds/league_photo/${L.id}?v=${L.photoV || L.photo_v}`;
 function editLeague(L) {
   haptic();
-  const EM = ['🏆', '⚽', '🔥', '👑', '🍺', '🎯', '⭐', '🦁', '💪', '😎', '🍕', '🏟️'];
+  const EM = ['🏆', '⚽', '🔥', '👑', '🍺', '🎯', '⭐', '🦁', '💪', '😎', '🍕', '🏟️', '🌍', '🥇', '🎉', '🏅', '🦅', '🐺'];
   let em = L.emoji || '', photo = null; // photo: null = unchanged, '' = removed, data URL = new
   const inSt = 'width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font:inherit;font-size:16px';
   const d = document.createElement('div'); d.className = 'sheet';
