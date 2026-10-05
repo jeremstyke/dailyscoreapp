@@ -214,7 +214,7 @@ const API = location.hostname.endsWith('railway.app') ? '' : 'https://pote-ia-bo
 let IS_ANDROID = false;
 try {
   if (new URLSearchParams(location.search).get('src') === 'android' || document.referrer.startsWith('android-app://')) sessionStorage.setItem('ds_android', '1');
-  try { const s0 = (new URLSearchParams(location.search).get('src') || '').replace(/[^a-z0-9_]/gi, '').slice(0, 30); if (s0 && !['android', 'tg_app'].includes(s0) && !localStorage.getItem('ds_src')) localStorage.setItem('ds_src', s0); } catch (e) {}
+  try { const s0 = (new URLSearchParams(location.search).get('src') || '').replace(/[^a-z0-9_]/gi, '').slice(0, 30); if (s0 && !['android', 'tg_app'].includes(s0) && !localStorage.getItem('ds_src')) localStorage.setItem('ds_src', s0); if (s0 && !['android', 'tg_app'].includes(s0) && navigator.sendBeacon) navigator.sendBeacon('https://pote-ia-bot-en-production.up.railway.app/ds/hit?s=' + s0 + '&l=' + (navigator.language || 'en').slice(0, 2).toLowerCase()); } catch (e) {}
   IS_ANDROID = !IN_TG && sessionStorage.getItem('ds_android') === '1';
   const qv = new URLSearchParams(location.search).get('v'); if (qv) sessionStorage.setItem('ds_appv', qv);
 } catch (e) {}
