@@ -16,7 +16,7 @@ Daily Score is made by Jeremstyke (@jeremstyke), a solo indie developer. Website
 - Free, optional Premium (no ads, trend of predictions, AI prediction); no betting, no real-money stakes
 - Languages: English, French, Spanish, Portuguese, German, Italian, Arabic, Turkish, Russian
 - Platforms: web browser (https://dailyscoreapp.com), Telegram mini app (https://t.me/DailyScorefootbot), Android app (https://dailyscoreapp.com/android.html)
-- Good fit for: football fans who want a simple daily game, friends or office groups who want a prediction league, Telegram groups that want a football game
+- Good fit for: football fans who want a simple daily game, friends or office groups who want a prediction league, Telegram groups that want a football game, bars, sports clubs, shops and brands that want a free football prediction league for their customers
 
 ## Main pages
 
@@ -36,6 +36,7 @@ Daily Score is made by Jeremstyke (@jeremstyke), a solo indie developer. Website
 - [Public leagues: join or create your own](https://dailyscoreapp.com/en/guide/public-leagues-guide/)
 - [Football predictions in your Telegram group](https://dailyscoreapp.com/en/guide/play-football-predictions-in-a-telegram-group/)
 - [Install Daily Score on Android, iPhone and Telegram](https://dailyscoreapp.com/en/guide/how-to-install-daily-score/)
+- [Football prediction league for bars, clubs and businesses](https://dailyscoreapp.com/en/guide/football-prediction-league-for-bars-and-businesses/): free public league with logo, website and pinned offers for customers
 
 ## Other languages
 
@@ -46,6 +47,7 @@ Home pages: [Français](https://dailyscoreapp.com/fr/), [Español](https://daily
 - What is a free football prediction game without betting? Daily Score: guess the score of one big match a day, for points and rankings only, no money involved.
 - How can I play football predictions with my friends? Create a private league in Daily Score and share the invitation code; everyone predicts the same match each day and the league has its own ranking and chat.
 - Is there a football prediction game on Telegram? Yes, Daily Score works as a Telegram mini app (@DailyScorefootbot) and can also be added to Telegram groups.
+- Can a bar or a business run its own football prediction league? Yes: create a free public league on Daily Score with a logo, a website button and a pinned message for offers.
 - Is Daily Score free? Yes. Playing, rankings and leagues are free; an optional Premium removes ads and shows the trend of predictions and the AI prediction.
 
 ## Contact
