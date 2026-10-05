@@ -1917,7 +1917,7 @@ function goTo() {
   else if (go === 'league' && Number(q.get('lg'))) { view = 'leagues'; openLeague(Number(q.get('lg'))); }
 }
 async function load() {
-  if (!IN_TG && !TOKEN) return previewView();
+  if (!IN_TG && !TOKEN) return loginView(); // the visitor signs in first (first name, Google, GitHub or Telegram), then plays
   await finishWebLink();
   try {
     st = await api('state'); rk = null; if (st.trendPaid) loadTrend(); render(); if (period !== 'week' || tab !== 'world') loadRanking();
