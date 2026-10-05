@@ -441,7 +441,7 @@ async function api(route, body) {
 // maintenance screen: shown to everyone, checks every 30 seconds whether the game is back
 let maintTimer = null;
 function maintView() {
-  if (!st || !st.me) { let nl = (navigator.language || 'en').slice(0, 2); try { if (IN_TG && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code) nl = tg.initDataUnsafe.user.language_code.slice(0, 2); } catch (e) {} lang = S[nl] ? nl : 'en'; }
+  if (!st || !st.me) { let nl = prefLang(); try { if (IN_TG && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code) nl = tg.initDataUnsafe.user.language_code.slice(0, 2); } catch (e) {} lang = S[nl] ? nl : 'en'; }
   applyLang(); hideNav();
   document.querySelectorAll('.sheet').forEach((x) => x.remove());
   document.getElementById('app').innerHTML = `<div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b></div></div>
@@ -455,6 +455,8 @@ function maintView() {
 }
 function toast(msg) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }
 const haptic = (k) => { try { tg.HapticFeedback.impactOccurred(k || 'light'); } catch (e) {} };
+// the language of a new visitor: the one in the link (?lang=fr) if any, else the browser's
+function prefLang() { try { const q = (new URLSearchParams(location.search).get('lang') || '').slice(0, 2).toLowerCase(); if (q && S[q]) return q; } catch (e) {} return (navigator.language || 'en').slice(0, 2); }
 function applyLang() { document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; document.documentElement.lang = lang; }
 
 async function startWebLink() {
@@ -614,7 +616,7 @@ function codeView(p) {
 let pv = { home: 1, away: 1, m: null }, pendingKey = null;
 async function previewView() {
   hideNav();
-  const nl = (navigator.language || 'en').slice(0, 2); lang = S[nl] ? nl : 'en'; applyLang();
+  const nl = prefLang(); lang = S[nl] ? nl : 'en'; applyLang();
   let m = null;
   try { const r = await fetch(API + '/ds/public/match'); if (r.status === 503) return maintView(); m = (await r.json()).match; } catch (e) {}
   if (!m || !m.open) return loginView();
@@ -684,7 +686,7 @@ async function applyPendingPick() {
 }
 function loginView() {
   hideNav();
-  const nl = (navigator.language || 'en').slice(0, 2); lang = S[nl] ? nl : 'en'; applyLang();
+  const nl = prefLang(); lang = S[nl] ? nl : 'en'; applyLang();
   document.getElementById('app').innerHTML = `
   <div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b><span class="beta">BETA</span></div></div>
   <div class="card center"><img src="https://dailyscoreapp.com/icon-512.png" alt="Daily Score" style="width:150px;height:150px;display:block;margin:4px auto 10px">
@@ -1766,7 +1768,7 @@ let autoSetupBusy = false, autoCountry = null, welcomeUsed = false;
 async function autoSetup() {
   if (autoSetupBusy) return;
   autoSetupBusy = true;
-  const nl = (navigator.language || 'en').slice(0, 2);
+  const nl = prefLang();
   const l = st.me.lang && S[st.me.lang] ? st.me.lang : S[nl] ? nl : 'en';
   const c = st.me.suggestedCountry || 'GB'; autoCountry = c;
   try { st = await api('setup', { lang: l, country: c }); try { localStorage.setItem('ds_cc', '1'); } catch (e) {} lang = st.me.lang; applyLang(); render(); if (!IN_TG) applyPendingPick(); }
