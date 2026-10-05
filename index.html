@@ -651,10 +651,22 @@ async function previewView() {
 function pvSignup() {
   haptic('medium');
   try { localStorage.setItem('ds_pend_pick', JSON.stringify({ day: pv.m.day, home: pv.home, away: pv.away, next: !!pv.m.next })); } catch (e) {}
-  const b = document.getElementById('pvlock'); if (b) { if (b.disabled) return; b.disabled = true; }
-  // no form: a guest account with a temporary name, the player can choose his name afterwards
-  emailCall('guest_start', { auto: 1 }).then((j) => { localStorage.setItem('ds_token', j.token); TOKEN = j.token; pendingKey = null; load(); })
-    .catch(() => { if (b) b.disabled = false; toast(t('wErr')); });
+  const d = document.createElement('div'); d.className = 'sheet';
+  d.innerHTML = `<div class="card"><div class="label">${esc(t('pvT'))}</div>
+    <p style="margin:0 0 8px">${esc(t('pvP'))}</p>
+    <input id="pvn" maxlength="20" autocomplete="given-name" placeholder="${esc(t('gName'))}" style="${inputCss}">
+    <button class="btn go" id="pvgo">${esc(t('pvGo'))}</button>
+    <div class="note" id="pvsso" style="cursor:pointer;text-decoration:underline">${esc(t('pvOther'))}</div></div>`;
+  d.onclick = (e) => { if (e.target === d) d.remove(); };
+  document.body.appendChild(d);
+  const inp = d.querySelector('#pvn'); setTimeout(() => inp.focus(), 100);
+  d.querySelector('#pvsso').onclick = () => { d.remove(); loginView(); };
+  d.querySelector('#pvgo').onclick = async () => {
+    const name = inp.value.trim(); if (name.length < 2) return inp.focus();
+    const b = d.querySelector('#pvgo'); b.disabled = true;
+    try { const j = await emailCall('guest_start', { name }); localStorage.setItem('ds_token', j.token); TOKEN = j.token; pendingKey = j.key; d.remove(); load(); }
+    catch (e) { toast(t('wErr')); b.disabled = false; }
+  };
 }
 // the prediction made before signing up is saved right after the account is ready
 async function applyPendingPick() {
@@ -1791,7 +1803,7 @@ function render() {
   document.getElementById('app').innerHTML = `
   <div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b><span class="beta">BETA</span></div>
     <div class="chips"><div class="chip fire" id="hfire" style="cursor:pointer">🔥 ${st.me.streak || 0}</div><div class="chip" id="htrophy" style="cursor:pointer">🏆 ${st.me.points}</div></div></div>
-  ${view === 'match' ? nameAutoCard() + notifCard() + guardCard() + pushCard() + installCard(false) + tgLinkCard() + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + (liveNow() ? '' : voteCard()) + lastCard() + vsAiCard() + blogLink() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard() + blogLink() + (IN_TG ? '' : `<div class="note" style="margin:-8px 0 18px;font-size:12px"><span data-legal="privacy.html" style="cursor:pointer;text-decoration:underline">${esc(t('legPriv'))}</span> · <span data-legal="terms.html" style="cursor:pointer;text-decoration:underline">${esc(t('legTerms'))}</span></div>`)}`;
+  ${view === 'match' ? notifCard() + guardCard() + pushCard() + installCard(false) + tgLinkCard() + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + (liveNow() ? '' : voteCard()) + lastCard() + vsAiCard() + blogLink() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard() + blogLink() + (IN_TG ? '' : `<div class="note" style="margin:-8px 0 18px;font-size:12px"><span data-legal="privacy.html" style="cursor:pointer;text-decoration:underline">${esc(t('legPriv'))}</span> · <span data-legal="terms.html" style="cursor:pointer;text-decoration:underline">${esc(t('legTerms'))}</span></div>`)}`;
   navBar();
   bind();
   askWriteAccess();
