@@ -52,6 +52,7 @@ Home pages: [Français](https://dailyscoreapp.com/fr/), [Español](https://daily
 
 ## Contact
 
+- Partnerships (bars, clubs, brands, businesses): juryjeremy@gmail.com or Telegram @jeremstyke
 - X: https://x.com/dailyscoreapp
 - Telegram channel: https://t.me/jeremstyke
 - Source and README: https://github.com/jeremstyke/dailyscoreapp
