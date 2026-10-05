@@ -1271,11 +1271,14 @@ async function openMatchDetail(day) {
 }
 // the AI and the admin (the game's creator) are shown in red in the rankings
 const RED_PIDS = ['0dcd927968', '3c936b10ce'];
-const nameHtml = (x) => RED_PIDS.includes(x.pid) ? `<span style="color:#ff5b5b;font-weight:800">${esc(x.name)}</span>` : esc(x.name);
+// Premium players in gold (the AI and the admin stay in red)
+const nameHtml = (x) => RED_PIDS.includes(x.pid) ? `<span style="color:#ff5b5b;font-weight:800">${esc(x.name)}</span>` : x.prem ? `<span style="color:var(--gold);font-weight:800">${esc(x.name)}</span>` : esc(x.name);
+// red card for the AI and the admin, gold card for the Premium players
+const rowSt = (x) => RED_PIDS.includes(x.pid) ? ' style="background:rgba(255,91,91,.12);border:1px solid rgba(255,91,91,.45);border-radius:12px;margin:4px 0;padding-left:8px;padding-right:8px"' : x.prem ? ' style="background:rgba(255,200,61,.12);border:1px solid rgba(255,200,61,.45);border-radius:12px;margin:4px 0;padding-left:8px;padding-right:8px"' : '';
 function rankingCard() {
   const r = rk || st.ranking, c = st.me.country;
   const per = [['day', 'pDay'], ['week', 'pWeek'], ['month', 'pMonth'], ['all', 'pAll']].map(([k, s]) => `<div class="tab ${period === k ? 'on' : ''}" data-period="${k}">${esc(t(s))}</div>`).join('');
-  const rows = r.top && r.top.length ? r.top.map((x) => `<div class="row ${x.me ? 'me' : ''}" data-pid="${esc(x.pid || '')}"><div class="rk">${x.rank}</div><div>${provIcon(x.provider)} ${flag(x.country)} ${nameHtml(x)}${x.prem ? ' 👑' : ''}${x.sup ? ' 💚' : ''}${badge(x.refs)}</div><div class="pts">${x.points} ${esc(t('pts'))}</div></div>`).join('') : `<p class="muted center">${esc(t('empty'))}</p>`;
+  const rows = r.top && r.top.length ? r.top.map((x) => `<div class="row ${x.me ? 'me' : ''}"${rowSt(x)} data-pid="${esc(x.pid || '')}"><div class="rk">${x.rank}</div><div>${x.provider === 'ai' ? '' : provIcon(x.provider) + ' ' + flag(x.country)} ${nameHtml(x)}${x.prem ? ' 👑' : ''}${x.sup ? ' 💚' : ''}${badge(x.refs)}</div><div class="pts">${x.points} ${esc(t('pts'))}</div></div>`).join('') : `<p class="muted center">${esc(t('empty'))}</p>`;
   return `<div class="card"><div class="label">🏆 ${esc(t('ranking'))}${r.players ? ' · ' + r.players + ' ' + esc(t('players')) : ''}</div>
     <div class="tabs">${per}</div>
     <div class="tabs"><div class="tab ${tab === 'world' ? 'on' : ''}" data-tab="world">${esc(t('world'))}</div><div class="tab ${tab === 'country' ? 'on' : ''}" data-tab="country">${flag(c)} ${esc(countryName(c))}</div><div class="tab ${tab === 'friends' ? 'on' : ''}" data-tab="friends">👥 ${esc(t('scFriends'))}</div></div>
@@ -1520,7 +1523,7 @@ async function previewLeague(id) {
   let v; try { v = await api('league_public_view', { id }); } catch (e) { toast(t('err')); return; }
   if (v.member) return openLeague(id);
   const L = v.league, ended = L.end < todayStr();
-  const rows = (v.top || []).map((x) => `<div class="row" data-pid="${esc(x.pid || '')}"><div class="rk">${x.rank}</div><div>${provIcon(x.provider)} ${flag(x.country)} ${nameHtml(x)}${x.prem ? ' 👑' : ''}${x.sup ? ' 💚' : ''}${badge(x.refs)}</div><div class="pts">${x.points} ${esc(t('pts'))}</div></div>`).join('');
+  const rows = (v.top || []).map((x) => `<div class="row"${rowSt(x)} data-pid="${esc(x.pid || '')}"><div class="rk">${x.rank}</div><div>${x.provider === 'ai' ? '' : provIcon(x.provider) + ' ' + flag(x.country)} ${nameHtml(x)}${x.prem ? ' 👑' : ''}${x.sup ? ' 💚' : ''}${badge(x.refs)}</div><div class="pts">${x.points} ${esc(t('pts'))}</div></div>`).join('');
   document.getElementById('app').innerHTML = backBar() + `<div class="card">${L.photoV ? `<img src="${lgPhotoUrl(L)}" alt="" style="width:72px;height:72px;border-radius:18px;object-fit:cover;display:block;margin:0 0 10px">` : ''}<div class="label">${L.emoji ? esc(L.emoji) : '👥'} ${esc(L.name)}</div>
     ${L.descr ? `<p style="margin:2px 0 8px;font-size:14px;line-height:1.5;white-space:pre-line">${esc(L.descr)}</p>` : ''}${webBtn(L.website)}
     <div class="note" style="margin:0 0 10px">${L.scope ? flag(L.scope) + ' ' + esc(countryName(L.scope)) : esc(t('lgWorld'))} · ${esc(fmtDay(L.start))} → ${esc(fmtDay(L.end))}${ended ? ' · ' + esc(t('lgEnded')) : ''} · ${v.players} ${esc(t('lgMembers'))}</div>
@@ -1534,7 +1537,7 @@ async function previewLeague(id) {
 async function openLeague(id) {
   try { leagueView = await api('league_view', { id }); } catch (e) { toast(t('err')); return render(); }
   const L = leagueView.league, ended = L.end < todayStr();
-  const rows = (leagueView.top || []).map((x) => `<div class="row ${x.me ? 'me' : ''}" data-pid="${esc(x.pid || '')}"><div class="rk">${x.rank}</div><div>${provIcon(x.provider)} ${flag(x.country)} ${nameHtml(x)}${x.prem ? ' 👑' : ''}${x.sup ? ' 💚' : ''}${badge(x.refs)}</div><div class="pts">${x.points} ${esc(t('pts'))}</div></div>`).join('');
+  const rows = (leagueView.top || []).map((x) => `<div class="row ${x.me ? 'me' : ''}"${rowSt(x)} data-pid="${esc(x.pid || '')}"><div class="rk">${x.rank}</div><div>${x.provider === 'ai' ? '' : provIcon(x.provider) + ' ' + flag(x.country)} ${nameHtml(x)}${x.prem ? ' 👑' : ''}${x.sup ? ' 💚' : ''}${badge(x.refs)}</div><div class="pts">${x.points} ${esc(t('pts'))}</div></div>`).join('');
   document.getElementById('app').innerHTML = backBar() + `<div class="card">${L.photoV ? `<img src="${lgPhotoUrl(L)}" alt="" style="width:72px;height:72px;border-radius:18px;object-fit:cover;display:block;margin:0 0 10px">` : ''}<div class="label">${L.emoji ? esc(L.emoji) : '👥'} ${esc(L.name)}</div>
     ${L.descr ? `<p style="margin:2px 0 8px;font-size:14px;line-height:1.5;white-space:pre-line">${esc(L.descr)}</p>` : ''}${webBtn(L.website)}
     <div class="note" style="margin:0 0 10px">${esc(fmtDay(L.start))} → ${esc(fmtDay(L.end))}${ended ? ' · ' + esc(t('lgEnded')) : ''} · ${leagueView.players} ${esc(t('lgMembers'))}</div>
