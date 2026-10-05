@@ -65,5 +65,5 @@ Daily Score is a free game for fun: there are no stakes, no odds and no money to
 
 ## Author
 
-Made by **[@jeremstyke](https://t.me/jeremstyke)**, solo indie developer. Follow the game on X: **[@dailyscoreapp](https://x.com/dailyscoreapp)**.
+Made by **[@jeremstyke](https://t.me/jeremstyke)**, solo indie developer. Follow the game on X: **[@dailyscoreapp](https://x.com/dailyscoreapp)**. Partnerships (bars, clubs, brands): **juryjeremy@gmail.com**.
 Also by me: [Life Sim](https://t.me/LsimgameBot?start=src_github_repo) and [ChatPal](https://t.me/mybestfriend_ai_en_bot?start=src_github_repo). More on [jeremstyke.github.io](https://jeremstyke.github.io).
