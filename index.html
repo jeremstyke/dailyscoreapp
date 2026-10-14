@@ -1636,7 +1636,44 @@ function inviteCard() {
   return `<div class="card"><div class="label">🤝 ${esc(t('invT'))}${badge(n)}</div>
     <p style="margin:0 0 8px;font-size:14px">${esc(t('invText'))}</p>
     <div class="note" style="margin:0">${esc(tpl(t('invCount'), { n }))}${next ? ' · ' + esc(tpl(t('invNext'), { b: next[1], k: next[0] })) : ''}</div>
-    <button class="btn go" id="invite">📣 ${esc(t('invBtn'))}</button></div>`;
+    ${tonBlock()}<button class="btn go" id="invite">📣 ${esc(t('invBtn'))}</button></div>`;
+}
+// 14 oct 2026: real TON for referrals (Telegram only): $0.05 in TON per friend who makes 4 predictions. A banner on the match screen,
+// a block in the invite card, and a sheet that explains it. Balance and TON wallet are in Earn by Jeremstyke (@earnbyjeremstykebot).
+const TONX = {
+  en: { h: '💎 Earn real TON', s: '$0.05 in TON for every friend who makes 4 predictions', inv: '📣 Invite my friends', my: '💰 My TON earnings', st: ['Share your invite link', 'Your friend makes 4 predictions (one per day)', 'You earn $0.05 in TON per friend, no limit', 'Paid to your TON wallet from $0.50, within 7 days'], n: 'Your balance and your TON wallet are in Earn by Jeremstyke.', close: 'Later' },
+  fr: { h: '💎 Gagne de vrais TON', s: '0,05 $ en TON par ami qui fait 4 pronos', inv: '📣 Inviter mes amis', my: '💰 Mes gains TON', st: ['Partage ton lien d\'invitation', 'Ton ami fait 4 pronos (un par jour)', 'Tu gagnes 0,05 $ en TON par ami, sans limite', 'Paiement sur ton portefeuille TON dès 0,50 $, sous 7 jours'], n: 'Ton solde et ton portefeuille TON sont dans Earn by Jeremstyke.', close: 'Plus tard' },
+  es: { h: '💎 Gana TON de verdad', s: '0,05 $ en TON por cada amigo que haga 4 pronósticos', inv: '📣 Invitar a mis amigos', my: '💰 Mis ganancias TON', st: ['Comparte tu enlace de invitación', 'Tu amigo hace 4 pronósticos (uno al día)', 'Ganas 0,05 $ en TON por amigo, sin límite', 'Pago a tu billetera TON desde 0,50 $, en 7 días'], n: 'Tu saldo y tu billetera TON están en Earn by Jeremstyke.', close: 'Más tarde' },
+  pt: { h: '💎 Ganhe TON de verdade', s: '0,05 $ em TON por cada amigo que fizer 4 palpites', inv: '📣 Convidar meus amigos', my: '💰 Meus ganhos TON', st: ['Compartilhe seu link de convite', 'Seu amigo faz 4 palpites (um por dia)', 'Você ganha 0,05 $ em TON por amigo, sem limite', 'Pagamento na sua carteira TON a partir de 0,50 $, em 7 dias'], n: 'Seu saldo e sua carteira TON ficam no Earn by Jeremstyke.', close: 'Depois' },
+  de: { h: '💎 Echte TON verdienen', s: '0,05 $ in TON für jeden Freund, der 4 Tipps abgibt', inv: '📣 Freunde einladen', my: '💰 Meine TON-Einnahmen', st: ['Teile deinen Einladungslink', 'Dein Freund gibt 4 Tipps ab (einen pro Tag)', 'Du verdienst 0,05 $ in TON pro Freund, ohne Limit', 'Auszahlung auf dein TON-Wallet ab 0,50 $, innerhalb von 7 Tagen'], n: 'Dein Guthaben und dein TON-Wallet findest du in Earn by Jeremstyke.', close: 'Später' },
+  it: { h: '💎 Guadagna veri TON', s: '0,05 $ in TON per ogni amico che fa 4 pronostici', inv: '📣 Invita i miei amici', my: '💰 I miei guadagni TON', st: ['Condividi il tuo link di invito', 'Il tuo amico fa 4 pronostici (uno al giorno)', 'Guadagni 0,05 $ in TON per amico, senza limiti', 'Pagamento sul tuo wallet TON da 0,50 $, entro 7 giorni'], n: 'Il tuo saldo e il tuo wallet TON sono in Earn by Jeremstyke.', close: 'Più tardi' },
+  tr: { h: '💎 Gerçek TON kazan', s: '4 tahmin yapan her arkadaş için 0,05 $ TON', inv: '📣 Arkadaşlarımı davet et', my: '💰 TON kazançlarım', st: ['Davet bağlantını paylaş', 'Arkadaşın 4 tahmin yapar (günde bir)', 'Arkadaş başına 0,05 $ TON kazanırsın, sınır yok', '0,50 $\'dan itibaren 7 gün içinde TON cüzdanına ödeme'], n: 'Bakiyen ve TON cüzdanın Earn by Jeremstyke içinde.', close: 'Sonra' },
+  ru: { h: '💎 Зарабатывай настоящие TON', s: '0,05 $ в TON за каждого друга, сделавшего 4 прогноза', inv: '📣 Пригласить друзей', my: '💰 Мои TON', st: ['Поделись своей ссылкой-приглашением', 'Друг делает 4 прогноза (по одному в день)', 'Ты получаешь 0,05 $ в TON за друга, без лимита', 'Выплата на твой TON-кошелёк от 0,50 $, в течение 7 дней'], n: 'Баланс и TON-кошелёк находятся в Earn by Jeremstyke.', close: 'Позже' },
+  ar: { h: '💎 اربح TON حقيقية', s: '0.05 $ بعملة TON عن كل صديق يقدّم 4 توقعات', inv: '📣 ادعُ أصدقائي', my: '💰 أرباحي من TON', st: ['شارك رابط الدعوة الخاص بك', 'يقدّم صديقك 4 توقعات (توقع واحد يوميًا)', 'تربح 0.05 $ بعملة TON عن كل صديق، بلا حدود', 'الدفع إلى محفظة TON الخاصة بك من 0.50 $، خلال 7 أيام'], n: 'رصيدك ومحفظة TON موجودان في Earn by Jeremstyke.', close: 'لاحقًا' },
+};
+const tonT = () => TONX[lang] || TONX.en;
+const TON_EARN = 'https://t.me/earnbyjeremstykebot?start=ds';
+const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
+function tonBanner() {
+  if (!IN_TG || !st || !st.me) return '';
+  const x = tonT();
+  return `<div class="igban tonban" data-ton="sheet" style="background:linear-gradient(135deg,rgba(46,230,255,.16),rgba(198,255,61,.08));border-color:rgba(46,230,255,.4)"><span style="font-size:26px">💎</span><div style="min-width:0"><b>${esc(x.h.replace(/^💎 /, ''))}</b><small>${esc(x.s)}</small></div><span class="iggo" style="margin-left:auto;background:#2ee6ff;color:#062a33">TON</span></div>`;
+}
+function tonBlock() {
+  if (!IN_TG) return '';
+  const x = tonT();
+  return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 8px">${esc(x.s)}</small><button class="btn" data-ton="earn" style="margin:0">${esc(x.my)}</button></div>`;
+}
+function tonSheet() {
+  const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {});
+  const d = document.createElement('div'); d.className = 'sheet';
+  d.innerHTML = `<div class="card" style="max-height:88vh;overflow:auto"><div class="label">${esc(x.h)}</div><p style="margin:0 0 10px;font-size:15px"><b>${esc(x.s)}</b></p>`
+    + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('')
+    + `<div class="note" style="margin:6px 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
+  document.body.appendChild(d);
+  d.onclick = (e) => { if (e.target === d || e.target.id === 'tonsc') d.remove(); };
+  d.querySelector('#tonsi').onclick = () => { d.remove(); tonInvite(); };
+  d.querySelector('#tonse').onclick = () => { haptic(); api('ev', { k: 'ton_earn' }).catch(() => {}); openLink(TON_EARN); };
 }
 let view = 'match';
 const IG_URL = 'https://www.instant-gaming.com/?igr=jeremymultigaming';
@@ -1806,7 +1843,7 @@ function render() {
   document.getElementById('app').innerHTML = `
   <div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b><span class="beta">BETA</span></div>
     <div class="chips"><div class="chip fire" id="hfire" style="cursor:pointer">🔥 ${st.me.streak || 0}</div><div class="chip" id="htrophy" style="cursor:pointer">🏆 ${st.me.points}</div></div></div>
-  ${view === 'match' ? notifCard() + guardCard() + pushCard() + installCard(false) + tgLinkCard() + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + (liveNow() ? '' : voteCard()) + lastCard() + vsAiCard() + blogLink() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard() + blogLink() + (IN_TG ? '' : `<div class="note" style="margin:-8px 0 18px;font-size:12px"><span data-legal="privacy.html" style="cursor:pointer;text-decoration:underline">${esc(t('legPriv'))}</span> · <span data-legal="terms.html" style="cursor:pointer;text-decoration:underline">${esc(t('legTerms'))}</span></div>`)}`;
+  ${view === 'match' ? notifCard() + guardCard() + pushCard() + installCard(false) + tgLinkCard() + tonBanner() + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + (liveNow() ? '' : voteCard()) + lastCard() + vsAiCard() + blogLink() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard() + blogLink() + (IN_TG ? '' : `<div class="note" style="margin:-8px 0 18px;font-size:12px"><span data-legal="privacy.html" style="cursor:pointer;text-decoration:underline">${esc(t('legPriv'))}</span> · <span data-legal="terms.html" style="cursor:pointer;text-decoration:underline">${esc(t('legTerms'))}</span></div>`)}`;
   navBar();
   bind();
   askWriteAccess();
@@ -1875,6 +1912,7 @@ function bind() {
   const lgj = document.getElementById('lgj'); if (lgj) lgj.onclick = () => { haptic(); joinView(); };
   const lgpb = document.getElementById('lgpub'); if (lgpb) lgpb.onclick = () => { haptic(); publicLeaguesView(); };
   document.querySelectorAll('[data-b]').forEach((x) => x.onclick = () => { haptic(); const b = DSB.find((y) => y[0] === x.dataset.b); toast((x.classList.contains('on') ? '✅ ' : '🔒 ') + b[1] + ' ' + bLabel(b)); });
+  document.querySelectorAll('[data-ton]').forEach((b) => b.onclick = () => { haptic(); if (b.dataset.ton === 'earn') { api('ev', { k: 'ton_earn' }).catch(() => {}); openLink(TON_EARN); } else tonSheet(); });
   const inv = document.getElementById('invite'); if (inv) inv.onclick = () => { haptic('medium'); api('ev', { k: 'invite' }).catch(() => {}); shareLink(IN_TG ? 'https://t.me/' + BOT + '?start=ref_' + st.me.id : WEB + '#ref=' + st.me.id, t('invShare')); };
   document.querySelectorAll('[data-tab]').forEach((x) => x.onclick = () => { haptic(); tab = x.dataset.tab; loadRanking(); });
   document.querySelectorAll('[data-period]').forEach((x) => x.onclick = () => { haptic(); period = x.dataset.period; loadRanking(); });
