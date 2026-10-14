@@ -229,7 +229,7 @@ try {
   TOKEN = localStorage.getItem('ds_token');
 } catch (e) {}
 const DS_INTER = 'int-53963'; // Adsgram interstitial block (14 oct 2026: new block, switched on)
-// Interstitial (Adsgram): once a day, after the first validation of the score (not on changes),
+// Interstitial (Adsgram): once a day, when the player opens the ranking (14 oct 2026; it used to come after the first pick of the day),
 // not on the player's first day, never for Premium. Telegram only.
 // TADS fullscreen (widget 12430): the interstitial in Telegram
 const TADS_FS = 12430;
@@ -1714,7 +1714,7 @@ function navBar() {
   placeRichBanner(nav); placeAd(); fitNav();
   const igb = document.getElementById('igban'); if (igb) igb.onclick = (e) => { haptic(); api('ev', { k: 'ig_click' }).catch(() => {}); if (IN_TG) { e.preventDefault(); try { tg.openLink(IG_URL); } catch (er) { window.open(IG_URL, '_blank'); } } };
   const hbb = document.getElementById('hbban'); if (hbb) hbb.onclick = () => { haptic(); api('ev', { k: 'house_click' }).catch(() => {}); tg.openTelegramLink(AD_CONTACT); };
-  nav.querySelectorAll('[data-nav]').forEach((x) => x.onclick = () => { haptic(); view = x.dataset.nav; leagueView = null; render(); scrollTop0(); });
+  nav.querySelectorAll('[data-nav]').forEach((x) => x.onclick = () => { haptic(); view = x.dataset.nav; leagueView = null; render(); scrollTop0(); if (view === 'rank') showInter(); });
 }
 const GUMROAD_URL = 'https://jeremstyke.gumroad.com/l/Daily-score-premium-1year';
 function premiumCard() {
@@ -1859,7 +1859,7 @@ function bind() {
   if (lock) lock.onclick = async () => {
     lock.disabled = true; haptic('medium');
     const firstPick = !st.pick;
-    try { st = await api('pick', { home, away }); editing = false; if (firstPick) { setTimeout(confirmCountry, 1200); setTimeout(showInter, 900); } try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
+    try { st = await api('pick', { home, away }); editing = false; if (firstPick) { setTimeout(confirmCountry, 1200); } try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
     catch (e) { toast(e.code === 'started' ? t('errStarted') : t('err')); lock.disabled = false; if (e.code === 'started') load(); }
   };
   const edit = document.getElementById('edit'); if (edit) edit.onclick = () => { editing = true; render(); };
@@ -1919,7 +1919,7 @@ function bind() {
   const set = document.getElementById('set'); if (set) set.onclick = () => { setupView(); };
   document.querySelectorAll('[data-ext]').forEach((x) => x.onclick = () => { haptic(); try { tg.openLink(x.dataset.ext); } catch (e) { window.open(x.dataset.ext, '_blank'); } });
   const hf = document.getElementById('hfire'); if (hf) hf.onclick = () => { haptic(); view = 'profile'; leagueView = null; render(); const sc = document.getElementById('streakcard'); if (sc) sc.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
-  const ht = document.getElementById('htrophy'); if (ht) ht.onclick = () => { haptic(); view = 'rank'; leagueView = null; render(); scrollTop0(); };
+  const ht = document.getElementById('htrophy'); if (ht) ht.onclick = () => { haptic(); view = 'rank'; leagueView = null; render(); scrollTop0(); showInter(); };
   const set2 = document.getElementById('set2'); if (set2) set2.onclick = () => { setupView(); };
 }
 async function loadTrend() { try { trendData = await api('trend'); render(); return true; } catch (e) { return false; } }
