@@ -1231,7 +1231,12 @@ async function watchRewarded() {
   if (!AG_READY) return offerInsteadOfAd();
   if (!window.Adsgram) return noAd();
   try {
+    // 15 oct 2026: the trend also opens when the ad's answer never comes back to the game (seen right after the opening interstitial):
+    // the server is asked every 3 seconds for 3 minutes, whatever the ad does
+    let gotIt = false;
+    (async () => { for (let i = 0; i < 60 && !gotIt; i++) { await new Promise((ok) => setTimeout(ok, 3000)); try { const s2 = await api('state'); if (s2.trendPaid && !gotIt) { gotIt = true; st = s2; await loadTrend(); render(); } } catch (e) {} } })();
     const r = await window.Adsgram.init({ blockId: DS_REWARD }).show();
+    if (gotIt) return;
     if (r && r.done === false) return toast(t('rwSkip')); // closed before the end: no reward
     toast(t('rwWait'));
     // Adsgram confirms the reward to the server, sometimes after a delay: up to 40 seconds here, then quietly for 3 minutes
