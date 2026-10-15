@@ -398,6 +398,8 @@ const openLink = (u) => { if (IN_TG) tg.openTelegramLink(u); else window.open(u,
 document.addEventListener('click', (e) => { const w = e.target.closest && e.target.closest('[data-web]'); if (w) openWeb(w.dataset.web); });
 const openWeb = (u) => { haptic(); api('ev', { k: 'league_web' }).catch(() => {}); try { if (IN_TG) return tg.openLink(u); } catch (e) {} window.open(u, '_blank', 'noopener'); };
 async function shareLink(url, text) {
+  // 15 oct 2026: after any share of an invite or league link, the player is told what it earns him
+  if (/ref_|lg_|#ref=|&r=/.test(String(url || ''))) setTimeout(() => { try { toast({ fr: '💎 Chaque ami qui rejoint avec ton lien et fait 4 pronos te rapporte 0,05 $ en TON', es: '💎 Cada amigo que se una con tu enlace y haga 4 pronósticos te da 0,05 $ en TON', pt: '💎 Cada amigo que entrar pelo seu link e fizer 4 palpites te rende 0,05 $ em TON' }[lang] || '💎 Every friend who joins through your link and makes 4 predictions earns you $0.05 in TON'); } catch (e) {} }, 1200);
   if (IN_TG) return tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text));
   if (navigator.share) { try { await navigator.share({ title: 'Daily Score', text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(text + ' ' + url); toast(t('copied')); } catch (e) { window.prompt('', text + ' ' + url); }
