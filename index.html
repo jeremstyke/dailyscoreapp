@@ -1676,6 +1676,25 @@ const TONC = {
   ar: '🏆 أصدقاؤك يُحتسبون أيضًا في المسابقة الأسبوعية في Earn by Jeremstyke: 1 $ و0.50 $ و0.25 $ بعملة TON لأفضل 3 كل يوم اثنين، إضافةً إلى أرباحك.'
 };
 const tonC = () => TONC[lang] || TONC.en;
+// 15 oct 2026: the player's TON gains from his Daily Score invites, shown in the game (like Meme Coin Tycoon and GramPedia)
+const TONS = {
+  en: ['Valid friends', 'Pending', 'Balance'], fr: ['Amis validés', 'En attente', 'Solde'], es: ['Amigos válidos', 'Pendientes', 'Saldo'],
+  pt: ['Amigos válidos', 'Pendentes', 'Saldo'], de: ['Gültige Freunde', 'Ausstehend', 'Guthaben'], it: ['Amici validi', 'In attesa', 'Saldo'],
+  tr: ['Geçerli arkadaşlar', 'Beklemede', 'Bakiye'], ru: ['Засчитано друзей', 'В ожидании', 'Баланс'], ar: ['أصدقاء مؤكَّدون', 'قيد الانتظار', 'الرصيد']
+};
+let TON_ST = null;
+function tonStatsHtml() {
+  const s = TON_ST; if (!s) return '';
+  const L = TONS[lang] || TONS.en, m = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
+  const tile = (b, l) => `<div style="flex:1;min-width:0;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.06);text-align:center"><b style="display:block;font-size:17px">${b}</b><small style="display:block;font-size:11px;color:var(--mute)">${esc(l)}</small></div>`;
+  return `<div style="display:flex;gap:6px;margin:0 0 8px">${tile('✅ ' + Number(s.valid || 0), L[0])}${tile('⏳ ' + Number(s.pending || 0), L[1])}${tile(m(s.balance), L[2])}</div>`;
+}
+function tonStats() {
+  if (!IN_TG) return;
+  const fill = () => document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); });
+  if (TON_ST) fill();
+  api('ton', {}).then((s) => { if (s && s.ok) { TON_ST = s; fill(); } }).catch(() => {});
+}
 const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=contest_ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
 const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
 function tonBanner() {
@@ -1685,15 +1704,16 @@ function tonBanner() {
 }
 function tonBlock() {
   if (!IN_TG) return '';
+  setTimeout(tonStats, 0);
   const x = tonT();
-  return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 6px">${esc(x.s)}</small><small style="display:block;margin:0 0 8px;color:#ffd43b">${esc(tonC())}</small><button class="btn" data-ton="earn" style="margin:0">${esc(x.my)}</button></div>`;
+  return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 6px">${esc(x.s)}</small><small style="display:block;margin:0 0 8px;color:#ffd43b">${esc(tonC())}</small><div class="tonst">${tonStatsHtml()}</div><button class="btn" data-ton="earn" style="margin:0">${esc(x.my)}</button></div>`;
 }
 function tonSheet() {
-  const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {});
+  const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
   const d = document.createElement('div'); d.className = 'sheet';
   d.innerHTML = `<div class="card" style="max-height:88vh;overflow:auto"><div class="label">${esc(x.h)}</div><p style="margin:0 0 10px;font-size:15px"><b>${esc(x.s)}</b></p>`
     + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('')
-    + `<div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
+    + `<div class="tonst">${tonStatsHtml()}</div><div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
   document.body.appendChild(d);
   d.onclick = (e) => { if (e.target === d || e.target.id === 'tonsc') d.remove(); };
   d.querySelector('#tonsi').onclick = () => { d.remove(); tonInvite(); };
