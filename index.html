@@ -1725,6 +1725,21 @@ function tonPendHtml(p, pend, need, M) {
 function tonPendIn(h, x) { const i = h.indexOf('</div>') + 6; return i > 5 ? h.slice(0, i) + x + h.slice(i) : h + x; }
 const tonDetHtml0 = tonDetHtml;
 tonDetHtml = () => { const a = TON_ST && TON_ST.all; return tonPendIn(tonDetHtml0(), a ? tonPendHtml(a.pending, esc((TONS[lang] || TONS.en)[1]), (n) => '👥 ' + n, tonMoney) : ''); };
+// 15 oct 2026: share outside Telegram (WhatsApp, Messenger, SMS...): the friend still opens the game in Telegram
+function outCopy(v, ok) {
+  let done = false;
+  try { navigator.clipboard.writeText(v); done = true; } catch (x) {}
+  if (!done) { try { const t = document.createElement('textarea'); t.value = v; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); } catch (x) {} }
+  try { toast(ok); } catch (x) {}
+}
+function outWa(msg) { const u = 'https://wa.me/?text=' + encodeURIComponent(msg); try { (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData ? Telegram.WebApp.openLink(u) : window.open(u, '_blank')); } catch (x) { window.open(u, '_blank'); } }
+const TONOUT = {
+  en: ['Copy my link', 'No Telegram yet? Install it, then tap this link again.'], fr: ['Copier mon lien', 'Pas encore Telegram ? Installe-le, puis reclique sur ce lien.'],
+  es: ['Copiar mi enlace', '¿Aún no tienes Telegram? Instálalo y vuelve a tocar este enlace.'], pt: ['Copiar meu link', 'Ainda não tem Telegram? Instale e toque neste link de novo.'],
+  de: ['Meinen Link kopieren', 'Noch kein Telegram? Installiere es und tippe dann erneut auf diesen Link.'], it: ['Copia il mio link', 'Non hai ancora Telegram? Installalo e poi tocca di nuovo questo link.'],
+  tr: ['Bağlantımı kopyala', 'Henüz Telegram yok mu? Yükle, sonra bu bağlantıya tekrar dokun.'], ru: ['Скопировать ссылку', 'Ещё нет Telegram? Установи его и снова нажми на эту ссылку.'],
+  ar: ['انسخ رابطي', 'ليس لديك تيليجرام بعد؟ ثبّته ثم اضغط على هذا الرابط مرة أخرى.']
+};
 function tonStatsHtml() {
   const s = TON_ST; if (!s) return '';
   const L = TONS[lang] || TONS.en, m = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
@@ -1756,12 +1771,15 @@ function tonSheet() {
   d.innerHTML = `<div class="card" style="max-height:88vh;overflow:auto"><div class="label">${esc(x.h)}</div><p style="margin:0 0 10px;font-size:15px"><b>${esc(x.s)}</b></p>`
     + `<div class="tondet">${tonDetHtml()}</div><div class="tonst">${tonStatsHtml()}</div>`
     + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('')
-    + `<div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
+    + `<div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="tonwa" style="flex:1;margin:0">📲 WhatsApp</button><button class="btn" id="toncp" style="flex:1;margin:0">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
   document.body.appendChild(d);
   // live: the balance is refreshed every 20 s while the sheet is open
   const live = setInterval(() => { if (!document.body.contains(d)) { clearInterval(live); return; } tonStats(); }, 20000);
   d.onclick = (e) => { if (e.target === d || e.target.id === 'tonsc') { d.remove(); clearInterval(live); } };
   d.querySelector('#tonsi').onclick = () => { d.remove(); clearInterval(live); tonInvite(); };
+  const myLink = 'https://t.me/' + BOT + '?start=ref_' + ((st && st.me && st.me.id) || ''), O = TONOUT[lang] || TONOUT.en;
+  d.querySelector('#tonwa').onclick = () => { haptic(); api('ev', { k: 'ton_wa' }).catch(() => {}); outWa(t('invShare') + ' 👉 ' + myLink + '\n\n(' + O[1] + ')'); };
+  d.querySelector('#toncp').onclick = () => { haptic(); api('ev', { k: 'ton_copy' }).catch(() => {}); outCopy(myLink, '✅ ' + myLink); };
   d.querySelector('#tonse').onclick = () => { haptic(); api('ev', { k: 'ton_earn' }).catch(() => {}); openLink(TON_EARN); };
 }
 let view = 'match';
