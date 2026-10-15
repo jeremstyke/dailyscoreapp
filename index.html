@@ -313,7 +313,7 @@ async function showInter() {
     let c = {}; try { c = JSON.parse(localStorage.getItem('ds_inter3') || '{}'); } catch (e) {}
     const n = c.d === today ? c.n || 0 : 0;
     // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
-    if (!TADS_DEBUG() && String(st.me.id) !== '7057960224' && ((st.me.picks || 0) < 2 || n >= 1)) return; // TEMP 15 oct 2026: owner test, interstitial at every opening
+    if (!TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
     localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
     // 15 oct 2026: the Adsgram script may not be loaded yet 1 second after opening: wait for it (10 s at most), and log each step
     api('ev', { k: 'ad_inter_try' }).catch(() => {});
