@@ -1800,13 +1800,38 @@ function tonBlock() {
   const x = tonT();
   return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 6px">${esc(x.s)}</small><div class="tonst">${tonStatsHtml()}</div><button class="btn" data-ton="earn" style="margin:0">${esc(DSG().progs)}</button></div>`;
 }
+// 15 oct 2026: the look of the TON sheet (same as Meme Coin Tycoon and GramPedia)
+(() => {
+  const st0 = document.createElement('style');
+  st0.textContent = '.tsxo{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}'
+    + '.tsx{width:100%;max-width:520px;max-height:90vh;overflow:auto;background:linear-gradient(180deg,#1d2142 0%,#121522 40%);color:#fff;border-radius:24px 24px 0 0;padding:10px 16px 26px;box-sizing:border-box;box-shadow:0 -10px 40px rgba(0,0,0,.5);animation:tsxUp .25s ease-out;text-align:start}'
+    + '@keyframes tsxUp{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}'
+    + '.tsx .grab{width:42px;height:5px;border-radius:9px;background:rgba(255,255,255,.25);margin:0 auto 14px}'
+    + '.tsx .hero{display:flex;gap:12px;align-items:center;margin:0 0 10px}'
+    + '.tsx .hero .ic{flex:none;width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:radial-gradient(circle at 30% 25%,#e6ffd6,#7dff6b 55%,#2a8a1e);box-shadow:0 6px 22px rgba(125,255,107,.35)}'
+    + '.tsx .hero b{display:block;font-size:21px;font-weight:900;letter-spacing:-.01em}'
+    + '.tsx .hero span{display:inline-block;margin-top:4px;font-size:12px;font-weight:800;color:#062a33;background:linear-gradient(90deg,#2ee6ff,#4ff0b7);padding:3px 10px;border-radius:999px}'
+    + '.tsx .sub{font-size:13px;opacity:.75;margin:0 0 14px;line-height:1.45}'
+    + '.tsx .cta{display:block;width:100%;border:0;border-radius:16px;padding:15px;font-weight:900;font-size:16px;color:#062a33;background:linear-gradient(90deg,#2ee6ff,#4ff0b7);box-shadow:0 6px 0 #0b8f86;cursor:pointer}'
+    + '.tsx .cta:active{transform:translateY(3px);box-shadow:0 3px 0 #0b8f86}'
+    + '.tsx .row{display:flex;gap:8px;margin:12px 0 16px}'
+    + '.tsx .sec{flex:1;border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:11px 6px;font-weight:700;font-size:14px;color:#fff;background:rgba(255,255,255,.06);cursor:pointer}'
+    + '.tsx details.how{margin:6px 0 10px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04)}'
+    + '.tsx details.how summary{cursor:pointer;font-weight:800;font-size:14px;list-style:none}.tsx details.how summary::-webkit-details-marker{display:none}'
+    + '.tsx .more{display:block;width:100%;border:0;background:none;color:#9fe9ff;font-weight:700;font-size:14px;padding:12px;cursor:pointer}'
+    + '.tsx .close{text-align:center;opacity:.6;font-size:13px;cursor:pointer;padding:4px}';
+  document.head.appendChild(st0);
+})();
 function tonSheet() {
   const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
-  const d = document.createElement('div'); d.className = 'sheet';
-  d.innerHTML = `<div class="card" style="max-height:88vh;overflow:auto"><div class="label">${esc(x.h)}</div><p style="margin:0 0 10px;font-size:15px"><b>${esc(x.s)}</b></p>`
-    + `<div class="tondet">${tonDetHtml()}</div><div class="tonst">${tonStatsHtml()}</div>`
-    + '<details style="margin:0 0 10px"><summary style="cursor:pointer;font-size:14px;font-weight:700;margin-bottom:8px">' + esc(({ en: 'How it works', fr: 'Comment ça marche', es: 'Cómo funciona', pt: 'Como funciona', de: 'So funktioniert es', it: 'Come funziona', tr: 'Nasıl çalışır', ru: 'Как это работает', ar: 'كيف يعمل' })[lang] || 'How it works') + ' ▾</summary>' + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('') + '</details>'
-    + `<button class="btn go" id="tonsi">${esc(x.inv)}</button><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="tonwa" style="flex:1;margin:0">📲 WhatsApp</button><button class="btn" id="toncp" style="flex:1;margin:0">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div><button class="btn" id="tonse" style="margin-top:8px">${esc(DSG().progs)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
+  const d = document.createElement('div'); d.className = 'tsxo';
+  const how = ({ en: 'How it works', fr: 'Comment ça marche', es: 'Cómo funciona', pt: 'Como funciona', de: 'So funktioniert es', it: 'Come funziona', tr: 'Nasıl çalışır', ru: 'Как это работает', ar: 'كيف يعمل' })[lang] || 'How it works';
+  d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">⚽</div><div><b>${esc(x.h.replace(/^💎 /, ''))}</b><span>+ ${tonMoney((TON_ST && TON_ST.usd) || 0.05)} TON</span></div></div><p class="sub">${esc(x.s)}</p>`
+    + `<div class="tondet">${tonDetHtml()}</div>`
+    + `<button class="cta" id="tonsi">${esc(x.inv)}</button><div class="row"><button class="sec" id="tonwa">📲 WhatsApp</button><button class="sec" id="toncp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
+    + `<div class="tonst">${tonStatsHtml()}</div>`
+    + `<details class="how"><summary>📖 ${esc(how)} ▾</summary><div style="margin-top:10px">` + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('') + `</div></details>`
+    + `<button class="more" id="tonse">${esc(DSG().progs)}</button><div class="close" id="tonsc">${esc(x.close)}</div></div>`;
   document.body.appendChild(d);
   // live: the balance is refreshed every 20 s while the sheet is open
   const live = setInterval(() => { if (!document.body.contains(d)) { clearInterval(live); return; } tonStats(); }, 20000);
