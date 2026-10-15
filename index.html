@@ -1695,6 +1695,9 @@ const TOND = {
   ru: { tot: 'Мой общий баланс', earn: '💰 Бонус Earn', tap: '💎 Алмаз', other: '🏆 Конкурс и бонусы', here: 'здесь', paid: 'Уже получено', wait: 'Выплачивается', pay: (m) => 'Выплата каждый понедельник от ' + m + ' на твой TON-кошелёк', nowal: '👛 Добавь кошелёк в Earn, чтобы получить выплату', wal: '✅ Кошелёк добавлен' },
   ar: { tot: 'رصيدي الإجمالي', earn: '💰 مكافأة Earn', tap: '💎 الماسة', other: '🏆 المسابقة والمكافآت', here: 'هنا', paid: 'تم استلامه', wait: 'قيد الدفع', pay: (m) => 'يُدفع كل يوم اثنين من ' + m + ' إلى محفظة TON', nowal: '👛 أضف محفظتك في Earn لتحصل على أموالك', wal: '✅ تمت إضافة المحفظة' }
 };
+// 15 oct 2026: "Add my wallet" opens Earn by Jeremstyke right on the wallet field
+const TONW = { en: '👛 Add my wallet', fr: '👛 Ajouter mon portefeuille', es: '👛 Añadir mi billetera', pt: '👛 Adicionar minha carteira', de: '👛 Mein Wallet hinzufügen', it: '👛 Aggiungi il mio wallet', tr: '👛 Cüzdanımı ekle', ru: '👛 Добавить кошелёк', ar: '👛 أضف محفظتي' };
+function tonGoWal() { haptic(); api('ev', { k: 'ton_wallet' }).catch(() => {}); openLink('https://t.me/earnbyjeremstykebot?startapp=wallet_ds'); }
 const TONG = { mct: '🪙 Meme Coin Tycoon', gp: '📚 GramPedia', ds: '⚽ Daily Score' };
 const tonMoney = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
 function tonDetHtml() {
@@ -1704,7 +1707,7 @@ function tonDetHtml() {
   return `<div style="margin:0 0 12px;padding:14px;border-radius:16px;border:1px solid rgba(46,230,255,.45);background:rgba(46,230,255,.08)"><small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(D.tot)}</small><div style="font-size:34px;font-weight:900;line-height:1.15;margin:2px 0 8px">${tonMoney(a.total)}</div>`
     + keys.map(row).join('')
     + (Number(a.paid) || Number(a.waiting) ? `<small style="display:block;margin-top:8px;opacity:.75">${Number(a.paid) ? '💸 ' + esc(D.paid) + ' ' + tonMoney(a.paid) : ''}${Number(a.paid) && Number(a.waiting) ? ' · ' : ''}${Number(a.waiting) ? '⏳ ' + esc(D.wait) + ' ' + tonMoney(a.waiting) : ''}</small>` : '')
-    + `<small style="display:block;margin-top:8px;opacity:.75">${esc(D.pay(tonMoney(a.min)))}</small><small style="display:block;margin-top:4px;font-weight:600">${esc(a.wallet ? D.wal : D.nowal)}</small></div>`;
+    + `<small style="display:block;margin-top:8px;opacity:.75">${esc(D.pay(tonMoney(a.min)))}</small>${a.wallet ? '<small style="display:block;margin-top:4px;font-weight:600">' + esc(D.wal) + '</small>' : '<button class="btn go" onclick="tonGoWal()" style="margin-top:10px">' + esc(TONW[lang] || TONW.en) + '</button>'}</div>`;
 }
 function tonStatsHtml() {
   const s = TON_ST; if (!s) return '';
