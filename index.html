@@ -1699,8 +1699,8 @@ const TONG = { mct: '🪙 Meme Coin Tycoon', gp: '📚 GramPedia', ds: '⚽ Dail
 const tonMoney = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
 function tonDetHtml() {
   const a = TON_ST && TON_ST.all; if (!a) return '';
-  const D = TOND[lang] || TOND.en, dd = a.detail || {}, keys = ['mct', 'gp', 'ds'].concat(['earn', 'tap', 'other'].filter((k) => Number(dd[k]) > 0));
-  const row = (k) => `<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid rgba(255,255,255,.08);font-size:14px${k === 'ds' ? ';font-weight:700' : ''}"><span>${esc(TONG[k] || D[k])}${k === 'ds' ? ' <small style="opacity:.6">(' + esc(D.here) + ')</small>' : ''}</span><b>${tonMoney(dd[k])}</b></div>`;
+  const D = TOND[lang] || TOND.en, dd = a.detail || {}, keys = ['mct', 'gp', 'ds', 'earn', 'tap'].concat(['other'].filter((k) => Number(dd[k]) > 0));
+  const row = (k) => `<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid rgba(255,255,255,.08);font-size:14px${k === 'ds' ? ';font-weight:700' : ''}"><span>${esc(TONG[k] || D[k])}${k === 'ds' ? ' <small style="opacity:.6">(' + esc(D.here) + ')</small>' : ''}</span><b>${k === 'tap' && Number(dd[k]) > 0 && Number(dd[k]) < 0.01 ? Number(dd[k]).toFixed(4) + ' $' : tonMoney(dd[k])}</b></div>`;
   return `<div style="margin:0 0 12px;padding:14px;border-radius:16px;border:1px solid rgba(46,230,255,.45);background:rgba(46,230,255,.08)"><small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(D.tot)}</small><div style="font-size:34px;font-weight:900;line-height:1.15;margin:2px 0 8px">${tonMoney(a.total)}</div>`
     + keys.map(row).join('')
     + (Number(a.paid) || Number(a.waiting) ? `<small style="display:block;margin-top:8px;opacity:.75">${Number(a.paid) ? '💸 ' + esc(D.paid) + ' ' + tonMoney(a.paid) : ''}${Number(a.paid) && Number(a.waiting) ? ' · ' : ''}${Number(a.waiting) ? '⏳ ' + esc(D.wait) + ' ' + tonMoney(a.waiting) : ''}</small>` : '')
