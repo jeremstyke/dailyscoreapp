@@ -1661,7 +1661,7 @@ const TONX = {
   ar: { h: '💎 اربح TON حقيقية', s: '0.05 $ بعملة TON عن كل صديق يقدّم 4 توقعات', inv: '📣 ادعُ أصدقائي', my: '💰 أرباحي من TON', st: ['شارك رابط الدعوة الخاص بك', 'يقدّم صديقك 4 توقعات (توقع واحد يوميًا)', 'تربح 0.05 $ بعملة TON عن كل صديق، بلا حدود', 'الدفع إلى محفظة TON الخاصة بك من 0.10 $، خلال 7 أيام'], n: 'رصيدك ومحفظة TON موجودان في Earn by Jeremstyke.', close: 'لاحقًا' },
 };
 const tonT = () => TONX[lang] || TONX.en;
-const TON_EARN = 'https://t.me/earnbyjeremstykebot?start=ds';
+const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
 const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
 function tonBanner() {
   if (!IN_TG || !st || !st.me) return '';
