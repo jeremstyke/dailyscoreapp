@@ -1663,7 +1663,20 @@ const TONX = {
   ar: { h: '💎 اربح TON حقيقية', s: '0.05 $ بعملة TON عن كل صديق يقدّم 4 توقعات', inv: '📣 ادعُ أصدقائي', my: '💰 أرباحي من TON', st: ['شارك رابط الدعوة الخاص بك', 'يقدّم صديقك 4 توقعات (توقع واحد يوميًا)', 'تربح 0.05 $ بعملة TON عن كل صديق، بلا حدود', 'الدفع إلى محفظة TON الخاصة بك من 0.10 $، خلال 7 أيام'], n: 'رصيدك ومحفظة TON موجودان في Earn by Jeremstyke.', close: 'لاحقًا' },
 };
 const tonT = () => TONX[lang] || TONX.en;
-const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
+// 15 oct 2026: the friends invited here also count in the weekly contest of Earn by Jeremstyke
+const TONC = {
+  en: '🏆 Your friends also count in the weekly contest on Earn by Jeremstyke: $1, $0.50 and $0.25 in TON for the top 3 every Monday, on top of your earnings.',
+  fr: '🏆 Tes amis comptent aussi pour le concours de la semaine sur Earn by Jeremstyke : 1 $, 0,50 $ et 0,25 $ en TON pour le top 3 chaque lundi, en plus de tes gains.',
+  es: '🏆 Tus amigos también cuentan en el concurso semanal de Earn by Jeremstyke: 1 $, 0,50 $ y 0,25 $ en TON para el top 3 cada lunes, además de tus ganancias.',
+  pt: '🏆 Seus amigos também contam no concurso semanal do Earn by Jeremstyke: 1 $, 0,50 $ e 0,25 $ em TON para o top 3 toda segunda, além dos seus ganhos.',
+  de: '🏆 Deine Freunde zählen auch beim Wochenwettbewerb in Earn by Jeremstyke: 1 $, 0,50 $ und 0,25 $ in TON für die Top 3 jeden Montag, zusätzlich zu deinen Einnahmen.',
+  it: '🏆 I tuoi amici contano anche nel concorso settimanale di Earn by Jeremstyke: 1 $, 0,50 $ e 0,25 $ in TON per la top 3 ogni lunedì, oltre ai tuoi guadagni.',
+  tr: '🏆 Arkadaşların Earn by Jeremstyke\'taki haftalık yarışmada da sayılır: her pazartesi ilk 3\'e TON olarak 1 $, 0,50 $ ve 0,25 $, kazançlarına ek olarak.',
+  ru: '🏆 Твои друзья также учитываются в еженедельном конкурсе Earn by Jeremstyke: 1 $, 0,50 $ и 0,25 $ в TON для топ-3 каждый понедельник, сверх твоих доходов.',
+  ar: '🏆 أصدقاؤك يُحتسبون أيضًا في المسابقة الأسبوعية في Earn by Jeremstyke: 1 $ و0.50 $ و0.25 $ بعملة TON لأفضل 3 كل يوم اثنين، إضافةً إلى أرباحك.'
+};
+const tonC = () => TONC[lang] || TONC.en;
+const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=contest_ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
 const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
 function tonBanner() {
   if (!IN_TG || !st || !st.me) return '';
@@ -1673,14 +1686,14 @@ function tonBanner() {
 function tonBlock() {
   if (!IN_TG) return '';
   const x = tonT();
-  return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 8px">${esc(x.s)}</small><button class="btn" data-ton="earn" style="margin:0">${esc(x.my)}</button></div>`;
+  return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 6px">${esc(x.s)}</small><small style="display:block;margin:0 0 8px;color:#ffd43b">${esc(tonC())}</small><button class="btn" data-ton="earn" style="margin:0">${esc(x.my)}</button></div>`;
 }
 function tonSheet() {
   const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {});
   const d = document.createElement('div'); d.className = 'sheet';
   d.innerHTML = `<div class="card" style="max-height:88vh;overflow:auto"><div class="label">${esc(x.h)}</div><p style="margin:0 0 10px;font-size:15px"><b>${esc(x.s)}</b></p>`
     + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('')
-    + `<div class="note" style="margin:6px 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
+    + `<div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
   document.body.appendChild(d);
   d.onclick = (e) => { if (e.target === d || e.target.id === 'tonsc') d.remove(); };
   d.querySelector('#tonsi').onclick = () => { d.remove(); tonInvite(); };
