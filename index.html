@@ -1707,7 +1707,6 @@ function tonDetHtml() {
   return `<div style="margin:0 0 12px;padding:14px;border-radius:16px;border:1px solid rgba(46,230,255,.45);background:rgba(46,230,255,.08)"><small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(D.tot)}</small><div style="font-size:34px;font-weight:900;line-height:1.15;margin:2px 0 8px">${tonMoney(a.total)}</div>`
     + keys.map(row).join('')
     + (Number(a.paid) || Number(a.waiting) ? `<small style="display:block;margin-top:8px;opacity:.75">${Number(a.paid) ? '💸 ' + esc(D.paid) + ' ' + tonMoney(a.paid) : ''}${Number(a.paid) && Number(a.waiting) ? ' · ' : ''}${Number(a.waiting) ? '⏳ ' + esc(D.wait) + ' ' + tonMoney(a.waiting) : ''}</small>` : '')
-    + tonPendHtml(a.pending, esc((TONS[lang] || TONS.en)[1]), (n) => '👥 ' + n, tonMoney)
     + `<small style="display:block;margin-top:8px;opacity:.75">${esc(D.pay(tonMoney(a.min)))}</small>${a.wallet ? '<small style="display:block;margin-top:4px;font-weight:600">' + esc(D.wal) + '</small>' : '<button class="btn go" onclick="tonGoWal()" style="margin-top:10px">' + esc(TONW[lang] || TONW.en) + '</button>'}</div>`;
 }
 // 15 oct 2026: the money waiting: friends who still have to play, with their progress (Meme Coin Tycoon: days /3 and trades /5,
@@ -1716,10 +1715,16 @@ function tonPendHtml(p, pend, need, M) {
   if (!p || !p.n) return '';
   const prog = (f) => f.app === 'mct' ? '📅 ' + Math.min(f.dy, 3) + '/3 · 🔁 ' + Math.min(f.tr, 5) + '/5' : f.app === 'ds' ? '⚽ ' + Math.min(f.tr, 4) + '/4' : '📚 ' + (f.tr > 0 ? '⏳' : '0/1');
   const ic = { mct: '🪙', ds: '⚽', gp: '📚' };
-  return `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">⏳ <b>${pend} : ${M(p.usd)}</b> <small style="opacity:.7">(${need(p.n)})</small></summary>`
+  // 15 oct 2026: shown big, right under the total balance, to motivate (the list of friends opens below)
+  return `<div style="margin:10px 0 8px;padding:10px 12px;border-radius:12px;background:rgba(255,212,59,.12);border:1px solid rgba(255,212,59,.5)"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700">⏳ ${pend}</span><b style="font-size:24px;color:#ffd43b;white-space:nowrap">+ ${M(p.usd)}</b></div><small style="display:block;opacity:.8;margin-top:2px">${need(p.n)}</small>`
+    + `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:13px;opacity:.85">👥 ${p.n} ▾</summary>`
     + (p.friends || []).map((f) => `<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:13px;border-top:1px solid rgba(255,255,255,.06)"><span>${ic[f.app] || ''} ${esc(f.name)}</span><span style="opacity:.8;white-space:nowrap">${prog(f)}</span></div>`).join('')
-    + (p.n > (p.friends || []).length ? `<small style="opacity:.6">+ ${p.n - p.friends.length}</small>` : '') + `</details>`;
+    + (p.n > (p.friends || []).length ? `<small style="opacity:.6">+ ${p.n - p.friends.length}</small>` : '') + `</details></div>`;
 }
+// puts the waiting block right after the total (the first closing div of the balance card)
+function tonPendIn(h, x) { const i = h.indexOf('</div>') + 6; return i > 5 ? h.slice(0, i) + x + h.slice(i) : h + x; }
+const tonDetHtml0 = tonDetHtml;
+tonDetHtml = () => { const a = TON_ST && TON_ST.all; return tonPendIn(tonDetHtml0(), a ? tonPendHtml(a.pending, esc((TONS[lang] || TONS.en)[1]), (n) => '👥 ' + n, tonMoney) : ''); };
 function tonStatsHtml() {
   const s = TON_ST; if (!s) return '';
   const L = TONS[lang] || TONS.en, m = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
