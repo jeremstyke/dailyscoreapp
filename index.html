@@ -1724,7 +1724,42 @@ function tonPendHtml(p, pend, need, M) {
 // puts the waiting block right after the total (the first closing div of the balance card)
 function tonPendIn(h, x) { const i = h.indexOf('</div>') + 6; return i > 5 ? h.slice(0, i) + x + h.slice(i) : h + x; }
 const tonDetHtml0 = tonDetHtml;
-tonDetHtml = () => { const a = TON_ST && TON_ST.all; return tonPendIn(tonDetHtml0(), a ? tonPendHtml(a.pending, esc((TONS[lang] || TONS.en)[1]), (n) => '👥 ' + n, tonMoney) : ''); };
+// 15 oct 2026 (v2): Daily Score shows only its own program: its earnings, its friends waiting, and the TON wallet, added right here
+// (one wallet per person, shared by all the apps). The other referral programs are in Earn by Jeremstyke.
+const DSGX = {
+  en: { mine: 'My Daily Score earnings', need: (n) => n + (n > 1 ? ' friends' : ' friend') + ' still to make 4 predictions', ph: 'Paste your TON address (UQ... or EQ...)', h1: 'No TON address? It\'s free and takes 1 minute:', h2: 'Open <b>@wallet</b> in Telegram', h3: 'Tap <b>Receive</b>, then <b>TON</b>', h4: 'Copy the address and paste it here', ow: 'Open @wallet', sync: 'One wallet for all the apps (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Wallet saved ✅', bad: 'Invalid TON address', progs: '🔗 More referral programs (Earn)', chg: 'Change' },
+  fr: { mine: 'Mes gains Daily Score', need: (n) => n + (n > 1 ? ' amis doivent' : ' ami doit') + ' encore faire leurs 4 pronos', ph: 'Colle ton adresse TON (UQ... ou EQ...)', h1: 'Pas d\'adresse TON ? C\'est gratuit et ça prend 1 minute :', h2: 'Ouvre <b>@wallet</b> dans Telegram', h3: 'Touche <b>Recevoir</b>, puis <b>TON</b>', h4: 'Copie l\'adresse et colle-la ici', ow: 'Ouvrir @wallet', sync: 'Un seul portefeuille pour toutes les apps (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Portefeuille enregistré ✅', bad: 'Adresse TON invalide', progs: '🔗 Autres programmes de parrainage (Earn)', chg: 'Changer' },
+  es: { mine: 'Mis ganancias en Daily Score', need: (n) => n + ' amigo(s) aún deben hacer 4 pronósticos', ph: 'Pega tu dirección TON (UQ... o EQ...)', h1: '¿No tienes dirección TON? Es gratis y tarda 1 minuto:', h2: 'Abre <b>@wallet</b> en Telegram', h3: 'Toca <b>Recibir</b> y luego <b>TON</b>', h4: 'Copia la dirección y pégala aquí', ow: 'Abrir @wallet', sync: 'Una sola billetera para todas las apps (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Billetera guardada ✅', bad: 'Dirección TON no válida', progs: '🔗 Más programas de referidos (Earn)', chg: 'Cambiar' },
+  pt: { mine: 'Meus ganhos no Daily Score', need: (n) => n + ' amigo(s) ainda precisam fazer 4 palpites', ph: 'Cole seu endereço TON (UQ... ou EQ...)', h1: 'Sem endereço TON? É grátis e leva 1 minuto:', h2: 'Abra <b>@wallet</b> no Telegram', h3: 'Toque em <b>Receber</b> e depois em <b>TON</b>', h4: 'Copie o endereço e cole aqui', ow: 'Abrir @wallet', sync: 'Uma só carteira para todos os apps (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Carteira salva ✅', bad: 'Endereço TON inválido', progs: '🔗 Mais programas de indicação (Earn)', chg: 'Alterar' },
+  de: { mine: 'Meine Daily-Score-Einnahmen', need: (n) => n + ' Freund(e) müssen noch 4 Tipps abgeben', ph: 'Füge deine TON-Adresse ein (UQ... oder EQ...)', h1: 'Keine TON-Adresse? Kostenlos und in 1 Minute erledigt:', h2: 'Öffne <b>@wallet</b> in Telegram', h3: 'Tippe auf <b>Empfangen</b>, dann <b>TON</b>', h4: 'Kopiere die Adresse und füge sie hier ein', ow: '@wallet öffnen', sync: 'Ein Wallet für alle Apps (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Wallet gespeichert ✅', bad: 'Ungültige TON-Adresse', progs: '🔗 Weitere Empfehlungsprogramme (Earn)', chg: 'Ändern' },
+  it: { mine: 'I miei guadagni Daily Score', need: (n) => n + ' amico/i devono ancora fare 4 pronostici', ph: 'Incolla il tuo indirizzo TON (UQ... o EQ...)', h1: 'Nessun indirizzo TON? È gratis e ci vuole 1 minuto:', h2: 'Apri <b>@wallet</b> su Telegram', h3: 'Tocca <b>Ricevi</b>, poi <b>TON</b>', h4: 'Copia l\'indirizzo e incollalo qui', ow: 'Apri @wallet', sync: 'Un solo wallet per tutte le app (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Wallet salvato ✅', bad: 'Indirizzo TON non valido', progs: '🔗 Altri programmi di invito (Earn)', chg: 'Cambia' },
+  tr: { mine: 'Daily Score kazançlarım', need: (n) => n + ' arkadaşın hâlâ 4 tahmin yapması gerekiyor', ph: 'TON adresini yapıştır (UQ... veya EQ...)', h1: 'TON adresin yok mu? Ücretsiz ve 1 dakika sürer:', h2: 'Telegram\'da <b>@wallet</b> aç', h3: '<b>Al</b>\'a, sonra <b>TON</b>\'a dokun', h4: 'Adresi kopyala ve buraya yapıştır', ow: '@wallet aç', sync: 'Tüm uygulamalar için tek cüzdan (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Cüzdan kaydedildi ✅', bad: 'Geçersiz TON adresi', progs: '🔗 Diğer davet programları (Earn)', chg: 'Değiştir' },
+  ru: { mine: 'Мой заработок в Daily Score', need: (n) => 'Друзей, которым осталось сделать 4 прогноза: ' + n, ph: 'Вставь свой TON-адрес (UQ... или EQ...)', h1: 'Нет TON-адреса? Это бесплатно и займёт 1 минуту:', h2: 'Открой <b>@wallet</b> в Telegram', h3: 'Нажми <b>Получить</b>, затем <b>TON</b>', h4: 'Скопируй адрес и вставь его сюда', ow: 'Открыть @wallet', sync: 'Один кошелёк для всех приложений (Meme Coin Tycoon, GramPedia, Earn…).', saved: 'Кошелёк сохранён ✅', bad: 'Неверный TON-адрес', progs: '🔗 Другие реферальные программы (Earn)', chg: 'Изменить' },
+  ar: { mine: 'أرباحي في Daily Score', need: (n) => 'أصدقاء عليهم تقديم 4 توقعات: ' + n, ph: 'الصق عنوان TON الخاص بك (UQ... أو EQ...)', h1: 'ليس لديك عنوان TON؟ إنه مجاني ويستغرق دقيقة:', h2: 'افتح <b>@wallet</b> في تيليجرام', h3: 'اضغط <b>استلام</b> ثم <b>TON</b>', h4: 'انسخ العنوان والصقه هنا', ow: 'افتح @wallet', sync: 'محفظة واحدة لكل التطبيقات (Meme Coin Tycoon و GramPedia و Earn…).', saved: 'تم حفظ المحفظة ✅', bad: 'عنوان TON غير صالح', progs: '🔗 برامج إحالة أخرى (Earn)', chg: 'تغيير' }
+};
+const DSG = () => DSGX[lang] || DSGX.en;
+const dsWalOpen = () => { const f = document.getElementById('gamewf'); return !!(f && f.style.display !== 'none'); };
+function dsWalShow() { const f = document.getElementById('gamewf'); if (!f) return; f.style.display = ''; const i = document.getElementById('gamewa'); if (i) { i.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => { try { i.focus(); } catch (e) {} }, 400); } }
+function dsOpenW() { haptic(); try { tg.openTelegramLink('https://t.me/wallet'); } catch (e) { window.open('https://t.me/wallet', '_blank'); } }
+async function dsWalSave() {
+  const i = document.getElementById('gamewa'), v = ((i && i.value) || '').trim(); if (!v) return;
+  haptic(); let r; try { r = await api('ton_wallet', { addr: v }); } catch (e) { r = null; }
+  if (!r || !r.ok) { toast(DSG().bad); return; }
+  toast(DSG().saved); const f = document.getElementById('gamewf'); if (f) f.style.display = 'none'; tonStats();
+}
+tonDetHtml = () => {
+  const s = TON_ST; if (!s) return '';
+  const a = s.all || {}, P = a.pending || {}, fl = (P.friends || []).filter((f) => f.app === 'ds'), pn = Number(s.pending || 0), D = TOND[lang] || TOND.en, G = DSG(), M = tonMoney;
+  let h = `<small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(G.mine)}</small><div style="font-size:34px;font-weight:900;line-height:1.15;margin:2px 0 6px">${M(s.balance)}</div>`;
+  h += tonPendHtml({ n: pn, usd: pn * Number(s.usd || 0), friends: fl }, esc((TONS[lang] || TONS.en)[1]), (n) => esc(G.need(n)), M);
+  if (Number(s.paid)) h += `<small style="display:block;margin-top:8px;opacity:.75">💸 ${esc(D.paid)} ${M(s.paid)}</small>`;
+  h += `<small style="display:block;margin-top:8px;opacity:.75">${esc(D.pay(M(a.min || s.min)))}</small>`;
+  h += a.wallet ? `<div style="margin-top:8px;font-size:14px;font-weight:700">${esc(D.wal)} <a href="#" onclick="dsWalShow();return false" style="font-weight:400;opacity:.7;text-decoration:underline;color:inherit;margin-left:6px">${esc(G.chg)}</a></div>`
+    : `<button class="btn go" onclick="dsWalShow()" style="margin-top:10px">${esc(TONW[lang] || TONW.en)}</button>`;
+  h += `<div id="gamewf" style="display:none;margin-top:10px"><div style="display:flex;gap:8px"><input id="gamewa" placeholder="${esc(G.ph)}" autocomplete="off" spellcheck="false" style="flex:1;min-width:0;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;font-size:14px"><button class="btn go" onclick="dsWalSave()" style="width:auto;margin:0;padding:12px 16px">OK</button></div>`
+    + `<div style="margin-top:8px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);font-size:13px;line-height:1.5"><b>${G.h1}</b><br>1. ${G.h2}<br>2. ${G.h3}<br>3. ${G.h4}<button class="btn" onclick="dsOpenW()" style="margin-top:8px">👛 ${esc(G.ow)}</button></div><small style="display:block;margin-top:6px;opacity:.7">${esc(G.sync)}</small></div>`;
+  return `<div style="margin:0 0 12px;padding:14px;border-radius:16px;border:1px solid rgba(46,230,255,.45);background:rgba(46,230,255,.08)">${h}</div>`;
+};
 // 15 oct 2026: share outside Telegram (WhatsApp, Messenger, SMS...): the friend still opens the game in Telegram
 function outCopy(v, ok) {
   let done = false;
@@ -1744,15 +1779,15 @@ function tonStatsHtml() {
   const s = TON_ST; if (!s) return '';
   const L = TONS[lang] || TONS.en, m = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
   const tile = (b, l) => `<div style="flex:1;min-width:0;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.06);text-align:center"><b style="display:block;font-size:17px">${b}</b><small style="display:block;font-size:11px;color:var(--mute)">${esc(l)}</small></div>`;
-  return `<div style="display:flex;gap:6px;margin:0 0 8px">${tile('✅ ' + Number(s.valid || 0), L[0])}${tile('⏳ ' + Number(s.pending || 0), L[1])}${tile(m(s.all ? s.all.total : s.balance), s.all ? (TOND[lang] || TOND.en).tot : L[2])}</div>`;
+  return `<div style="display:flex;gap:6px;margin:0 0 8px">${tile('✅ ' + Number(s.valid || 0), L[0])}${tile('⏳ ' + Number(s.pending || 0), L[1])}${tile(m(s.balance), L[2])}</div>`;
 }
 function tonStats() {
   if (!IN_TG) return;
-  const fill = () => { document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); }); document.querySelectorAll('.tondet').forEach((el) => { el.innerHTML = tonDetHtml(); }); };
+  const fill = () => { document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); }); if (!dsWalOpen()) document.querySelectorAll('.tondet').forEach((el) => { el.innerHTML = tonDetHtml(); }); };
   if (TON_ST) fill();
   api('ton', {}).then((s) => { if (s && s.ok) { TON_ST = s; fill(); } }).catch(() => {});
 }
-const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
+const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=progs_ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
 const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
 function tonBanner() {
   if (!IN_TG || !st || !st.me) return '';
@@ -1763,7 +1798,7 @@ function tonBlock() {
   if (!IN_TG) return '';
   setTimeout(tonStats, 0);
   const x = tonT();
-  return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 6px">${esc(x.s)}</small><small style="display:block;margin:0 0 8px;color:#ffd43b">${esc(tonC())}</small><div class="tonst">${tonStatsHtml()}</div><button class="btn" data-ton="earn" style="margin:0">${esc(x.my)}</button></div>`;
+  return `<div style="margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08)"><b style="display:block;font-size:15px">${esc(x.h)}</b><small style="display:block;color:var(--mute);margin:2px 0 6px">${esc(x.s)}</small><div class="tonst">${tonStatsHtml()}</div><button class="btn" data-ton="earn" style="margin:0">${esc(DSG().progs)}</button></div>`;
 }
 function tonSheet() {
   const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
@@ -1771,7 +1806,7 @@ function tonSheet() {
   d.innerHTML = `<div class="card" style="max-height:88vh;overflow:auto"><div class="label">${esc(x.h)}</div><p style="margin:0 0 10px;font-size:15px"><b>${esc(x.s)}</b></p>`
     + `<div class="tondet">${tonDetHtml()}</div><div class="tonst">${tonStatsHtml()}</div>`
     + '<details style="margin:0 0 10px"><summary style="cursor:pointer;font-size:14px;font-weight:700;margin-bottom:8px">' + esc(({ en: 'How it works', fr: 'Comment ça marche', es: 'Cómo funciona', pt: 'Como funciona', de: 'So funktioniert es', it: 'Come funziona', tr: 'Nasıl çalışır', ru: 'Как это работает', ar: 'كيف يعمل' })[lang] || 'How it works') + ' ▾</summary>' + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('') + '</details>'
-    + `<div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="tonwa" style="flex:1;margin:0">📲 WhatsApp</button><button class="btn" id="toncp" style="flex:1;margin:0">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
+    + `<button class="btn go" id="tonsi">${esc(x.inv)}</button><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="tonwa" style="flex:1;margin:0">📲 WhatsApp</button><button class="btn" id="toncp" style="flex:1;margin:0">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div><button class="btn" id="tonse" style="margin-top:8px">${esc(DSG().progs)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
   document.body.appendChild(d);
   // live: the balance is refreshed every 20 s while the sheet is open
   const live = setInterval(() => { if (!document.body.contains(d)) { clearInterval(live); return; } tonStats(); }, 20000);
