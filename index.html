@@ -1786,16 +1786,22 @@ function tonStatsHtml() {
 }
 function tonStats() {
   if (!IN_TG) return;
-  const fill = () => { document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); }); if (!dsWalOpen()) document.querySelectorAll('.tondet').forEach((el) => { el.innerHTML = tonDetHtml(); }); };
+  const fill = () => { document.querySelectorAll('.tonmini').forEach((el) => { if (TON_ST) el.textContent = dsMini(TON_ST); }); document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); }); if (!dsWalOpen()) document.querySelectorAll('.tondet').forEach((el) => { el.innerHTML = tonDetHtml(); }); };
   if (TON_ST) fill();
   api('ton', {}).then((s) => { if (s && s.ok) { TON_ST = s; fill(); } }).catch(() => {});
 }
 const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=progs_ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
 const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
+// 15 oct 2026: the home banner shows the player's validated, pending and paid amounts
+function dsMini(s) {
+  const W = ({ en: ['validated', 'pending', 'paid'], fr: ['validé', 'en attente', 'payé'], es: ['validado', 'pendiente', 'pagado'], pt: ['validado', 'pendente', 'pago'], de: ['bestätigt', 'ausstehend', 'ausgezahlt'], it: ['convalidato', 'in attesa', 'pagato'], tr: ['onaylandı', 'beklemede', 'ödendi'], ru: ['подтверждено', 'в ожидании', 'выплачено'], ar: ['مؤكد', 'قيد الانتظار', 'مدفوع'] })[lang] || ['validated', 'pending', 'paid'];
+  return '✅ ' + tonMoney(s.balance) + ' ' + W[0] + ' · ⏳ ' + tonMoney(Number(s.pending || 0) * Number(s.usd || 0)) + ' ' + W[1] + ' · 💸 ' + tonMoney(Number(s.paid || 0) + Number(s.waiting || 0)) + ' ' + W[2];
+}
 function tonBanner() {
   if (!IN_TG || !st || !st.me) return '';
+  setTimeout(tonStats, 0);
   const x = tonT();
-  return `<div class="igban tonban" data-ton="sheet" style="background:linear-gradient(135deg,rgba(46,230,255,.16),rgba(198,255,61,.08));border-color:rgba(46,230,255,.4)"><span style="font-size:26px">💎</span><div style="min-width:0"><b>${esc(x.h.replace(/^💎 /, ''))}</b><small>${esc(x.s)}</small></div><span class="iggo" style="margin-left:auto;background:#2ee6ff;color:#062a33">TON</span></div>`;
+  return `<div class="igban tonban" data-ton="sheet" style="background:linear-gradient(135deg,rgba(46,230,255,.16),rgba(198,255,61,.08));border-color:rgba(46,230,255,.4)"><span style="font-size:26px">💎</span><div style="min-width:0"><b>${esc(x.h.replace(/^💎 /, ''))}</b><small class="tonmini">${esc(TON_ST ? dsMini(TON_ST) : x.s)}</small></div><span class="iggo" style="margin-left:auto;background:#2ee6ff;color:#062a33">TON</span></div>`;
 }
 function tonBlock() {
   if (!IN_TG) return '';
