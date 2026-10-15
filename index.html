@@ -1683,19 +1683,42 @@ const TONS = {
   tr: ['Geçerli arkadaşlar', 'Beklemede', 'Bakiye'], ru: ['Засчитано друзей', 'В ожидании', 'Баланс'], ar: ['أصدقاء مؤكَّدون', 'قيد الانتظار', 'الرصيد']
 };
 let TON_ST = null;
+// 15 oct 2026: the same live total balance in every app (Meme Coin Tycoon, GramPedia, Daily Score) and its detail per program
+const TOND = {
+  en: { tot: 'My total balance', earn: '💰 Earn bonus', tap: '💎 Diamond', other: '🏆 Contest and bonuses', here: 'here', paid: 'Already received', wait: 'Being paid', pay: (m) => 'Paid every Monday from ' + m + ' to your TON wallet', nowal: '👛 Add your wallet in Earn to get paid', wal: '✅ Wallet added' },
+  fr: { tot: 'Mon solde total', earn: '💰 Bonus Earn', tap: '💎 Diamant', other: '🏆 Concours et bonus', here: 'ici', paid: 'Déjà reçu', wait: 'En cours de paiement', pay: (m) => 'Payé chaque lundi dès ' + m + ' sur ton portefeuille TON', nowal: '👛 Ajoute ton portefeuille dans Earn pour être payé', wal: '✅ Portefeuille ajouté' },
+  es: { tot: 'Mi saldo total', earn: '💰 Bono Earn', tap: '💎 Diamante', other: '🏆 Concurso y bonos', here: 'aquí', paid: 'Ya recibido', wait: 'En pago', pay: (m) => 'Pagado cada lunes desde ' + m + ' a tu billetera TON', nowal: '👛 Añade tu billetera en Earn para cobrar', wal: '✅ Billetera añadida' },
+  pt: { tot: 'Meu saldo total', earn: '💰 Bônus Earn', tap: '💎 Diamante', other: '🏆 Concurso e bônus', here: 'aqui', paid: 'Já recebido', wait: 'Em pagamento', pay: (m) => 'Pago toda segunda a partir de ' + m + ' na sua carteira TON', nowal: '👛 Adicione sua carteira no Earn para receber', wal: '✅ Carteira adicionada' },
+  de: { tot: 'Mein Gesamtguthaben', earn: '💰 Earn-Bonus', tap: '💎 Diamant', other: '🏆 Wettbewerb und Boni', here: 'hier', paid: 'Bereits erhalten', wait: 'Wird ausgezahlt', pay: (m) => 'Auszahlung jeden Montag ab ' + m + ' auf dein TON-Wallet', nowal: '👛 Füge dein Wallet in Earn hinzu, um bezahlt zu werden', wal: '✅ Wallet hinzugefügt' },
+  it: { tot: 'Il mio saldo totale', earn: '💰 Bonus Earn', tap: '💎 Diamante', other: '🏆 Concorso e bonus', here: 'qui', paid: 'Già ricevuto', wait: 'In pagamento', pay: (m) => 'Pagato ogni lunedì da ' + m + ' sul tuo wallet TON', nowal: '👛 Aggiungi il tuo wallet in Earn per essere pagato', wal: '✅ Wallet aggiunto' },
+  tr: { tot: 'Toplam bakiyem', earn: '💰 Earn bonusu', tap: '💎 Elmas', other: '🏆 Yarışma ve bonuslar', here: 'burada', paid: 'Alınan', wait: 'Ödeniyor', pay: (m) => 'Her pazartesi ' + m + '\'dan itibaren TON cüzdanına ödenir', nowal: '👛 Ödeme almak için cüzdanını Earn\'e ekle', wal: '✅ Cüzdan eklendi' },
+  ru: { tot: 'Мой общий баланс', earn: '💰 Бонус Earn', tap: '💎 Алмаз', other: '🏆 Конкурс и бонусы', here: 'здесь', paid: 'Уже получено', wait: 'Выплачивается', pay: (m) => 'Выплата каждый понедельник от ' + m + ' на твой TON-кошелёк', nowal: '👛 Добавь кошелёк в Earn, чтобы получить выплату', wal: '✅ Кошелёк добавлен' },
+  ar: { tot: 'رصيدي الإجمالي', earn: '💰 مكافأة Earn', tap: '💎 الماسة', other: '🏆 المسابقة والمكافآت', here: 'هنا', paid: 'تم استلامه', wait: 'قيد الدفع', pay: (m) => 'يُدفع كل يوم اثنين من ' + m + ' إلى محفظة TON', nowal: '👛 أضف محفظتك في Earn لتحصل على أموالك', wal: '✅ تمت إضافة المحفظة' }
+};
+const TONG = { mct: '🪙 Meme Coin Tycoon', gp: '📚 GramPedia', ds: '⚽ Daily Score' };
+const tonMoney = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
+function tonDetHtml() {
+  const a = TON_ST && TON_ST.all; if (!a) return '';
+  const D = TOND[lang] || TOND.en, dd = a.detail || {}, keys = ['mct', 'gp', 'ds'].concat(['earn', 'tap', 'other'].filter((k) => Number(dd[k]) > 0));
+  const row = (k) => `<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid rgba(255,255,255,.08);font-size:14px${k === 'ds' ? ';font-weight:700' : ''}"><span>${esc(TONG[k] || D[k])}${k === 'ds' ? ' <small style="opacity:.6">(' + esc(D.here) + ')</small>' : ''}</span><b>${tonMoney(dd[k])}</b></div>`;
+  return `<div style="margin:0 0 12px;padding:14px;border-radius:16px;border:1px solid rgba(46,230,255,.45);background:rgba(46,230,255,.08)"><small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(D.tot)}</small><div style="font-size:34px;font-weight:900;line-height:1.15;margin:2px 0 8px">${tonMoney(a.total)}</div>`
+    + keys.map(row).join('')
+    + (Number(a.paid) || Number(a.waiting) ? `<small style="display:block;margin-top:8px;opacity:.75">${Number(a.paid) ? '💸 ' + esc(D.paid) + ' ' + tonMoney(a.paid) : ''}${Number(a.paid) && Number(a.waiting) ? ' · ' : ''}${Number(a.waiting) ? '⏳ ' + esc(D.wait) + ' ' + tonMoney(a.waiting) : ''}</small>` : '')
+    + `<small style="display:block;margin-top:8px;opacity:.75">${esc(D.pay(tonMoney(a.min)))}</small><small style="display:block;margin-top:4px;font-weight:600">${esc(a.wallet ? D.wal : D.nowal)}</small></div>`;
+}
 function tonStatsHtml() {
   const s = TON_ST; if (!s) return '';
   const L = TONS[lang] || TONS.en, m = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
   const tile = (b, l) => `<div style="flex:1;min-width:0;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.06);text-align:center"><b style="display:block;font-size:17px">${b}</b><small style="display:block;font-size:11px;color:var(--mute)">${esc(l)}</small></div>`;
-  return `<div style="display:flex;gap:6px;margin:0 0 8px">${tile('✅ ' + Number(s.valid || 0), L[0])}${tile('⏳ ' + Number(s.pending || 0), L[1])}${tile(m(s.balance), L[2])}</div>`;
+  return `<div style="display:flex;gap:6px;margin:0 0 8px">${tile('✅ ' + Number(s.valid || 0), L[0])}${tile('⏳ ' + Number(s.pending || 0), L[1])}${tile(m(s.all ? s.all.total : s.balance), s.all ? (TOND[lang] || TOND.en).tot : L[2])}</div>`;
 }
 function tonStats() {
   if (!IN_TG) return;
-  const fill = () => document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); });
+  const fill = () => { document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); }); document.querySelectorAll('.tondet').forEach((el) => { el.innerHTML = tonDetHtml(); }); };
   if (TON_ST) fill();
   api('ton', {}).then((s) => { if (s && s.ok) { TON_ST = s; fill(); } }).catch(() => {});
 }
-const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=contest_ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
+const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
 const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
 function tonBanner() {
   if (!IN_TG || !st || !st.me) return '';
@@ -1712,11 +1735,14 @@ function tonSheet() {
   const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
   const d = document.createElement('div'); d.className = 'sheet';
   d.innerHTML = `<div class="card" style="max-height:88vh;overflow:auto"><div class="label">${esc(x.h)}</div><p style="margin:0 0 10px;font-size:15px"><b>${esc(x.s)}</b></p>`
+    + `<div class="tondet">${tonDetHtml()}</div><div class="tonst">${tonStatsHtml()}</div>`
     + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('')
-    + `<div class="tonst">${tonStatsHtml()}</div><div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
+    + `<div class="note" style="margin:6px 0 6px;color:#ffd43b">${esc(tonC())}</div><div class="note" style="margin:0 0 10px">${esc(x.n)}</div><button class="btn go" id="tonsi">${esc(x.inv)}</button><button class="btn" id="tonse" style="margin-top:8px">${esc(x.my)}</button><div class="note" id="tonsc" style="cursor:pointer;text-decoration:underline;margin-top:10px">${esc(x.close)}</div></div>`;
   document.body.appendChild(d);
-  d.onclick = (e) => { if (e.target === d || e.target.id === 'tonsc') d.remove(); };
-  d.querySelector('#tonsi').onclick = () => { d.remove(); tonInvite(); };
+  // live: the balance is refreshed every 20 s while the sheet is open
+  const live = setInterval(() => { if (!document.body.contains(d)) { clearInterval(live); return; } tonStats(); }, 20000);
+  d.onclick = (e) => { if (e.target === d || e.target.id === 'tonsc') { d.remove(); clearInterval(live); } };
+  d.querySelector('#tonsi').onclick = () => { d.remove(); clearInterval(live); tonInvite(); };
   d.querySelector('#tonse').onclick = () => { haptic(); api('ev', { k: 'ton_earn' }).catch(() => {}); openLink(TON_EARN); };
 }
 let view = 'match';
