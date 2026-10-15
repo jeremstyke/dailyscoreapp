@@ -1707,7 +1707,18 @@ function tonDetHtml() {
   return `<div style="margin:0 0 12px;padding:14px;border-radius:16px;border:1px solid rgba(46,230,255,.45);background:rgba(46,230,255,.08)"><small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(D.tot)}</small><div style="font-size:34px;font-weight:900;line-height:1.15;margin:2px 0 8px">${tonMoney(a.total)}</div>`
     + keys.map(row).join('')
     + (Number(a.paid) || Number(a.waiting) ? `<small style="display:block;margin-top:8px;opacity:.75">${Number(a.paid) ? '💸 ' + esc(D.paid) + ' ' + tonMoney(a.paid) : ''}${Number(a.paid) && Number(a.waiting) ? ' · ' : ''}${Number(a.waiting) ? '⏳ ' + esc(D.wait) + ' ' + tonMoney(a.waiting) : ''}</small>` : '')
+    + tonPendHtml(a.pending, esc((TONS[lang] || TONS.en)[1]), (n) => '👥 ' + n, tonMoney)
     + `<small style="display:block;margin-top:8px;opacity:.75">${esc(D.pay(tonMoney(a.min)))}</small>${a.wallet ? '<small style="display:block;margin-top:4px;font-weight:600">' + esc(D.wal) + '</small>' : '<button class="btn go" onclick="tonGoWal()" style="margin-top:10px">' + esc(TONW[lang] || TONW.en) + '</button>'}</div>`;
+}
+// 15 oct 2026: the money waiting: friends who still have to play, with their progress (Meme Coin Tycoon: days /3 and trades /5,
+// Daily Score: predictions /4, GramPedia: listing)
+function tonPendHtml(p, pend, need, M) {
+  if (!p || !p.n) return '';
+  const prog = (f) => f.app === 'mct' ? '📅 ' + Math.min(f.dy, 3) + '/3 · 🔁 ' + Math.min(f.tr, 5) + '/5' : f.app === 'ds' ? '⚽ ' + Math.min(f.tr, 4) + '/4' : '📚 ' + (f.tr > 0 ? '⏳' : '0/1');
+  const ic = { mct: '🪙', ds: '⚽', gp: '📚' };
+  return `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">⏳ <b>${pend} : ${M(p.usd)}</b> <small style="opacity:.7">(${need(p.n)})</small></summary>`
+    + (p.friends || []).map((f) => `<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:13px;border-top:1px solid rgba(255,255,255,.06)"><span>${ic[f.app] || ''} ${esc(f.name)}</span><span style="opacity:.8;white-space:nowrap">${prog(f)}</span></div>`).join('')
+    + (p.n > (p.friends || []).length ? `<small style="opacity:.6">+ ${p.n - p.friends.length}</small>` : '') + `</details>`;
 }
 function tonStatsHtml() {
   const s = TON_ST; if (!s) return '';
