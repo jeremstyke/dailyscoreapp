@@ -1750,9 +1750,12 @@ async function dsWalSave() {
 tonDetHtml = () => {
   const s = TON_ST; if (!s) return '';
   const a = s.all || {}, P = a.pending || {}, fl = (P.friends || []).filter((f) => f.app === 'ds'), pn = Number(s.pending || 0), D = TOND[lang] || TOND.en, G = DSG(), M = tonMoney;
-  let h = `<small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(G.mine)}</small><div style="font-size:34px;font-weight:900;line-height:1.15;margin:2px 0 6px">${M(s.balance)}</div>`;
-  h += tonPendHtml({ n: pn, usd: pn * Number(s.usd || 0), friends: fl }, esc((TONS[lang] || TONS.en)[1]), (n) => esc(G.need(n)), M);
-  if (Number(s.paid)) h += `<small style="display:block;margin-top:8px;opacity:.75">💸 ${esc(D.paid)} ${M(s.paid)}</small>`;
+  // 15 oct 2026: validated, pending and paid shown at once, without a tap
+  const box = (l, v, c) => `<div style="flex:1;min-width:0;padding:10px 4px;border-radius:14px;background:rgba(0,0,0,.2);text-align:center"><small style="display:block;font-size:11px;opacity:.8">${l}</small><b style="display:block;font-size:18px;font-weight:900;color:${c};white-space:nowrap">${v}</b></div>`;
+  const prog = (f) => f.app === 'mct' ? '📅 ' + Math.min(f.dy, 3) + '/3 · 🔁 ' + Math.min(f.tr, 5) + '/5' : f.app === 'ds' ? '⚽ ' + Math.min(f.tr, 4) + '/4' : '📚 ' + (f.tr > 0 ? '⏳' : '0/1');
+  let h = `<small style="display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7">${esc(G.mine)}</small>`
+    + `<div style="display:flex;gap:6px;margin:8px 0 4px">${box('✅ ' + ({ en: 'Validated', fr: 'Validé', es: 'Validado', pt: 'Validado', de: 'Bestätigt', it: 'Convalidato', tr: 'Onaylandı', ru: 'Подтверждено', ar: 'مؤكد' }[lang] || 'Validated'), M(s.balance), '#4ff0b7')}${box('⏳ ' + esc((TONS[lang] || TONS.en)[1]), M(pn * Number(s.usd || 0)), '#ffd43b')}${box('💸 ' + ({ en: 'Paid', fr: 'Payé', es: 'Pagado', pt: 'Pago', de: 'Ausgezahlt', it: 'Pagato', tr: 'Ödendi', ru: 'Выплачено', ar: 'مدفوع' }[lang] || 'Paid'), M(Number(s.paid || 0) + Number(s.waiting || 0)), '#9fe9ff')}</div>`;
+  if (pn) h += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:13px;opacity:.85">👥 ${esc(G.need(pn))} ▾</summary>` + fl.map((f) => `<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:13px;border-top:1px solid rgba(255,255,255,.06)"><span>${esc(f.name)}</span><span style="opacity:.8;white-space:nowrap">${prog(f)}</span></div>`).join('') + `</details>`;
   h += `<small style="display:block;margin-top:8px;opacity:.75">${esc(D.pay(M(a.min || s.min)))}</small>`;
   h += a.wallet ? `<div style="margin-top:8px;font-size:14px;font-weight:700">${esc(D.wal)} <a href="#" onclick="dsWalShow();return false" style="font-weight:400;opacity:.7;text-decoration:underline;color:inherit;margin-left:6px">${esc(G.chg)}</a></div>`
     : `<button class="btn go" onclick="dsWalShow()" style="margin-top:10px">${esc(TONW[lang] || TONW.en)}</button>`;
