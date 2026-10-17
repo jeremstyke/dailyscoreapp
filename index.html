@@ -1805,6 +1805,7 @@ function dsMini(s) {
 const EARN_CARD = { en: ['Tap the diamond, earn money', 'Free, paid in real TON every Monday.'], fr: ['Tape le diamant, gagne de l\'argent', 'Gratuit, payé en vrai TON chaque lundi.'], es: ['Toca el diamante, gana dinero', 'Gratis, pagado en TON real cada lunes.'], pt: ['Toque no diamante, ganhe dinheiro', 'Grátis, pago em TON de verdade toda segunda.'], de: ['Tippe den Diamanten, verdiene Geld', 'Kostenlos, jeden Montag in echtem TON bezahlt.'], it: ['Tocca il diamante, guadagna soldi', 'Gratis, pagato in TON vero ogni lunedì.'], ar: ['اضغط على الماسة واربح المال', 'مجاني، يُدفع بعملة TON حقيقية كل يوم اثنين.'], tr: ['Elmasa dokun, para kazan', 'Ücretsiz, her pazartesi gerçek TON ile ödenir.'], ru: ['Жми на алмаз и зарабатывай', 'Бесплатно, выплаты в настоящих TON каждый понедельник.'] };
 window.dsEarn = () => { haptic(); api('ev', { k: 'earn_card' }).catch(() => {}); openLink('https://t.me/earnbyjeremstykebot?startapp=tap_dsapp'); };
 function tonBanner() {
+  return ''; // 17 oct 2026 (Jeremy): no more diamond card (Earn by Jeremstyke) on Daily Score
   const e = EARN_CARD[lang] || EARN_CARD.en;
   return `<div class="igban" onclick="dsEarn()" style="cursor:pointer;background:linear-gradient(135deg,rgba(46,230,255,.16),rgba(198,255,61,.08));border-color:rgba(46,230,255,.4)"><span style="font-size:26px">💎</span><div style="min-width:0"><b>${esc(e[0])}</b><small>${esc(e[1])}</small></div><span class="iggo" style="margin-left:auto;background:#2ee6ff;color:#062a33">Earn</span></div>`;
   if (!IN_TG || !st || !st.me) return '';
