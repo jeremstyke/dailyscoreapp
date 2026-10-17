@@ -1789,7 +1789,7 @@ function tonStatsHtml() {
 }
 function tonStats() {
   if (!IN_TG) return;
-  const fill = () => { document.querySelectorAll('.tonmini').forEach((el) => { if (TON_ST) el.textContent = dsMini(TON_ST); }); document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); }); if (!dsWalOpen()) document.querySelectorAll('.tondet').forEach((el) => { el.innerHTML = tonDetHtml(); }); };
+  const fill = () => { document.querySelectorAll('.dssubb').forEach((el) => { el.innerHTML = dsSubBlock(); }); document.querySelectorAll('.tonmini').forEach((el) => { if (TON_ST) el.textContent = dsMini(TON_ST); }); document.querySelectorAll('.tonst').forEach((el) => { el.innerHTML = tonStatsHtml(); }); if (!dsWalOpen()) document.querySelectorAll('.tondet').forEach((el) => { el.innerHTML = tonDetHtml(); }); };
   if (TON_ST) fill();
   api('ton', {}).then((s) => { if (s && s.ok) { const was = !!(TON_ST && TON_ST.sub); TON_ST = s; fill(); if (!!s.sub !== was) { try { navBar(); } catch (e) {} } } }).catch(() => {}); // 17 oct 2026: the banner shows when he is subscribed to @jeremstyke
 }
@@ -1877,7 +1877,7 @@ function tonSheet() {
   const d = document.createElement('div'); d.className = 'tsxo';
   const how = ({ en: 'How it works', fr: 'Comment ça marche', es: 'Cómo funciona', pt: 'Como funciona', de: 'So funktioniert es', it: 'Come funziona', tr: 'Nasıl çalışır', ru: 'Как это работает', ar: 'كيف يعمل' })[lang] || 'How it works';
   d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">⚽</div><div><b>${esc(x.h.replace(/^💎 /, ''))}</b><span>USDT</span></div></div><p class="sub">${esc(x.s)}</p>`
-    + `<div class="tondet">${tonDetHtml()}</div>` + dsSubBlock() + dsMctBlock()
+    + `<div class="tondet">${tonDetHtml()}</div>` + `<div class="dssubb">${dsSubBlock()}</div>` + dsMctBlock()
     + `<button class="cta" id="tonsi">${esc(x.inv)}</button><div class="row"><button class="sec" id="tonwa">📲 WhatsApp</button><button class="sec" id="toncp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
     + `<div class="tonst">${tonStatsHtml()}</div>`
     + `<details class="how"><summary>📖 ${esc(how)} ▾</summary><div style="margin-top:10px">` + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('') + `</div></details>`
