@@ -1841,12 +1841,28 @@ function tonBlock() {
     + '.tsx .close{text-align:center;opacity:.6;font-size:13px;cursor:pointer;padding:4px}';
   document.head.appendChild(st0);
 })();
+// 17 oct 2026 (Jeremy): the earnings sheet also shows what Meme Coin Tycoon pays (referral, diamond, the 3 contests), with a button to play
+function dsMctBlock() {
+  if (!IN_TG) return '';
+  const K = { fr: ['🪙 Meme Coin Tycoon paie aussi en USDT', '👥 Parrainage : 0,05 $ par ami qui joue 3 jours', '💎 Diamant : de l\'argent à chaque tape', '🏆 Concours des gains : 1 $, 0,50 $ et 0,25 $', '🏆 Concours des parrains : 1 $, 0,50 $ et 0,25 $', '🏆 Concours du diamant : 1 $, 0,50 $ et 0,25 $', 'Les 3 concours sont payés chaque lundi', 'Jouer'],
+    es: ['🪙 Meme Coin Tycoon también paga en USDT', '👥 Referidos: 0,05 $ por amigo que juegue 3 días', '💎 Diamante: dinero en cada toque', '🏆 Concurso de ganancias: 1 $, 0,50 $ y 0,25 $', '🏆 Concurso de padrinos: 1 $, 0,50 $ y 0,25 $', '🏆 Concurso del diamante: 1 $, 0,50 $ y 0,25 $', 'Los 3 concursos se pagan cada lunes', 'Jugar'],
+    pt: ['🪙 Meme Coin Tycoon também paga em USDT', '👥 Indicação: 0,05 $ por amigo que jogar 3 dias', '💎 Diamante: dinheiro a cada toque', '🏆 Concurso de ganhos: 1 $, 0,50 $ e 0,25 $', '🏆 Concurso de padrinhos: 1 $, 0,50 $ e 0,25 $', '🏆 Concurso do diamante: 1 $, 0,50 $ e 0,25 $', 'Os 3 concursos são pagos toda segunda', 'Jogar'],
+    de: ['🪙 Meme Coin Tycoon zahlt auch in USDT', '👥 Empfehlung: 0,05 $ pro Freund, der 3 Tage spielt', '💎 Diamant: Geld bei jedem Tippen', '🏆 Gewinn-Wettbewerb: 1 $, 0,50 $ und 0,25 $', '🏆 Empfehler-Wettbewerb: 1 $, 0,50 $ und 0,25 $', '🏆 Diamant-Wettbewerb: 1 $, 0,50 $ und 0,25 $', 'Alle 3 Wettbewerbe werden jeden Montag ausgezahlt', 'Spielen'],
+    it: ['🪙 Anche Meme Coin Tycoon paga in USDT', '👥 Invita amici: 0,05 $ per amico che gioca 3 giorni', '💎 Diamante: soldi a ogni tocco', '🏆 Concorso guadagni: 1 $, 0,50 $ e 0,25 $', '🏆 Concorso padrini: 1 $, 0,50 $ e 0,25 $', '🏆 Concorso diamante: 1 $, 0,50 $ e 0,25 $', 'I 3 concorsi sono pagati ogni lunedì', 'Gioca'],
+    tr: ['🪙 Meme Coin Tycoon da USDT öder', '👥 Davet: 3 gün oynayan arkadaş başına 0,05 $', '💎 Elmas: her dokunuşta para', '🏆 Kazanç yarışması: 1 $, 0,50 $ ve 0,25 $', '🏆 Davetçi yarışması: 1 $, 0,50 $ ve 0,25 $', '🏆 Elmas yarışması: 1 $, 0,50 $ ve 0,25 $', '3 yarışma her pazartesi ödenir', 'Oyna'],
+    ru: ['🪙 Meme Coin Tycoon тоже платит в USDT', '👥 Рефералы: 0,05 $ за друга, который играет 3 дня', '💎 Алмаз: деньги за каждое касание', '🏆 Конкурс прибыли: 1 $, 0,50 $ и 0,25 $', '🏆 Конкурс рефереров: 1 $, 0,50 $ и 0,25 $', '🏆 Конкурс алмаза: 1 $, 0,50 $ и 0,25 $', 'Все 3 конкурса выплачиваются каждый понедельник', 'Играть'],
+    ar: ['🪙 Meme Coin Tycoon يدفع أيضًا بعملة USDT', '👥 الإحالة: 0.05 $ عن كل صديق يلعب 3 أيام', '💎 الماسة: مال مع كل ضغطة', '🏆 مسابقة الأرباح: 1 $ و0.50 $ و0.25 $', '🏆 مسابقة الداعين: 1 $ و0.50 $ و0.25 $', '🏆 مسابقة الماسة: 1 $ و0.50 $ و0.25 $', 'تُدفع المسابقات الثلاث كل يوم اثنين', 'العب'] };
+  const x = K[lang] || ['🪙 Meme Coin Tycoon pays in USDT too', '👥 Referral: $0.05 per friend who plays 3 days', '💎 Diamond: money on every tap', '🏆 Gains contest: $1, $0.50 and $0.25', '🏆 Sponsor contest: $1, $0.50 and $0.25', '🏆 Diamond contest: $1, $0.50 and $0.25', 'All 3 contests are paid every Monday', 'Play'];
+  const row = (t) => `<div style="padding:6px 0;border-top:1px solid rgba(255,255,255,.07);font-size:13.5px">${esc(t)}</div>`;
+  return `<div style="margin:0 0 14px;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,212,59,.45);background:rgba(255,212,59,.07)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><b style="flex:1;font-size:15px">${esc(x[0])}</b><button onclick="dsMct()" style="flex:none;border:0;border-radius:999px;padding:6px 14px;font-weight:800;font-size:12px;background:#ffd43b;color:#1d0f00;cursor:pointer">${esc(x[7])}</button></div>`
+    + x.slice(1, 6).map(row).join('') + `<small style="display:block;margin-top:4px;opacity:.75">${esc(x[6])}</small></div>`;
+}
 function tonSheet() {
   const x = tonT(); api('ev', { k: 'ton_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
   const d = document.createElement('div'); d.className = 'tsxo';
   const how = ({ en: 'How it works', fr: 'Comment ça marche', es: 'Cómo funciona', pt: 'Como funciona', de: 'So funktioniert es', it: 'Come funziona', tr: 'Nasıl çalışır', ru: 'Как это работает', ar: 'كيف يعمل' })[lang] || 'How it works';
   d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">⚽</div><div><b>${esc(x.h.replace(/^💎 /, ''))}</b><span>USDT</span></div></div><p class="sub">${esc(x.s)}</p>`
-    + `<div class="tondet">${tonDetHtml()}</div>`
+    + `<div class="tondet">${tonDetHtml()}</div>` + dsMctBlock()
     + `<button class="cta" id="tonsi">${esc(x.inv)}</button><div class="row"><button class="sec" id="tonwa">📲 WhatsApp</button><button class="sec" id="toncp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
     + `<div class="tonst">${tonStatsHtml()}</div>`
     + `<details class="how"><summary>📖 ${esc(how)} ▾</summary><div style="margin-top:10px">` + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('') + `</div></details>`
