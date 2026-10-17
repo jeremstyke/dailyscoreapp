@@ -398,7 +398,7 @@ document.addEventListener('click', (e) => { const w = e.target.closest && e.targ
 const openWeb = (u) => { haptic(); api('ev', { k: 'league_web' }).catch(() => {}); try { if (IN_TG) return tg.openLink(u); } catch (e) {} window.open(u, '_blank', 'noopener'); };
 async function shareLink(url, text) {
   // 15 oct 2026: after any share of an invite or league link, the player is told what it earns him
-  if (/ref_|lg_|#ref=|&r=/.test(String(url || ''))) setTimeout(() => { try { toast({ fr: '💎 Chaque ami qui rejoint avec ton lien et fait 5 pronos te rapporte 0,05 $ en USDT', es: '💎 Cada amigo que se una con tu enlace y haga 5 pronósticos te da 0,05 $ en USDT', pt: '💎 Cada amigo que entrar pelo seu link e fizer 5 palpites te rende 0,05 $ em USDT' }[lang] || '💎 Every friend who joins through your link and makes 5 predictions earns you $0.05 in USDT'); } catch (e) {} }, 1200);
+  if (false && /ref_|lg_|#ref=|&r=/.test(String(url || ''))) setTimeout(() => { try { toast({ fr: '💎 Chaque ami qui rejoint avec ton lien et fait 5 pronos te rapporte 0,05 $ en USDT', es: '💎 Cada amigo que se una con tu enlace y haga 5 pronósticos te da 0,05 $ en USDT', pt: '💎 Cada amigo que entrar pelo seu link e fizer 5 palpites te rende 0,05 $ em USDT' }[lang] || '💎 Every friend who joins through your link and makes 5 predictions earns you $0.05 in USDT'); } catch (e) {} }, 1200);
   if (IN_TG) return tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text));
   if (navigator.share) { try { await navigator.share({ title: 'Daily Score', text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(text + ' ' + url); toast(t('copied')); } catch (e) { window.prompt('', text + ' ' + url); }
@@ -1897,6 +1897,7 @@ let igSeen = false;
 // 17 oct 2026 (Jeremy): the Instant Gaming banner is replaced by the player's real earnings (Telegram only, where he can be paid):
 // right result $0.02, exact score $0.05, 7 days in a row $0.05 (30 days $0.15), friend who makes 5 predictions $0.05 + 10 % of his earnings. A tap opens the earnings sheet.
 function dsMoneyBan() {
+  return ''; // 17 oct 2026 (Jeremy, 19h45): the earnings system is removed from Daily Score
   if (!IN_TG || !st || !st.me) return '';
   setTimeout(tonStats, 0);
   const x = tonT();
