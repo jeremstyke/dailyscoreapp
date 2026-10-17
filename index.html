@@ -1870,8 +1870,10 @@ function dsMoneyBan() {
   if (!IN_TG || !st || !st.me) return '';
   setTimeout(tonStats, 0);
   const x = tonT();
-  return `<div class="igban" onclick="tonSheet()" style="cursor:pointer;background:linear-gradient(135deg,rgba(125,255,107,.16),rgba(46,230,255,.08));border-color:rgba(125,255,107,.45)"><span style="font-size:26px">💵</span><div style="min-width:0"><b>${esc(x.h.replace(/^💵 /, ''))}</b><small class="tonmini">${esc(TON_ST ? dsMini(TON_ST) : x.s)}</small></div><span class="iggo" style="margin-left:auto;background:#7dff6b;color:#10200f">USDT</span></div>`;
+  return `<div class="igban" onclick="tonSheet()" style="cursor:pointer;background:linear-gradient(135deg,rgba(125,255,107,.16),rgba(46,230,255,.08));border-color:rgba(125,255,107,.45)"><span style="font-size:26px">💵</span><div style="min-width:0"><b>${esc(x.h.replace(/^💵 /, ''))}</b><small class="tonmini">${esc(TON_ST ? dsMini(TON_ST) : x.s)}</small></div><span class="iggo" onclick="event.stopPropagation();dsMct()" style="margin-left:auto;background:#7dff6b;color:#10200f;white-space:nowrap">🪙 Meme Coin</span></div>`;
 }
+// 17 oct 2026 (Jeremy): the banner also leads to Meme Coin Tycoon (real USDT there too)
+window.dsMct = () => { try { haptic(); } catch (e) {} api('ev', { k: 'ban_mct' }).catch(() => {}); openLink('https://t.me/Memecointycoonbot?startapp=src_dsban'); };
 function igBanner() {
   if (!st || !st.me || st.me.premium || !st.me.country) return '';
   if (IN_TG && TASK_ON && tadsState !== 'none') return ''; // Telegram: the Adsgram Task comes first, Instant Gaming is the fallback
