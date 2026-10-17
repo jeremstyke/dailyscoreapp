@@ -1841,6 +1841,21 @@ function tonBlock() {
     + '.tsx .close{text-align:center;opacity:.6;font-size:13px;cursor:pointer;padding:4px}';
   document.head.appendChild(st0);
 })();
+// 17 oct 2026 (Jeremy): the earnings sheet also shows the @jeremstyke subscription ($0.01 every 30 days), or that the player is subscribed
+function dsSubBlock() {
+  if (!IN_TG) return '';
+  const on = !!(TON_ST && TON_ST.sub);
+  const K = { fr: ['📣 Abonne-toi à @jeremstyke', '+0,01 $ tous les 30 jours tant que tu es abonné', '✅ Tu es abonné, merci 👍', 'S\'abonner'],
+    es: ['📣 Suscríbete a @jeremstyke', '+0,01 $ cada 30 días mientras sigas suscrito', '✅ Estás suscrito, gracias 👍', 'Suscribirme'],
+    pt: ['📣 Inscreva-se em @jeremstyke', '+0,01 $ a cada 30 dias enquanto estiver inscrito', '✅ Você está inscrito, obrigado 👍', 'Inscrever-me'],
+    de: ['📣 Abonniere @jeremstyke', '+0,01 $ alle 30 Tage, solange du abonniert bist', '✅ Du bist abonniert, danke 👍', 'Abonnieren'],
+    it: ['📣 Iscriviti a @jeremstyke', '+0,01 $ ogni 30 giorni finché resti iscritto', '✅ Sei iscritto, grazie 👍', 'Iscriviti'],
+    tr: ['📣 @jeremstyke kanalına abone ol', 'Abone kaldığın sürece her 30 günde +0,01 $', '✅ Abonesin, teşekkürler 👍', 'Abone ol'],
+    ru: ['📣 Подпишись на @jeremstyke', '+0,01 $ каждые 30 дней, пока ты подписан', '✅ Ты подписан, спасибо 👍', 'Подписаться'],
+    ar: ['📣 اشترك في @jeremstyke', '+0.01 $ كل 30 يومًا ما دمت مشتركًا', '✅ أنت مشترك، شكرًا 👍', 'اشترك'] };
+  const x = K[lang] || ['📣 Subscribe to @jeremstyke', '+$0.01 every 30 days while you stay subscribed', '✅ You are subscribed, thanks 👍', 'Subscribe'];
+  return `<div style="margin:0 0 14px;padding:12px 14px;border-radius:16px;border:1px solid rgba(125,255,107,.45);background:rgba(125,255,107,.07)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;min-width:0"><b style="display:block;font-size:15px">${esc(x[0])}</b><small style="display:block;opacity:.8;margin-top:2px">${esc(x[1])}</small>${on ? `<small style="display:block;color:#7dff6b;font-weight:700;margin-top:4px">${esc(x[2])}</small>` : ''}</div>${on ? '' : `<button onclick="dsSub()" style="flex:none;border:0;border-radius:999px;padding:6px 14px;font-weight:800;font-size:12px;background:#7dff6b;color:#10200f;cursor:pointer">${esc(x[3])}</button>`}</div></div>`;
+}
 // 17 oct 2026 (Jeremy): the earnings sheet also shows what Meme Coin Tycoon pays (referral, diamond, the 3 contests), with a button to play
 function dsMctBlock() {
   if (!IN_TG) return '';
@@ -1862,7 +1877,7 @@ function tonSheet() {
   const d = document.createElement('div'); d.className = 'tsxo';
   const how = ({ en: 'How it works', fr: 'Comment ça marche', es: 'Cómo funciona', pt: 'Como funciona', de: 'So funktioniert es', it: 'Come funziona', tr: 'Nasıl çalışır', ru: 'Как это работает', ar: 'كيف يعمل' })[lang] || 'How it works';
   d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">⚽</div><div><b>${esc(x.h.replace(/^💎 /, ''))}</b><span>USDT</span></div></div><p class="sub">${esc(x.s)}</p>`
-    + `<div class="tondet">${tonDetHtml()}</div>` + dsMctBlock()
+    + `<div class="tondet">${tonDetHtml()}</div>` + dsSubBlock() + dsMctBlock()
     + `<button class="cta" id="tonsi">${esc(x.inv)}</button><div class="row"><button class="sec" id="tonwa">📲 WhatsApp</button><button class="sec" id="toncp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
     + `<div class="tonst">${tonStatsHtml()}</div>`
     + `<details class="how"><summary>📖 ${esc(how)} ▾</summary><div style="margin-top:10px">` + x.st.map((a, i) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:0 0 8px"><span style="flex:none;width:24px;height:24px;border-radius:50%;background:#2ee6ff;color:#062a33;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px">${i + 1}</span><span style="font-size:14px">${esc(a)}</span></div>`).join('') + `</div></details>`
