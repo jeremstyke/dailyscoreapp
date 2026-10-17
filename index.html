@@ -305,18 +305,17 @@ async function showRichAds() {
     if (r && r.catch) r.catch(() => api('ev', { k: 'ad_rich_none' }).catch(() => {}));
   } catch (e) { api('ev', { k: 'ad_rich_err' }).catch(() => {}); if (owner) toast('RichAds: ' + (e && e.message || 'error')); }
 }
-async function showInter() {
+// 17 oct 2026 (Jeremy): the interstitial at every opening of the game and after every prediction saved (Telegram, never for Premium),
+// with 45 seconds at least between two, so a player who opens the game and predicts right away sees only one
+let INTER_AT = 0;
+async function showInter(why) {
   if (!INTER_ON) return;
   try {
     if (!IN_TG || (st && st.me && st.me.premium)) return;
-    const today = new Date().toISOString().slice(0, 10);
-    let c = {}; try { c = JSON.parse(localStorage.getItem('ds_inter3') || '{}'); } catch (e) {}
-    const n = c.d === today ? c.n || 0 : 0;
-    // no fullscreen on a player's first day (fewer than 2 picks, one pick per day), then 2 a day at most
-    if (!TADS_DEBUG() && ((st.me.picks || 0) < 2 || n >= 1)) return;
-    localStorage.setItem('ds_inter3', JSON.stringify({ d: today, n: n + 1, at: Date.now() }));
+    if (Date.now() - INTER_AT < 45000) return;
+    INTER_AT = Date.now();
     // 15 oct 2026: the Adsgram script may not be loaded yet 1 second after opening: wait for it (10 s at most), and log each step
-    api('ev', { k: 'ad_inter_try' }).catch(() => {});
+    api('ev', { k: 'ad_inter_try' + (why ? '_' + why : '') }).catch(() => {});
     let w = 0; while (!window.Adsgram && w < 20) { await new Promise((ok) => setTimeout(ok, 500)); w++; }
     if (!window.Adsgram) { api('ev', { k: 'ad_inter_noload' }).catch(() => {}); return; }
     window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => api('ev', { k: 'ad_inter_none' }).catch(() => {}));
@@ -681,10 +680,10 @@ async function applyPendingPick() {
   try { localStorage.removeItem('ds_pend_pick'); } catch (e) {}
   if (p.next) {
     // tomorrow's match, chosen before today's match ended: saved for tomorrow
-    try { st = await api('pick', { home: p.home, away: p.away, next: 1 }); render(); toast(t('pvSavedNext')); } catch (e) { return; }
+    try { st = await api('pick', { home: p.home, away: p.away, next: 1 }); render(); toast(t('pvSavedNext')); setTimeout(() => showInter('pick'), 1500); } catch (e) { return; }
   } else {
     if (!st || !st.match || st.pick || st.match.day !== p.day || new Date(st.match.kickoff).getTime() <= Date.now()) return;
-    try { st = await api('pick', { home: p.home, away: p.away }); home = p.home; away = p.away; editing = false; render(); toast(t('saved')); try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } catch (e) { return; }
+    try { st = await api('pick', { home: p.home, away: p.away }); home = p.home; away = p.away; editing = false; render(); toast(t('saved')); setTimeout(() => showInter('pick'), 1500); try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } catch (e) { return; }
   }
   api('ev', { k: 'pick_before_signup' }).catch(() => {});
   const k = pendingKey; pendingKey = null;
@@ -2054,7 +2053,7 @@ function bind() {
   if (lock) lock.onclick = async () => {
     lock.disabled = true; haptic('medium');
     const firstPick = !st.pick;
-    try { st = await api('pick', { home, away }); editing = false; if (firstPick) { setTimeout(confirmCountry, 1200); } try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
+    try { st = await api('pick', { home, away }); editing = false; if (firstPick) { setTimeout(confirmCountry, 1200); } else setTimeout(() => showInter('pick'), 1500); try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} toast(t('saved')); render(); }
     catch (e) { toast(e.code === 'started' ? t('errStarted') : t('err')); lock.disabled = false; if (e.code === 'started') load(); }
   };
   const edit = document.getElementById('edit'); if (edit) edit.onclick = () => { editing = true; render(); };
@@ -2173,7 +2172,7 @@ async function load() {
   await finishWebLink();
   try {
     st = await api('state'); rk = null; if (st.trendPaid) loadTrend(); render(); if (period !== 'week' || tab !== 'world') loadRanking();
-    if (!window.__interBoot) { window.__interBoot = true; setTimeout(showInter, 1200); } // the interstitial at opening (once a day, see showInter)
+    if (!window.__interBoot) { window.__interBoot = true; setTimeout(() => showInter('open'), 1200); } // the interstitial at every opening (see showInter)
     let pref = null; try { pref = localStorage.getItem('ds_ref'); localStorage.removeItem('ds_ref'); } catch (e) {}
     if (pref && !IN_TG) api('ref_set', { ref: pref }).catch(() => {});
     let pend = null; try { pend = JSON.parse(localStorage.getItem('ds_lg') || 'null'); localStorage.removeItem('ds_lg'); } catch (e) {}
