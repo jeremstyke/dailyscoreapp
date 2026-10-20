@@ -10,7 +10,7 @@
   <a href="https://t.me/DailyScorefootbot?start=src_github_repo"><b>▶ Play on Telegram</b></a> ·
   <a href="https://dailyscoreapp.com/?src=github_repo"><b>🌐 Play in your browser</b></a> ·
   <a href="https://dailyscoreapp.com/android.html"><b>🤖 Android app</b></a> ·
-  <a href="https://x.com/dailyscoreapp"><b>𝕏 @dailyscoreapp</b></a>
+  <a href="https://t.me/jeremstyke"><b>📢 Telegram Jeremstyke</b></a>
 </p>
 
 <p align="center">
@@ -65,5 +65,5 @@ Daily Score is a free game for fun: there are no stakes, no odds and no money to
 
 ## Author
 
-Made by **[@jeremstyke](https://t.me/jeremstyke)**, solo indie developer. Follow the game on X: **[@dailyscoreapp](https://x.com/dailyscoreapp)**. Partnerships (bars, clubs, brands): **juryjeremy@gmail.com**.
+Made by **[@jeremstyke](https://t.me/jeremstyke)**, solo indie developer. News on Telegram: **[Jeremstyke](https://t.me/jeremstyke)**. Partnerships (bars, clubs, brands): **juryjeremy@gmail.com**.
 Also by me: [Life Sim](https://t.me/LsimgameBot?start=src_github_repo) and [ChatPal](https://t.me/mybestfriend_ai_en_bot?start=src_github_repo). More on [jeremstyke.github.io](https://jeremstyke.github.io).
