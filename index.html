@@ -2202,7 +2202,9 @@ function goTo() {
   else if (go === 'league' && Number(q.get('lg'))) { view = 'leagues'; openLeague(Number(q.get('lg'))); }
 }
 async function load() {
-  if (!IN_TG && !TOKEN) return loginView(); // the visitor signs in first (first name, Google, GitHub or Telegram), then plays
+  // 20 oct 2026 (Jeremy): outside Telegram the visitor makes his first prediction first, then signs in (first name, Google, GitHub or
+  // Telegram) and the prediction is saved right after (previously: sign in first, 5 oct 2026). No open match: the sign-in screen.
+  if (!IN_TG && !TOKEN) return previewView();
   await finishWebLink();
   try {
     st = await api('state'); rk = null; if (st.trendPaid) loadTrend(); render(); if (period !== 'week' || tab !== 'world') loadRanking();
