@@ -1947,7 +1947,8 @@ function navBar() {
   const items = [['match', '⚽', 'tMatch'], ['rank', '🏆', 'tRank'], ['leagues', '👥', 'tLeagues'], ['profile', '🏅', 'tProfile']];
   let nav = document.getElementById('nav');
   if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.getElementById('app').insertAdjacentElement('afterend', nav); }
-  nav.innerHTML = adSlot() + dsMoneyBan() + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
+  // 20 oct 2026 (Jeremy): the Instant Gaming banner is back on the website and the Android app (not in Telegram)
+  nav.innerHTML = adSlot() + dsMoneyBan() + (IN_TG ? '' : igBanner()) + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
   placeRichBanner(nav); placeAd(); fitNav();
   const igb = document.getElementById('igban'); if (igb) igb.onclick = (e) => { haptic(); api('ev', { k: 'ig_click' }).catch(() => {}); if (IN_TG) { e.preventDefault(); try { tg.openLink(IG_URL); } catch (er) { window.open(IG_URL, '_blank'); } } };
   const hbb = document.getElementById('hbban'); if (hbb) hbb.onclick = () => { haptic(); api('ev', { k: 'house_click' }).catch(() => {}); tg.openTelegramLink(AD_CONTACT); };
