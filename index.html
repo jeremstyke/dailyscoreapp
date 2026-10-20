@@ -308,10 +308,33 @@ async function showRichAds() {
 // 17 oct 2026 (Jeremy): the interstitial at every opening of the game and after every prediction saved (Telegram, never for Premium),
 // with 45 seconds at least between two, so a player who opens the game and predicts right away sees only one
 let INTER_AT = 0;
+// 20 oct 2026 (Jeremy): website and Android app: an Instant Gaming interstitial after a prediction is validated, once a day,
+// never for Premium players nor for new players (their first 2 predictions)
+function igInter() {
+  try {
+    if (!st || !st.me || st.me.premium || (st.me.picks || 0) < 3) return;
+    const day = new Date().toISOString().slice(0, 10);
+    try { if (localStorage.getItem('ds_igi') === day) return; localStorage.setItem('ds_igi', day); } catch (e) {}
+    const d = document.createElement('div'); d.className = 'sheet';
+    d.innerHTML = `<div class="card center" style="position:relative;padding-top:26px">
+      <div id="igix" style="position:absolute;top:8px;right:12px;font-size:20px;cursor:pointer;opacity:.7">✕</div>
+      <div class="muted" style="font-size:12px;margin-bottom:6px">${esc(t('igTag'))} · Instant Gaming</div>
+      <div style="font-size:54px;line-height:1">🎮</div>
+      <h2 style="margin:10px 0 6px">${esc(t('igT').replace(/^🎮 /, ''))}</h2>
+      <p class="muted" style="margin:0 0 14px">${esc(t('igB'))}</p>
+      <a class="btn go" id="igigo" href="${IG_URL}" target="_blank" rel="noopener sponsored" style="display:block;text-decoration:none">${esc(t('igGo'))} 👉</a></div>`;
+    d.onclick = (e) => { if (e.target === d) d.remove(); };
+    document.body.appendChild(d);
+    d.querySelector('#igix').onclick = () => d.remove();
+    d.querySelector('#igigo').onclick = () => { api('ev', { k: 'ig_inter_click' }).catch(() => {}); setTimeout(() => d.remove(), 300); };
+    api('ev', { k: 'ig_inter' }).catch(() => {});
+  } catch (e) {}
+}
 async function showInter(why) {
+  if (!IN_TG) { if (why === 'pick') igInter(); return; }
   if (!INTER_ON) return;
   try {
-    if (!IN_TG || (st && st.me && st.me.premium)) return;
+    if (st && st.me && st.me.premium) return;
     if (Date.now() - INTER_AT < 45000) return;
     INTER_AT = Date.now();
     // 15 oct 2026: the Adsgram script may not be loaded yet 1 second after opening: wait for it (10 s at most), and log each step
