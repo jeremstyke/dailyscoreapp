@@ -623,8 +623,8 @@ async function previewView() {
   hideNav();
   const nl = prefLang(); lang = S[nl] ? nl : 'en'; applyLang();
   let m = null;
-  try { const r = await fetch(API + '/ds/public/match'); if (r.status === 503) return maintView(); m = (await r.json()).match; } catch (e) {}
-  if (!m || !m.open) return loginView();
+  try { const r = await fetch(API + '/ds/public/match'); if (r.status === 503) return maintView(); m = (await r.json()).match; } catch (e) { return loginView(); }
+  if (!m || !m.open) return noMatchView();
   pv.m = m;
   const kick = new Date(m.kickoff).toLocaleString(lang, { weekday: 'long', hour: '2-digit', minute: '2-digit' });
   const crest = (u) => u ? `<img src="${esc(u)}" alt="" style="width:54px;height:54px;object-fit:contain">` : '<div style="height:54px"></div>';
@@ -652,6 +652,15 @@ async function previewView() {
   });
   document.getElementById('pvhave').onclick = loginView;
   document.getElementById('pvlock').onclick = pvSignup;
+}
+// 20 oct 2026 (Jeremy): a visitor on a day without a match sees "no match today", with a discreet link to sign in
+function noMatchView() {
+  document.getElementById('app').innerHTML = `<div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b></div></div>
+  <div class="card center" style="margin-top:30px"><div style="font-size:64px;line-height:1">⚽</div>
+    <p style="margin:14px 0 6px;font-size:17px;font-weight:800">${esc(t('nomatch'))}</p></div>
+  <div class="note" id="nmhave" style="cursor:pointer;text-decoration:underline;margin-top:6px">${esc(t('pvLogin'))}</div>
+  <p class="center muted" style="margin:14px 0 0;font-size:12px">by <a href="https://t.me/jeremstyke" style="color:var(--lime)">@jeremstyke</a> · <a href="https://dailyscoreapp.com/privacy.html" style="color:var(--mute)">Privacy</a></p>`;
+  document.getElementById('nmhave').onclick = loginView;
 }
 function pvSignup() {
   haptic('medium');
