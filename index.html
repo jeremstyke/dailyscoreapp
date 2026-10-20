@@ -832,20 +832,20 @@ const JSK = { en: ['📢 Jeremstyke on Telegram', 'Telegram business, Daily Scor
 let JSK_SUB = null, JSK_RW = null, JSK_ASKED = false, JSK_WAIT = false;
 const JSKSUB = { en: ['📢 Subscribe to Jeremstyke: +$0.01 every 30 days', '✅ Subscribed: +$0.01 every 30 days'], fr: ['📢 Abonne-toi à Jeremstyke : +0,01 $ tous les 30 jours', '✅ Abonné : +0,01 $ tous les 30 jours'], es: ['📢 Suscríbete a Jeremstyke: +0,01 $ cada 30 días', '✅ Suscrito: +0,01 $ cada 30 días'], pt: ['📢 Inscreva-se no Jeremstyke: +0,01 $ a cada 30 dias', '✅ Inscrito: +0,01 $ a cada 30 dias'], de: ['📢 Abonniere Jeremstyke: +0,01 $ alle 30 Tage', '✅ Abonniert: +0,01 $ alle 30 Tage'], it: ['📢 Iscriviti a Jeremstyke: +0,01 $ ogni 30 giorni', '✅ Iscritto: +0,01 $ ogni 30 giorni'], tr: ['📢 Jeremstyke\'a abone ol: 30 günde bir +0,01 $', '✅ Abonesin: 30 günde bir +0,01 $'], ru: ['📢 Подпишись на Jeremstyke: +0,01 $ каждые 30 дней', '✅ Ты подписан: +0,01 $ каждые 30 дней'], ar: ['📢 اشترك في Jeremstyke: +0.01 $ كل 30 يومًا', '✅ مشترك: +0.01 $ كل 30 يومًا'] };
 function jskPaint() {
-  if (!JSK_SUB) return;
+  if (!(JSK_SUB || (TON_ST && TON_ST.sub))) return;
   document.querySelectorAll('.jsklnk .iggo').forEach((e) => { e.textContent = '✅'; e.style.background = '#7dff6b'; e.style.color = '#0d2a08'; });
   document.querySelectorAll('.jsksubt').forEach((e) => { e.textContent = (JSKSUB[lang] || JSKSUB.en)[1]; });
 }
 function jskCheck(fresh) {
   if (!IN_TG || !TOKEN) return;
   api('jsk', { fresh: fresh ? 1 : 0 }).then((r) => {
-    if (!r) return; JSK_SUB = r.sub; JSK_RW = r.rw || null; jskPaint();
+    if (!r) return; JSK_SUB = r.sub; JSK_RW = r.rw || null; if (r.sub && TON_ST) TON_ST.sub = true; jskPaint(); try { tonStats(); } catch (e) {}
     if (JSK_RW && JSK_RW.credited) { toast('✅ +0,01 $'); try { tonStats(); } catch (e) {} }
   }).catch(() => {});
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && JSK_WAIT) { JSK_WAIT = false; setTimeout(() => jskCheck(true), 1500); } });
 const jskSubRow = () => IN_TG ? `<div class="jsklnk" style="cursor:pointer;margin:10px 0 0;padding:10px 12px;border-radius:12px;border:1px solid rgba(46,230,255,.4);background:rgba(46,230,255,.08);font-weight:700;font-size:14px"><span class="jsksubt">${esc((JSKSUB[lang] || JSKSUB.en)[JSK_SUB ? 1 : 0])}</span></div>` : '';
-const jskBtn = () => { if (IN_TG && !JSK_ASKED) { JSK_ASKED = true; setTimeout(() => jskCheck(false), 600); } const x = JSK[lang] || JSK.en; return `<div class="igban jsklnk" style="cursor:pointer;margin:0 auto 16px;background:linear-gradient(135deg,rgba(46,230,255,.14),rgba(255,255,255,.04));border-color:rgba(46,230,255,.4)"><div style="min-width:0"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></div><span class="iggo" style="${JSK_SUB ? 'background:#7dff6b;color:#0d2a08' : 'background:#2ee6ff;color:#062a30'}">${JSK_SUB ? '✅' : esc(x[2])}</span></div>`; };
+const jskBtn = () => { if (IN_TG && !JSK_ASKED) { JSK_ASKED = true; setTimeout(() => jskCheck(false), 600); } const x = JSK[lang] || JSK.en; return `<div class="igban jsklnk" style="cursor:pointer;margin:0 auto 16px;background:linear-gradient(135deg,rgba(46,230,255,.14),rgba(255,255,255,.04));border-color:rgba(46,230,255,.4)"><div style="min-width:0"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></div><span class="iggo" style="${(JSK_SUB || (TON_ST && TON_ST.sub)) ? 'background:#7dff6b;color:#0d2a08' : 'background:#2ee6ff;color:#062a30'}">${(JSK_SUB || (TON_ST && TON_ST.sub)) ? '✅' : esc(x[2])}</span></div>`; };
 document.addEventListener('click', (ev) => { const a = ev.target && ev.target.closest && ev.target.closest('.jsklnk'); if (!a) return; try { haptic(); } catch (e) {} try { api('ev', { k: 'jsk_link' }).catch(() => {}); } catch (e) {} JSK_WAIT = true; openLink('https://t.me/jeremstyke'); });
 // 20 oct 2026 (Jeremy): the blog is a card too, like the Jeremstyke one (same handler id bloglnk)
 const BLOGGO = { en: 'Read', fr: 'Lire', es: 'Leer', pt: 'Ler', de: 'Lesen', it: 'Leggi', tr: 'Oku', ru: 'Читать', ar: 'اقرأ' };
@@ -2012,7 +2012,7 @@ window.dsRefSheet = function () {
   haptic(); api('ev', { k: 'ref_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
   const x = DSREF[lang] || DSREF.en, y = tonT(), d = document.createElement('div'); d.className = 'tsxo';
   d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">👥</div><div><b>${esc(x[0].replace(/^👥 /, ''))}</b><span>TON</span></div></div><p class="sub">${esc(x[1])}<br>${esc(x[2])}</p><p class="sub" style="color:#ffd36b"><b>${esc(DSREF_TG[lang] || DSREF_TG.en)}</b></p>`
-    + `<div class="tondet">${tonDetHtml()}</div>` + jskSubRow()
+    + `<div class="tondet">${tonDetHtml()}</div>` + `<div class="dssubb">${dsSubBlock()}</div>`
     + `<button class="cta" id="rfsi">${esc(y.inv)}</button><div class="row"><button class="sec" id="rfwa">📲 WhatsApp</button><button class="sec" id="rfcp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
     + `<div class="close" id="rfsc">${esc(y.close)}</div></div>`;
   document.body.appendChild(d); jskCheck(true);
@@ -2037,7 +2037,7 @@ function dsMoneyBan() {
   return `<div class="igban" onclick="tonSheet()" style="cursor:pointer;background:linear-gradient(135deg,rgba(125,255,107,.16),rgba(46,230,255,.08));border-color:rgba(125,255,107,.45)"><span style="font-size:26px">💵</span><div style="min-width:0"><b>${esc(x.h.replace(/^💵 /, ''))}</b><small>${esc(x.s)}</small></div></div>`; // 17 oct 2026 (Jeremy, 19h45): no balances on the banner, only what can be earned; @jeremstyke and Meme Coin are in the sheet
 }
 // 17 oct 2026 (Jeremy): the banner also leads to Meme Coin Tycoon (real USDT there too)
-window.dsSub = () => { try { haptic(); } catch (e) {} api('ev', { k: 'ban_sub' }).catch(() => {}); openLink('https://t.me/jeremstyke'); };
+window.dsSub = () => { try { haptic(); } catch (e) {} api('ev', { k: 'ban_sub' }).catch(() => {}); JSK_WAIT = true; openLink('https://t.me/jeremstyke'); };
 window.dsMct = () => { try { haptic(); } catch (e) {} api('ev', { k: 'ban_mct' }).catch(() => {}); openLink('https://t.me/Memecointycoonbot?startapp=src_dsban'); };
 function igBanner() {
   if (!st || !st.me || st.me.premium || !st.me.country) return '';
