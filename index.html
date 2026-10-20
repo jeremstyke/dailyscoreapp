@@ -1719,15 +1719,15 @@ const TONS = {
 let TON_ST = null;
 // 15 oct 2026: the same live total balance in every app (Meme Coin Tycoon, GramPedia, Daily Score) and its detail per program
 const TOND = {
-  en: { tot: 'My total balance', earn: '💰 Earn bonus', tap: '💎 Diamond', other: '🏆 Contest and bonuses', here: 'here', paid: 'Already received', wait: 'Being paid', pay: (m) => 'Paid every Monday from ' + m + ' to your TON wallet', nowal: '👛 Add your wallet in Earn to get paid', wal: '✅ Wallet added' },
-  fr: { tot: 'Mon solde total', earn: '💰 Bonus Earn', tap: '💎 Diamant', other: '🏆 Concours et bonus', here: 'ici', paid: 'Déjà reçu', wait: 'En cours de paiement', pay: (m) => 'Payé chaque lundi dès ' + m + ' sur ton portefeuille TON', nowal: '👛 Ajoute ton portefeuille dans Earn pour être payé', wal: '✅ Portefeuille ajouté' },
-  es: { tot: 'Mi saldo total', earn: '💰 Bono Earn', tap: '💎 Diamante', other: '🏆 Concurso y bonos', here: 'aquí', paid: 'Ya recibido', wait: 'En pago', pay: (m) => 'Pagado cada lunes desde ' + m + ' a tu billetera TON', nowal: '👛 Añade tu billetera en Earn para cobrar', wal: '✅ Billetera añadida' },
-  pt: { tot: 'Meu saldo total', earn: '💰 Bônus Earn', tap: '💎 Diamante', other: '🏆 Concurso e bônus', here: 'aqui', paid: 'Já recebido', wait: 'Em pagamento', pay: (m) => 'Pago toda segunda a partir de ' + m + ' na sua carteira TON', nowal: '👛 Adicione sua carteira no Earn para receber', wal: '✅ Carteira adicionada' },
-  de: { tot: 'Mein Gesamtguthaben', earn: '💰 Earn-Bonus', tap: '💎 Diamant', other: '🏆 Wettbewerb und Boni', here: 'hier', paid: 'Bereits erhalten', wait: 'Wird ausgezahlt', pay: (m) => 'Auszahlung jeden Montag ab ' + m + ' auf dein TON-Wallet', nowal: '👛 Füge dein Wallet in Earn hinzu, um bezahlt zu werden', wal: '✅ Wallet hinzugefügt' },
-  it: { tot: 'Il mio saldo totale', earn: '💰 Bonus Earn', tap: '💎 Diamante', other: '🏆 Concorso e bonus', here: 'qui', paid: 'Già ricevuto', wait: 'In pagamento', pay: (m) => 'Pagato ogni lunedì da ' + m + ' sul tuo wallet TON', nowal: '👛 Aggiungi il tuo wallet in Earn per essere pagato', wal: '✅ Wallet aggiunto' },
-  tr: { tot: 'Toplam bakiyem', earn: '💰 Earn bonusu', tap: '💎 Elmas', other: '🏆 Yarışma ve bonuslar', here: 'burada', paid: 'Alınan', wait: 'Ödeniyor', pay: (m) => 'Her pazartesi ' + m + '\'dan itibaren TON cüzdanına ödenir', nowal: '👛 Ödeme almak için cüzdanını Earn\'e ekle', wal: '✅ Cüzdan eklendi' },
-  ru: { tot: 'Мой общий баланс', earn: '💰 Бонус Earn', tap: '💎 Алмаз', other: '🏆 Конкурс и бонусы', here: 'здесь', paid: 'Уже получено', wait: 'Выплачивается', pay: (m) => 'Выплата каждый понедельник от ' + m + ' на твой TON-кошелёк', nowal: '👛 Добавь кошелёк в Earn, чтобы получить выплату', wal: '✅ Кошелёк добавлен' },
-  ar: { tot: 'رصيدي الإجمالي', earn: '💰 مكافأة Earn', tap: '💎 الماسة', other: '🏆 المسابقة والمكافآت', here: 'هنا', paid: 'تم استلامه', wait: 'قيد الدفع', pay: (m) => 'يُدفع كل يوم اثنين من ' + m + ' إلى محفظة TON', nowal: '👛 أضف محفظتك في Earn لتحصل على أموالك', wal: '✅ تمت إضافة المحفظة' }
+  en: { tot: 'My total balance', earn: '💰 Earn bonus', tap: '💎 Diamond', other: '🏆 Contest and bonuses', here: 'here', paid: 'Already received', wait: 'Being paid', pay: (m) => 'Paid every day from ' + m + ' to your TON wallet', nowal: '👛 Add your wallet in Earn to get paid', wal: '✅ Wallet added' },
+  fr: { tot: 'Mon solde total', earn: '💰 Bonus Earn', tap: '💎 Diamant', other: '🏆 Concours et bonus', here: 'ici', paid: 'Déjà reçu', wait: 'En cours de paiement', pay: (m) => 'Payé chaque jour dès ' + m + ' sur ton portefeuille TON', nowal: '👛 Ajoute ton portefeuille dans Earn pour être payé', wal: '✅ Portefeuille ajouté' },
+  es: { tot: 'Mi saldo total', earn: '💰 Bono Earn', tap: '💎 Diamante', other: '🏆 Concurso y bonos', here: 'aquí', paid: 'Ya recibido', wait: 'En pago', pay: (m) => 'Pagado cada día desde ' + m + ' a tu billetera TON', nowal: '👛 Añade tu billetera en Earn para cobrar', wal: '✅ Billetera añadida' },
+  pt: { tot: 'Meu saldo total', earn: '💰 Bônus Earn', tap: '💎 Diamante', other: '🏆 Concurso e bônus', here: 'aqui', paid: 'Já recebido', wait: 'Em pagamento', pay: (m) => 'Pago todo dia a partir de ' + m + ' na sua carteira TON', nowal: '👛 Adicione sua carteira no Earn para receber', wal: '✅ Carteira adicionada' },
+  de: { tot: 'Mein Gesamtguthaben', earn: '💰 Earn-Bonus', tap: '💎 Diamant', other: '🏆 Wettbewerb und Boni', here: 'hier', paid: 'Bereits erhalten', wait: 'Wird ausgezahlt', pay: (m) => 'Auszahlung jeden Tag ab ' + m + ' auf dein TON-Wallet', nowal: '👛 Füge dein Wallet in Earn hinzu, um bezahlt zu werden', wal: '✅ Wallet hinzugefügt' },
+  it: { tot: 'Il mio saldo totale', earn: '💰 Bonus Earn', tap: '💎 Diamante', other: '🏆 Concorso e bonus', here: 'qui', paid: 'Già ricevuto', wait: 'In pagamento', pay: (m) => 'Pagato ogni giorno da ' + m + ' sul tuo wallet TON', nowal: '👛 Aggiungi il tuo wallet in Earn per essere pagato', wal: '✅ Wallet aggiunto' },
+  tr: { tot: 'Toplam bakiyem', earn: '💰 Earn bonusu', tap: '💎 Elmas', other: '🏆 Yarışma ve bonuslar', here: 'burada', paid: 'Alınan', wait: 'Ödeniyor', pay: (m) => 'Her gün ' + m + '\'dan itibaren TON cüzdanına ödenir', nowal: '👛 Ödeme almak için cüzdanını Earn\'e ekle', wal: '✅ Cüzdan eklendi' },
+  ru: { tot: 'Мой общий баланс', earn: '💰 Бонус Earn', tap: '💎 Алмаз', other: '🏆 Конкурс и бонусы', here: 'здесь', paid: 'Уже получено', wait: 'Выплачивается', pay: (m) => 'Выплата каждый день от ' + m + ' на твой TON-кошелёк', nowal: '👛 Добавь кошелёк в Earn, чтобы получить выплату', wal: '✅ Кошелёк добавлен' },
+  ar: { tot: 'رصيدي الإجمالي', earn: '💰 مكافأة Earn', tap: '💎 الماسة', other: '🏆 المسابقة والمكافآت', here: 'هنا', paid: 'تم استلامه', wait: 'قيد الدفع', pay: (m) => 'يُدفع كل يوم من ' + m + ' إلى محفظة TON', nowal: '👛 أضف محفظتك في Earn لتحصل على أموالك', wal: '✅ تمت إضافة المحفظة' }
 };
 // 15 oct 2026: "Add my wallet" opens Earn by Jeremstyke right on the wallet field
 const TONW = { en: '👛 Add my wallet', fr: '👛 Ajouter mon portefeuille', es: '👛 Añadir mi billetera', pt: '👛 Adicionar minha carteira', de: '👛 Mein Wallet hinzufügen', it: '👛 Aggiungi il mio wallet', tr: '👛 Cüzdanımı ekle', ru: '👛 Добавить кошелёк', ar: '👛 أضف محفظتي' };
@@ -1922,6 +1922,39 @@ function tonSheet() {
   d.querySelector('#tonwa').onclick = () => { haptic(); api('ev', { k: 'ton_wa' }).catch(() => {}); outWa(t('invShare') + ' 👉 ' + myLink + '\n\n(' + O[1] + ')'); };
   d.querySelector('#toncp').onclick = () => { haptic(); api('ev', { k: 'ton_copy' }).catch(() => {}); outCopy(myLink, '✅ ' + myLink); };
 }
+// 20 oct 2026 (Jeremy): the referral is back (Telegram only): $0.05 in TON per invited friend who makes 5 predictions. A small banner
+// above the menu, a tap opens a simple sheet (balances, friends in progress, wallet, invite); the other earnings stay off.
+const DSREF = {
+  en: ['👥 $0.05 in TON per friend', 'Your friend makes 5 predictions: you earn $0.05', 'One prediction a day, so 5 different days. Paid in TON every day, from $0.10.'],
+  fr: ['👥 0,05 $ en TON par ami', 'Ton ami fait 5 pronos : tu gagnes 0,05 $', 'Un prono par jour, donc 5 jours différents. Payé en TON chaque jour, dès 0,10 $.'],
+  es: ['👥 0,05 $ en TON por amigo', 'Tu amigo hace 5 pronósticos: ganas 0,05 $', 'Un pronóstico al día, así que 5 días distintos. Pagado en TON cada día, desde 0,10 $.'],
+  pt: ['👥 0,05 $ em TON por amigo', 'Seu amigo faz 5 palpites: você ganha 0,05 $', 'Um palpite por dia, então 5 dias diferentes. Pago em TON todo dia, a partir de 0,10 $.'],
+  de: ['👥 0,05 $ in TON pro Freund', 'Dein Freund gibt 5 Tipps ab: du verdienst 0,05 $', 'Ein Tipp pro Tag, also 5 verschiedene Tage. Auszahlung in TON jeden Tag, ab 0,10 $.'],
+  it: ['👥 0,05 $ in TON per amico', 'Il tuo amico fa 5 pronostici: guadagni 0,05 $', 'Un pronostico al giorno, quindi 5 giorni diversi. Pagato in TON ogni giorno, da 0,10 $.'],
+  tr: ['👥 Arkadaş başına TON ile 0,05 $', 'Arkadaşın 5 tahmin yapar: 0,05 $ kazanırsın', 'Günde bir tahmin, yani 5 farklı gün. Her gün TON ile ödenir, 0,10 $ itibarıyla.'],
+  ru: ['👥 0,05 $ в TON за друга', 'Друг делает 5 прогнозов: ты получаешь 0,05 $', 'Один прогноз в день, то есть 5 разных дней. Выплата в TON каждый день, от 0,10 $.'],
+  ar: ['👥 0.05 $ بعملة TON لكل صديق', 'يقدّم صديقك 5 توقعات: تربح 0.05 $', 'توقع واحد يوميًا، أي 5 أيام مختلفة. الدفع بعملة TON يوميًا ابتداءً من 0.10 $.']
+};
+function dsRefBan() {
+  if (!IN_TG || !st || !st.me || !st.me.country) return '';
+  const x = DSREF[lang] || DSREF.en;
+  return `<div class="igban" onclick="dsRefSheet()" style="cursor:pointer;background:linear-gradient(135deg,rgba(125,255,107,.16),rgba(46,230,255,.08));border-color:rgba(125,255,107,.45)"><div style="min-width:0"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></div><span class="iggo" style="background:#7dff6b;color:#0d2a08">${esc(({ en: 'Invite', fr: 'Inviter', es: 'Invitar', pt: 'Convidar', de: 'Einladen', it: 'Invita', tr: 'Davet et', ru: 'Пригласить', ar: 'ادعُ' })[lang] || 'Invite')}</span></div>`;
+}
+window.dsRefSheet = function () {
+  haptic(); api('ev', { k: 'ref_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
+  const x = DSREF[lang] || DSREF.en, y = tonT(), d = document.createElement('div'); d.className = 'tsxo';
+  d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">👥</div><div><b>${esc(x[0].replace(/^👥 /, ''))}</b><span>TON</span></div></div><p class="sub">${esc(x[1])}<br>${esc(x[2])}</p>`
+    + `<div class="tondet">${tonDetHtml()}</div>`
+    + `<button class="cta" id="rfsi">${esc(y.inv)}</button><div class="row"><button class="sec" id="rfwa">📲 WhatsApp</button><button class="sec" id="rfcp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
+    + `<div class="close" id="rfsc">${esc(y.close)}</div></div>`;
+  document.body.appendChild(d);
+  const live = setInterval(() => { if (!document.body.contains(d)) { clearInterval(live); return; } tonStats(); }, 20000);
+  d.onclick = (e) => { if (e.target === d || e.target.id === 'rfsc') { d.remove(); clearInterval(live); } };
+  d.querySelector('#rfsi').onclick = () => { d.remove(); clearInterval(live); tonInvite(); };
+  const myLink = 'https://t.me/' + BOT + '?start=ref_' + ((st && st.me && st.me.id) || ''), O = TONOUT[lang] || TONOUT.en;
+  d.querySelector('#rfwa').onclick = () => { haptic(); api('ev', { k: 'ton_wa' }).catch(() => {}); outWa(t('invShare') + ' 👉 ' + myLink + '\n\n(' + O[1] + ')'); };
+  d.querySelector('#rfcp').onclick = () => { haptic(); api('ev', { k: 'ton_copy' }).catch(() => {}); outCopy(myLink, '✅ ' + myLink); };
+};
 let view = 'match';
 const IG_URL = 'https://www.instant-gaming.com/?igr=jeremymultigaming';
 let igSeen = false;
@@ -1970,7 +2003,7 @@ function navBar() {
   let nav = document.getElementById('nav');
   if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.getElementById('app').insertAdjacentElement('afterend', nav); }
   // 20 oct 2026 (Jeremy): the Instant Gaming banner is back on the website and the Android app (not in Telegram)
-  nav.innerHTML = adSlot() + dsMoneyBan() + (IN_TG ? '' : igBanner()) + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
+  nav.innerHTML = adSlot() + dsMoneyBan() + (IN_TG ? dsRefBan() : igBanner()) + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
   placeRichBanner(nav); placeAd(); fitNav();
   const igb = document.getElementById('igban'); if (igb) igb.onclick = (e) => { haptic(); api('ev', { k: 'ig_click' }).catch(() => {}); if (IN_TG) { e.preventDefault(); try { tg.openLink(IG_URL); } catch (er) { window.open(IG_URL, '_blank'); } } };
   const hbb = document.getElementById('hbban'); if (hbb) hbb.onclick = () => { haptic(); api('ev', { k: 'house_click' }).catch(() => {}); tg.openTelegramLink(AD_CONTACT); };
