@@ -1957,13 +1957,15 @@ window.dsRefSheet = function () {
   const x = DSREF[lang] || DSREF.en, y = tonT(), d = document.createElement('div'); d.className = 'tsxo';
   d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">👥</div><div><b>${esc(x[0].replace(/^👥 /, ''))}</b><span>TON</span></div></div><p class="sub">${esc(x[1])}<br>${esc(x[2])}</p><p class="sub" style="color:#ffd36b"><b>${esc(DSREF_TG[lang] || DSREF_TG.en)}</b></p>`
     + `<div class="tondet">${tonDetHtml()}</div>`
-    + `<button class="cta" id="rfsi">${esc(y.inv)}</button><div class="row"><button class="sec" id="rfcp" style="flex:1">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
+    + `<button class="cta" id="rfsi">${esc(y.inv)}</button><div class="row"><button class="sec" id="rfwa">📲 WhatsApp</button><button class="sec" id="rfcp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
     + `<div class="close" id="rfsc">${esc(y.close)}</div></div>`;
   document.body.appendChild(d);
   const live = setInterval(() => { if (!document.body.contains(d)) { clearInterval(live); return; } tonStats(); }, 20000);
   d.onclick = (e) => { if (e.target === d || e.target.id === 'rfsc') { d.remove(); clearInterval(live); } };
   d.querySelector('#rfsi').onclick = () => { d.remove(); clearInterval(live); tonInvite(); };
   const myLink = 'https://t.me/' + BOT + '?start=ref_' + ((st && st.me && st.me.id) || ''), O = TONOUT[lang] || TONOUT.en;
+  // 20 oct 2026 (Jeremy): WhatsApp is back, the link opens the Telegram game (t.me), so the friend counts
+  d.querySelector('#rfwa').onclick = () => { haptic(); api('ev', { k: 'ton_wa' }).catch(() => {}); outWa(t('invShare') + ' 👉 ' + myLink + '\n\n(' + O[1] + ')'); };
   d.querySelector('#rfcp').onclick = () => { haptic(); api('ev', { k: 'ton_copy' }).catch(() => {}); outCopy(myLink, '✅ ' + myLink); };
 };
 let view = 'match';
