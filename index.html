@@ -1935,6 +1935,18 @@ const DSREF = {
   ru: ['👥 0,05 $ в TON за друга', 'Друг делает 5 прогнозов: ты получаешь 0,05 $', 'Один прогноз в день, то есть 5 разных дней. Выплата в TON каждый день, от 0,10 $.'],
   ar: ['👥 0.05 $ بعملة TON لكل صديق', 'يقدّم صديقك 5 توقعات: تربح 0.05 $', 'توقع واحد يوميًا، أي 5 أيام مختلفة. الدفع بعملة TON يوميًا ابتداءً من 0.10 $.']
 };
+// 20 oct 2026 (Jeremy): the referral only works for friends who join in Telegram with the link (not the website), and no WhatsApp button
+const DSREF_TG = {
+  en: '⚠️ Telegram only: your friend must join with your link inside Telegram. A friend who plays on the website (dailyscoreapp.com) does not count.',
+  fr: '⚠️ Uniquement sur Telegram : ton ami doit rejoindre avec ton lien dans Telegram. Un ami qui joue sur le site (dailyscoreapp.com) ne compte pas.',
+  es: '⚠️ Solo en Telegram: tu amigo debe entrar con tu enlace dentro de Telegram. Un amigo que juega en la web (dailyscoreapp.com) no cuenta.',
+  pt: '⚠️ Só no Telegram: seu amigo precisa entrar com seu link dentro do Telegram. Um amigo que joga no site (dailyscoreapp.com) não conta.',
+  de: '⚠️ Nur in Telegram: Dein Freund muss mit deinem Link in Telegram beitreten. Ein Freund, der auf der Website (dailyscoreapp.com) spielt, zählt nicht.',
+  it: '⚠️ Solo su Telegram: il tuo amico deve entrare con il tuo link dentro Telegram. Un amico che gioca sul sito (dailyscoreapp.com) non conta.',
+  tr: '⚠️ Sadece Telegram: arkadaşın Telegram içinde senin bağlantınla katılmalı. Sitede (dailyscoreapp.com) oynayan arkadaş sayılmaz.',
+  ru: '⚠️ Только в Telegram: друг должен зайти по твоей ссылке внутри Telegram. Друг, который играет на сайте (dailyscoreapp.com), не засчитывается.',
+  ar: '⚠️ على تيليجرام فقط: يجب أن ينضم صديقك عبر رابطك داخل تيليجرام. الصديق الذي يلعب على الموقع (dailyscoreapp.com) لا يُحتسب.'
+};
 function dsRefBan() {
   if (!IN_TG || !st || !st.me || !st.me.country) return '';
   const x = DSREF[lang] || DSREF.en;
@@ -1943,16 +1955,15 @@ function dsRefBan() {
 window.dsRefSheet = function () {
   haptic(); api('ev', { k: 'ref_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
   const x = DSREF[lang] || DSREF.en, y = tonT(), d = document.createElement('div'); d.className = 'tsxo';
-  d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">👥</div><div><b>${esc(x[0].replace(/^👥 /, ''))}</b><span>TON</span></div></div><p class="sub">${esc(x[1])}<br>${esc(x[2])}</p>`
+  d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">👥</div><div><b>${esc(x[0].replace(/^👥 /, ''))}</b><span>TON</span></div></div><p class="sub">${esc(x[1])}<br>${esc(x[2])}</p><p class="sub" style="color:#ffd36b"><b>${esc(DSREF_TG[lang] || DSREF_TG.en)}</b></p>`
     + `<div class="tondet">${tonDetHtml()}</div>`
-    + `<button class="cta" id="rfsi">${esc(y.inv)}</button><div class="row"><button class="sec" id="rfwa">📲 WhatsApp</button><button class="sec" id="rfcp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
+    + `<button class="cta" id="rfsi">${esc(y.inv)}</button><div class="row"><button class="sec" id="rfcp" style="flex:1">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
     + `<div class="close" id="rfsc">${esc(y.close)}</div></div>`;
   document.body.appendChild(d);
   const live = setInterval(() => { if (!document.body.contains(d)) { clearInterval(live); return; } tonStats(); }, 20000);
   d.onclick = (e) => { if (e.target === d || e.target.id === 'rfsc') { d.remove(); clearInterval(live); } };
   d.querySelector('#rfsi').onclick = () => { d.remove(); clearInterval(live); tonInvite(); };
   const myLink = 'https://t.me/' + BOT + '?start=ref_' + ((st && st.me && st.me.id) || ''), O = TONOUT[lang] || TONOUT.en;
-  d.querySelector('#rfwa').onclick = () => { haptic(); api('ev', { k: 'ton_wa' }).catch(() => {}); outWa(t('invShare') + ' 👉 ' + myLink + '\n\n(' + O[1] + ')'); };
   d.querySelector('#rfcp').onclick = () => { haptic(); api('ev', { k: 'ton_copy' }).catch(() => {}); outCopy(myLink, '✅ ' + myLink); };
 };
 let view = 'match';
