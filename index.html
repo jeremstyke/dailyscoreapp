@@ -2001,6 +2001,8 @@ window.dsProofs = function () {
   d.innerHTML = `<div style="display:flex;justify-content:flex-end;padding:8px 10px"><button style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#fff;color:#111;cursor:pointer">✕</button></div><iframe src="${PROOFS_URL}" style="flex:1;border:0;width:100%"></iframe>`;
   d.querySelector('button').onclick = () => d.remove(); document.body.appendChild(d);
 };
+// 21 oct 2026 (Jeremy): links t.me/DailyScorefootbot/play?startapp=proofs (channel posts) open the payment proofs right away
+try { if (IN_TG && tg.initDataUnsafe && tg.initDataUnsafe.start_param === 'proofs') setTimeout(() => window.dsProofs(), 1500); } catch (e) {}
 // 20 oct 2026 (Jeremy): the referral only works for friends who join in Telegram with the link (not the website), and no WhatsApp button
 const DSREF_TG = {
   en: '⚠️ Telegram only: your friend must join with your link inside Telegram. A friend who plays on the website (dailyscoreapp.com) does not count.',
