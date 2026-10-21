@@ -1991,6 +1991,16 @@ const DSREF = {
   ru: ['👥 0,05 $ в TON за друга', 'Друг делает 5 прогнозов: ты получаешь 0,05 $', 'Один прогноз в день, то есть 5 разных дней. Выплата в TON каждый день, от 0,10 $.'],
   ar: ['👥 0.05 $ بعملة TON لكل صديق', 'يقدّم صديقك 5 توقعات: تربح 0.05 $', 'توقع واحد يوميًا، أي 5 أيام مختلفة. الدفع بعملة TON يوميًا ابتداءً من 0.10 $.']
 };
+// 21 oct 2026 (Jeremy): the public payment proofs (every TON payout, checkable on Tonviewer), opened inside the game from the green sheet
+const PROOFS_URL = 'https://pote-ia-bot-en-production.up.railway.app/mct/proofs?app=ds';
+const PRF = { en: '💸 Payment proofs: every payout sent', fr: '💸 Preuves de paiement : tous les paiements envoyés', es: '💸 Pruebas de pago: todos los pagos enviados', pt: '💸 Provas de pagamento: todos os pagamentos enviados', de: '💸 Zahlungsnachweise: alle gesendeten Auszahlungen', it: '💸 Prove di pagamento: tutti i pagamenti inviati', tr: '💸 Ödeme kanıtları: gönderilen tüm ödemeler', ru: '💸 Доказательства выплат: все отправленные выплаты', ar: '💸 إثباتات الدفع: كل المدفوعات المرسلة' };
+const dsProofBtn = () => `<div onclick="dsProofs()" style="cursor:pointer;margin:12px 0 0;padding:11px 12px;border-radius:12px;border:1px solid rgba(125,255,107,.45);background:rgba(125,255,107,.08);font-weight:700;font-size:14px;text-align:center">${esc(PRF[lang] || PRF.en)} ›</div>`;
+window.dsProofs = function () {
+  haptic(); api('ev', { k: 'proofs' }).catch(() => {});
+  const d = document.createElement('div'); d.style.cssText = 'position:fixed;inset:0;z-index:100000;background:#1a0638;display:flex;flex-direction:column';
+  d.innerHTML = `<div style="display:flex;justify-content:flex-end;padding:8px 10px"><button style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#fff;color:#111;cursor:pointer">✕</button></div><iframe src="${PROOFS_URL}" style="flex:1;border:0;width:100%"></iframe>`;
+  d.querySelector('button').onclick = () => d.remove(); document.body.appendChild(d);
+};
 // 20 oct 2026 (Jeremy): the referral only works for friends who join in Telegram with the link (not the website), and no WhatsApp button
 const DSREF_TG = {
   en: '⚠️ Telegram only: your friend must join with your link inside Telegram. A friend who plays on the website (dailyscoreapp.com) does not count.',
@@ -2012,7 +2022,7 @@ window.dsRefSheet = function () {
   haptic(); api('ev', { k: 'ref_sheet' }).catch(() => {}); setTimeout(tonStats, 0);
   const x = DSREF[lang] || DSREF.en, y = tonT(), d = document.createElement('div'); d.className = 'tsxo';
   d.innerHTML = `<div class="tsx"><div class="grab"></div><div class="hero"><div class="ic">👥</div><div><b>${esc(x[0].replace(/^👥 /, ''))}</b><span>TON</span></div></div><p class="sub">${esc(x[1])}<br>${esc(x[2])}</p><p class="sub" style="color:#ffd36b"><b>${esc(DSREF_TG[lang] || DSREF_TG.en)}</b></p>`
-    + `<div class="tondet">${tonDetHtml()}</div>` + `<div class="dssubb">${dsSubBlock()}</div>`
+    + `<div class="tondet">${tonDetHtml()}</div>` + `<div class="dssubb">${dsSubBlock()}</div>` + dsProofBtn()
     + `<button class="cta" id="rfsi">${esc(y.inv)}</button><div class="row"><button class="sec" id="rfwa">📲 WhatsApp</button><button class="sec" id="rfcp">📋 ${esc((TONOUT[lang] || TONOUT.en)[0])}</button></div>`
     + `<div class="close" id="rfsc">${esc(y.close)}</div></div>`;
   document.body.appendChild(d); jskCheck(true);
