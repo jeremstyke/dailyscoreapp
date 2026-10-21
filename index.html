@@ -1994,7 +1994,7 @@ const DSREF = {
 // 21 oct 2026 (Jeremy): the public payment proofs (every TON payout, checkable on Tonviewer), opened inside the game from the green sheet
 const PROOFS_URL = 'https://pote-ia-bot-en-production.up.railway.app/mct/proofs?app=ds';
 const PRF = { en: '💸 Payment proofs: every payout sent', fr: '💸 Preuves de paiement : tous les paiements envoyés', es: '💸 Pruebas de pago: todos los pagos enviados', pt: '💸 Provas de pagamento: todos os pagamentos enviados', de: '💸 Zahlungsnachweise: alle gesendeten Auszahlungen', it: '💸 Prove di pagamento: tutti i pagamenti inviati', tr: '💸 Ödeme kanıtları: gönderilen tüm ödemeler', ru: '💸 Доказательства выплат: все отправленные выплаты', ar: '💸 إثباتات الدفع: كل المدفوعات المرسلة' };
-const dsProofBtn = () => `<div onclick="dsProofs()" style="cursor:pointer;margin:12px 0 0;padding:11px 12px;border-radius:12px;border:1px solid rgba(125,255,107,.45);background:rgba(125,255,107,.08);font-weight:700;font-size:14px;text-align:center">${esc(PRF[lang] || PRF.en)} ›</div>`;
+const dsProofBtn = () => `<div onclick="dsProofs()" style="cursor:pointer;margin:16px 0 18px;padding:11px 12px;border-radius:12px;border:1px solid rgba(125,255,107,.45);background:rgba(125,255,107,.08);font-weight:700;font-size:14px;text-align:center">${esc(PRF[lang] || PRF.en)} ›</div>`;
 window.dsProofs = function () {
   haptic(); api('ev', { k: 'proofs' }).catch(() => {});
   const d = document.createElement('div'); d.style.cssText = 'position:fixed;inset:0;z-index:100000;background:#1a0638;display:flex;flex-direction:column';
