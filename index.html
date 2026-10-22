@@ -2079,12 +2079,22 @@ function placeRichBanner(nav) {
   }
   nav.insertBefore(richBanEl, nav.firstChild);
 }
+// 22 oct 2026 (Jeremy, 17h46): the referral is removed from Daily Score; in its place a blue banner to Baton (@PassTheBatonBot)
+const DSBATON = {en: ['🏃 Earn $BATON', 'My new game: hold the baton, 300 $BATON/h, trade them for USDT', 'Play'], fr: ['🏃 Gagne des $BATON', 'Mon nouveau jeu : tiens le bâton, 300 $BATON/h, échange-les contre des USDT', 'Jouer'], es: ['🏃 Gana $BATON', 'Mi nuevo juego: ten el bastón, 300 $BATON/h, cámbialos por USDT', 'Jugar'], pt: ['🏃 Ganhe $BATON', 'Meu novo jogo: segure o bastão, 300 $BATON/h, troque por USDT', 'Jogar'], de: ['🏃 Verdiene $BATON', 'Mein neues Spiel: halte den Stab, 300 $BATON/h, tausche sie gegen USDT', 'Spielen'], it: ['🏃 Guadagna $BATON', 'Il mio nuovo gioco: tieni il testimone, 300 $BATON/h, scambiali in USDT', 'Gioca'], tr: ['🏃 $BATON kazan', 'Yeni oyunum: bayrağı tut, saatte 300 $BATON, USDT ile takas et', 'Oyna'], ru: ['🏃 Зарабатывай $BATON', 'Моя новая игра: держи эстафету, 300 $BATON/ч, обменивай на USDT', 'Играть'], ar: ['🏃 اربح $BATON', 'لعبتي الجديدة: احمل العصا، 300 $BATON/ساعة، وبدّلها بـ USDT', 'العب']};
+let btSeen = false;
+function dsBatonBan() {
+  if (!IN_TG || !st || !st.me || !st.me.country) return '';
+  if (!btSeen) { btSeen = true; api('ev', { k: 'baton_view' }).catch(() => {}); }
+  const x = DSBATON[lang] || DSBATON.en;
+  return `<div class="igban" onclick="dsBaton()" style="cursor:pointer;background:linear-gradient(135deg,rgba(47,141,255,.30),rgba(30,90,200,.14));border-color:rgba(80,160,255,.6)"><div style="min-width:0"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></div><span class="iggo" style="background:#2f8dff;color:#fff">${esc(x[2])}</span></div>`;
+}
+window.dsBaton = () => { try { haptic(); } catch (e) {} api('ev', { k: 'baton_click' }).catch(() => {}); openLink('https://t.me/PassTheBatonBot/play?startapp=src_dsban'); };
 function navBar() {
   const items = [['match', '⚽', 'tMatch'], ['rank', '🏆', 'tRank'], ['leagues', '👥', 'tLeagues'], ['profile', '🏅', 'tProfile']];
   let nav = document.getElementById('nav');
   if (!nav) { nav = document.createElement('div'); nav.id = 'nav'; nav.className = 'nav'; document.getElementById('app').insertAdjacentElement('afterend', nav); }
   // 20 oct 2026 (Jeremy): the Instant Gaming banner is back on the website and the Android app (not in Telegram)
-  nav.innerHTML = adSlot() + dsMoneyBan() + (IN_TG ? dsRefBan() : igBanner()) + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
+  nav.innerHTML = adSlot() + dsMoneyBan() + (IN_TG ? dsBatonBan() : igBanner()) + (richBannerFilled() ? '' : houseBanner()) + '<div class="nav-in">' + items.map(([k, i, s]) => `<div class="nb ${view === k ? 'on' : ''}" data-nav="${k}"><span class="i">${i}</span>${esc(t(s))}</div>`).join('') + '</div>';
   placeRichBanner(nav); placeAd(); fitNav();
   const igb = document.getElementById('igban'); if (igb) igb.onclick = (e) => { haptic(); api('ev', { k: 'ig_click' }).catch(() => {}); if (IN_TG) { e.preventDefault(); try { tg.openLink(IG_URL); } catch (er) { window.open(IG_URL, '_blank'); } } };
   const hbb = document.getElementById('hbban'); if (hbb) hbb.onclick = () => { haptic(); api('ev', { k: 'house_click' }).catch(() => {}); tg.openTelegramLink(AD_CONTACT); };
