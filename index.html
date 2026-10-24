@@ -1794,7 +1794,7 @@ const TOND = {
 };
 // 15 oct 2026: "Add my wallet" opens Earn by Jeremstyke right on the wallet field
 const TONW = { en: '👛 Add my wallet', fr: '👛 Ajouter mon portefeuille', es: '👛 Añadir mi billetera', pt: '👛 Adicionar minha carteira', de: '👛 Mein Wallet hinzufügen', it: '👛 Aggiungi il mio wallet', tr: '👛 Cüzdanımı ekle', ru: '👛 Добавить кошелёк', ar: '👛 أضف محفظتي' };
-function tonGoWal() { haptic(); api('ev', { k: 'ton_wallet' }).catch(() => {}); openLink('https://t.me/earnbyjeremstykebot?startapp=wallet_ds'); }
+function tonGoWal() { haptic(); api('ev', { k: 'ton_wallet' }).catch(() => {}); openLink('https://t.me/Memecointycoonbot?startapp=src_ds'); } // 24 oct 2026: Earn by Jeremstyke is deleted, the TON wallet is added in Meme Coin Tycoon
 const TONG = { mct: '🪙 Meme Coin Tycoon', gp: '📚 GramPedia', ds: '⚽ Daily Score' };
 const tonMoney = (v) => (Math.round(Number(v || 0) * 100) / 100).toFixed(2) + ' $';
 function tonDetHtml() {
@@ -1887,7 +1887,7 @@ function tonStats() {
   if (TON_ST) fill();
   api('ton', {}).then((s) => { if (s && s.ok) { const was = !!(TON_ST && TON_ST.sub); TON_ST = s; fill(); if (!!s.sub !== was) { try { navBar(); } catch (e) {} } } }).catch(() => {}); // 17 oct 2026: the banner shows when he is subscribed to @jeremstyke
 }
-const TON_EARN = 'https://t.me/earnbyjeremstykebot?startapp=progs_ds'; // 15 oct 2026: opens the Earn mini app directly, source ds
+const TON_EARN = 'https://t.me/Memecointycoonbot?startapp=src_ds'; // 24 oct 2026: Earn by Jeremstyke is deleted // 15 oct 2026: opens the Earn mini app directly, source ds
 const tonInvite = () => { haptic('medium'); api('ev', { k: 'ton_invite' }).catch(() => {}); shareLink('https://t.me/' + BOT + '?start=ref_' + st.me.id, t('invShare')); };
 // 15 oct 2026: the home banner shows the player's validated, pending and paid amounts
 function dsMini(s) {
@@ -1896,7 +1896,7 @@ function dsMini(s) {
 }
 // 16 oct 2026 (Jeremy): the TON program is stopped; the home shows a small card to Earn by Jeremstyke (tap the diamond) instead
 const EARN_CARD = { en: ['Tap the diamond, earn money', 'Free, paid in real USDT every Monday.'], fr: ['Tape le diamant, gagne de l\'argent', 'Gratuit, payé en vrais USDT chaque lundi.'], es: ['Toca el diamante, gana dinero', 'Gratis, pagado en USDT real cada lunes.'], pt: ['Toque no diamante, ganhe dinheiro', 'Grátis, pago em USDT de verdade toda segunda.'], de: ['Tippe den Diamanten, verdiene Geld', 'Kostenlos, jeden Montag in echten USDT bezahlt.'], it: ['Tocca il diamante, guadagna soldi', 'Gratis, pagato in USDT vero ogni lunedì.'], ar: ['اضغط على الماسة واربح المال', 'مجاني، يُدفع بعملة USDT حقيقية كل يوم اثنين.'], tr: ['Elmasa dokun, para kazan', 'Ücretsiz, her pazartesi gerçek USDT ile ödenir.'], ru: ['Жми на алмаз и зарабатывай', 'Бесплатно, выплаты в настоящих USDT каждый понедельник.'] };
-window.dsEarn = () => { haptic(); api('ev', { k: 'earn_card' }).catch(() => {}); openLink('https://t.me/earnbyjeremstykebot?startapp=tap_dsapp'); };
+window.dsEarn = () => { haptic(); api('ev', { k: 'earn_card' }).catch(() => {}); openLink('https://t.me/Memecointycoonbot?startapp=src_ds'); };
 function tonBanner() {
   return ''; // 17 oct 2026 (Jeremy): no more diamond card (Earn by Jeremstyke) on Daily Score
   const e = EARN_CARD[lang] || EARN_CARD.en;
