@@ -338,6 +338,7 @@ async function showInter(why) {
     if (Date.now() - INTER_AT < 45000) return;
     // 24 oct 2026 (10h19, Jeremy): one hour at least between two interstitials, even after closing the app
     let lastInt = 0; try { lastInt = Number(localStorage.getItem('ds_int_at') || 0); } catch (e) {}
+    if (!lastInt) { try { localStorage.setItem('ds_int_at', String(Date.now())); } catch (e) {} return; }  // never on the first visit
     if (Date.now() - lastInt < 3600000) return;
     try { localStorage.setItem('ds_int_at', String(Date.now())); } catch (e) {}
     INTER_AT = Date.now();
