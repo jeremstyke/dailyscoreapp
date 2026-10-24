@@ -336,6 +336,10 @@ async function showInter(why) {
   try {
     if (st && st.me && st.me.premium) return;
     if (Date.now() - INTER_AT < 45000) return;
+    // 24 oct 2026 (10h19, Jeremy): one hour at least between two interstitials, even after closing the app
+    let lastInt = 0; try { lastInt = Number(localStorage.getItem('ds_int_at') || 0); } catch (e) {}
+    if (Date.now() - lastInt < 3600000) return;
+    try { localStorage.setItem('ds_int_at', String(Date.now())); } catch (e) {}
     INTER_AT = Date.now();
     // 15 oct 2026: the Adsgram script may not be loaded yet 1 second after opening: wait for it (10 s at most), and log each step
     api('ev', { k: 'ad_inter_try' + (why ? '_' + why : '') }).catch(() => {});
