@@ -2390,5 +2390,6 @@ if (IS_ANDROID) { try { if (!localStorage.getItem('ds_inst')) { const d = Array.
 if (!IN_TG && 'serviceWorker' in navigator && (location.hostname === 'dailyscoreapp.com' || location.hostname.endsWith('github.io'))) navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
 if (!IN_TG) document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && TOKEN && isWebOnly()) load(); });
 </script>
+<script src="https://jeremstyke.github.io/games.js" data-from="ds"></script>
 </body>
 </html>
