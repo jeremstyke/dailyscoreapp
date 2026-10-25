@@ -341,7 +341,7 @@ async function showInter(why) {
     // 24 oct 2026 (10h19, Jeremy): one hour at least between two interstitials, even after closing the app
     let lastInt = 0; try { lastInt = Number(localStorage.getItem('ds_int_at') || 0); } catch (e) {}
     if (!lastInt) { try { localStorage.setItem('ds_int_at', String(Date.now())); } catch (e) {} return; }  // never on the first visit
-    if (Date.now() - lastInt < 3600000) return;
+    // 25 oct 2026 (22h51, Jeremy): at every opening, no time limit (still never on the first visit)
     try { localStorage.setItem('ds_int_at', String(Date.now())); } catch (e) {}
     INTER_AT = Date.now();
     // 15 oct 2026: the Adsgram script may not be loaded yet 1 second after opening: wait for it (10 s at most), and log each step
