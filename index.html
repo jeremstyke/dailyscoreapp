@@ -276,7 +276,7 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = true, TASK_ON = true /* 25 oct 2026 (Jeremy): Adsgram Task back on, it pays $BATON on Baton */, RICH_RW = false, RW_ON = true, LIFE_FALLBACK = false, AG_READY = true; // once Adsgram is approved (AG_READY): no video available -> 'come back later' // AG_READY: Adsgram block 51754 approved (until then, Adsgram is never called: it would show 'block not active') // until Adsgram approves: no video available -> the one-time lifetime offer instead (turn off once the videos work) // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
+const INTER_ON = true, TASK_ON = false /* 25 oct 2026 (22h35, Jeremy): Task off again */, RICH_RW = false, RW_ON = true, LIFE_FALLBACK = false, AG_READY = true; // once Adsgram is approved (AG_READY): no video available -> 'come back later' // AG_READY: Adsgram block 51754 approved (until then, Adsgram is never called: it would show 'block not active') // until Adsgram approves: no video available -> the one-time lifetime offer instead (turn off once the videos work) // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
 // RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
 let richCtl = null, richLoading = null;
 function loadRich() {
@@ -2094,6 +2094,7 @@ function placeRichBanner(nav) {
 const DSBATON = {en: ['🏃 Pass The Baton', 'My new game: hold the baton, 300 $BATON/h, trade them for USDT', 'Play'], fr: ['🏃 Pass The Baton', 'Mon nouveau jeu : tiens le bâton, 300 $BATON/h, échange-les contre des USDT', 'Jouer'], es: ['🏃 Pass The Baton', 'Mi nuevo juego: ten el bastón, 300 $BATON/h, cámbialos por USDT', 'Jugar'], pt: ['🏃 Pass The Baton', 'Meu novo jogo: segure o bastão, 300 $BATON/h, troque por USDT', 'Jogar'], de: ['🏃 Pass The Baton', 'Mein neues Spiel: halte den Stab, 300 $BATON/h, tausche sie gegen USDT', 'Spielen'], it: ['🏃 Pass The Baton', 'Il mio nuovo gioco: tieni il testimone, 300 $BATON/h, scambiali in USDT', 'Gioca'], tr: ['🏃 Pass The Baton', 'Yeni oyunum: bayrağı tut, saatte 300 $BATON, USDT ile takas et', 'Oyna'], ru: ['🏃 Pass The Baton', 'Моя новая игра: держи эстафету, 300 $BATON/ч, обменивай на USDT', 'Играть'], ar: ['🏃 Pass The Baton', 'لعبتي الجديدة: احمل العصا، 300 $BATON/ساعة، وبدّلها بـ USDT', 'العب']};
 let btSeen = false;
 function dsBatonBan() {
+  return '';  // 25 oct 2026 (22h35, Jeremy): no more Pass The Baton banner on Daily Score
   if (!IN_TG || !st || !st.me || !st.me.country) return '';
   if (!btSeen) { btSeen = true; api('ev', { k: 'baton_view' }).catch(() => {}); }
   const x = DSBATON[lang] || DSBATON.en;
