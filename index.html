@@ -276,7 +276,7 @@ function showTadsFullscreen() {
   });
 }
 // Ads switched off for now (only the rewarded ad is on): set to true to bring them back
-const INTER_ON = true, TASK_ON = false /* 25 oct 2026 (22h35, Jeremy): Task off again */, RICH_RW = false, RW_ON = true, LIFE_FALLBACK = false, AG_READY = true; // once Adsgram is approved (AG_READY): no video available -> 'come back later' // AG_READY: Adsgram block 51754 approved (until then, Adsgram is never called: it would show 'block not active') // until Adsgram approves: no video available -> the one-time lifetime offer instead (turn off once the videos work) // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
+const INTER_ON = true, TASK_ON = true /* 26 oct 2026 (13h52, Jeremy): Task back on, 3,000 $BATON */, RICH_RW = false, RW_ON = true, LIFE_FALLBACK = false, AG_READY = true; // once Adsgram is approved (AG_READY): no video available -> 'come back later' // AG_READY: Adsgram block 51754 approved (until then, Adsgram is never called: it would show 'block not active') // until Adsgram approves: no video available -> the one-time lifetime offer instead (turn off once the videos work) // 'replace': until Adsgram approves, the rewarded button opens the one-time lifetime offer; 'ten': the offer 10% of the time, otherwise the video // no ads in Telegram until Adsgram accepts dailyscoreapp.com; // Adsgram: Task (task-51752) and rewarded on; interstitial (int-51534) off for the launch, to switch back on once retention is known; RichAds off
 // RichAds (pubId 1024502, appId 9135): loaded only for players who can see ads, in Telegram
 let richCtl = null, richLoading = null;
 function loadRich() {
@@ -1027,7 +1027,7 @@ function celebrate(emoji, title, sub, gold) {
 }
 if (!document.getElementById('celcss')) { const cs = document.createElement('style'); cs.id = 'celcss'; cs.textContent = '@keyframes celIn{from{opacity:0}to{opacity:1}}@keyframes celPop{0%{transform:scale(.2) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}@keyframes celFall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}'; document.head.appendChild(cs); }
 function taskLabel() {
-  return '🏃 +2 000 $BATON';  // 25 oct 2026 (Jeremy): the task pays $BATON on Baton (server: ds_task_baton), no waiting time any more
+  return '🏃 +3 000 $BATON';  // 25 oct 2026 (Jeremy): the task pays $BATON on Baton (server: ds_task_baton), no waiting time any more
   const ms = st && st.taskNext ? new Date(st.taskNext).getTime() - Date.now() : 0;
   if (ms <= 0) return t('taskRw');
   const hh = Math.floor(ms / 3600000), mm = Math.ceil((ms % 3600000) / 60000);
@@ -1053,7 +1053,7 @@ function placeAd() {
   const onTaskGift = () => {
     if (Date.now() - lastTaskGift < 3000) return; lastTaskGift = Date.now();
     api('ev', { k: 'ad_task_reward' }).catch(() => {});
-    celebrate('🏃', '+2 000 $BATON', 'Baton 🏃'); return;  // 25 oct 2026 (Jeremy): added on Baton (kept there if he has no Baton account yet)
+    celebrate('🏃', '+3 000 $BATON', 'Baton 🏃'); return;  // 25 oct 2026 (Jeremy): added on Baton (kept there if he has no Baton account yet)
     const waiting = st && st.taskNext && new Date(st.taskNext).getTime() > Date.now();
     if (waiting) celebrate('⏳', taskLabel(), t('celWait'));
     else celebrate('🎁', t('celT'), t('celS'));
