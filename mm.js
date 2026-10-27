@@ -83,7 +83,7 @@
     const t = T(), ms = (D && D.matches) || [];
     const mn = (D && D.main) || [];
     // 27 oct 2026 (19h49, Jeremy): the small Baton banner, with the $BATON won on Daily Score, links to Pass The Baton (always shown)
-    const ban = () => '<div class="igban" data-bl="1" style="cursor:pointer;background:linear-gradient(135deg,rgba(47,141,255,.30),rgba(30,90,200,.14));border-color:rgba(80,160,255,.6)"><div style="min-width:0"><b>🏃 ' + ec(D.dsbt > 0 ? t.won(Number(D.dsbt)) : t.bl1) + '</b>' + (D.dsall > 0 ? '<small style="color:var(--lime,#c6ff3d);font-weight:700">' + ec(t.all(Number(D.dsall))) + '</small>' : '') + '<small>' + ec(t.bl2) + '</small></div><span class="iggo">' + ec(t.bl3) + ' ›</span></div>';
+    const ban = () => (D.dsall > 0 ? '<div class="igban" data-sh="1" style="cursor:pointer;padding:6px 10px 6px 12px;background:linear-gradient(135deg,rgba(47,141,255,.22),rgba(30,90,200,.10));border-color:rgba(80,160,255,.5)"><div style="min-width:0"><b style="font-size:13px">' + ec(S2().all(Number(D.dsall).toLocaleString(lg()))) + '</b></div><span class="iggo" style="padding:4px 10px">›</span></div>' : '');
     if (!ms.length && !mn.length) return '<div style="margin:6px 0 14px">' + ban() + '</div>';
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' });
     const tomorrowOnly = ms.every((m) => m.day !== today);
@@ -117,8 +117,9 @@
 
   const timers = {};
   document.addEventListener('click', async (e) => {
-    const b = e.target.closest && e.target.closest('#mmCard [data-mm], #mmCard [data-jk], #mmCard [data-cl], #mmCard [data-tr], #mmCard [data-val], #mmCard [data-cm], #mmCard [data-bl]'); if (!b || !D) return;
+    const b = e.target.closest && e.target.closest('#mmCard [data-mm], #mmCard [data-jk], #mmCard [data-cl], #mmCard [data-tr], #mmCard [data-val], #mmCard [data-cm], #mmCard [data-bl], #mmCard [data-sh]'); if (!b || !D) return;
     e.preventDefault(); e.stopPropagation(); hap();
+    if (b.dataset.sh) { openSheet(); return; }
     if (b.dataset.bl) { const u = 'https://t.me/PassTheBatonBot/play?startapp=src_dsmm'; try { tw.openTelegramLink(u); } catch (x) { location.href = u; } return; }
     const save = async (m) => {
       const cur = LOC[m.id] || { h: m.pick ? m.pick.h : 1, a: m.pick ? m.pick.a : 1 };
@@ -170,4 +171,58 @@
   load();
   setInterval(() => { if (!document.hidden && Date.now() - lastLoad > 60000) load(); }, 15000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
+  // 27 oct 2026 (20h45, Jeremy): a banner above the menu (every tab) with the player's own $BATON, which opens a sheet that explains
+  // everything (his gains by source, how to win, real money on Pass The Baton); in the game, a small line with the total of all players.
+  const SH = {
+    en: { nav: (n) => '🏃 My gains: ' + n + ' $BATON', nav0: '🏃 Win $BATON: real money', more: 'How it works ›', ttl: 'My $BATON on Daily Score', rows: { m: '⚽ Predictions', w: '🏆 Weekly contest', f: '👥 Invited friends', t: '🎯 Tasks' }, how: 'How to win', lines: ['⚽ Every prediction: +2,000 exact score · +500 right result · +100 missed', '🎬 x2 on a match with a video', '⭐ Match of the day: points and $BATON x2 (up to +4,000)', '🏆 Weekly contest: 400,000 / 200,000 / 100,000 on the podium, 40,000 from 4th to 10th, 4,000 for every ranked player', '👥 Every invited friend who plays: +10,000', '🎁 After each match, collect your $BATON with a video'], money: '💵 $BATON are real money: they go to Pass The Baton, our other game, where you swap them for USDT.', btn: '🏃 Open Pass The Baton', close: 'Close', all: (n) => '🌍 ' + n + ' $BATON already won by the players' },
+    fr: { nav: (n) => '🏃 Mes gains : ' + n + ' $BATON', nav0: '🏃 Gagne des $BATON : de l\'argent réel', more: 'Comment ça marche ›', ttl: 'Mes $BATON sur Daily Score', rows: { m: '⚽ Pronostics', w: '🏆 Concours de la semaine', f: '👥 Amis invités', t: '🎯 Tâches' }, how: 'Comment en gagner', lines: ['⚽ Chaque prono : +2 000 score exact · +500 bon résultat · +100 raté', '🎬 x2 sur un match avec une vidéo', '⭐ Match du jour : points et $BATON x2 (jusqu\'à +4 000)', '🏆 Concours de la semaine : 400 000 / 200 000 / 100 000 sur le podium, 40 000 du 4e au 10e, 4 000 pour tous les classés', '👥 Chaque ami invité qui joue : +10 000', '🎁 Après chaque match, récupère tes $BATON avec une vidéo'], money: '💵 Les $BATON sont de l\'argent réel : ils arrivent sur Pass The Baton, notre autre jeu, où tu les échanges contre des USDT.', btn: '🏃 Ouvrir Pass The Baton', close: 'Fermer', all: (n) => '🌍 ' + n + ' $BATON déjà gagnés par les joueurs' },
+    es: { nav: (n) => '🏃 Mis ganancias: ' + n + ' $BATON', nav0: '🏃 Gana $BATON: dinero real', more: 'Cómo funciona ›', ttl: 'Mis $BATON en Daily Score', rows: { m: '⚽ Pronósticos', w: '🏆 Concurso semanal', f: '👥 Amigos invitados', t: '🎯 Tareas' }, how: 'Cómo ganar', lines: ['⚽ Cada pronóstico: +2.000 resultado exacto · +500 acierto · +100 fallo', '🎬 x2 en un partido con un vídeo', '⭐ Partido del día: puntos y $BATON x2 (hasta +4.000)', '🏆 Concurso semanal: 400.000 / 200.000 / 100.000 en el podio, 40.000 del 4.º al 10.º, 4.000 para todos los clasificados', '👥 Cada amigo invitado que juega: +10.000', '🎁 Tras cada partido, cobra tus $BATON con un vídeo'], money: '💵 Los $BATON son dinero real: van a Pass The Baton, nuestro otro juego, donde los cambias por USDT.', btn: '🏃 Abrir Pass The Baton', close: 'Cerrar', all: (n) => '🌍 ' + n + ' $BATON ya ganados por los jugadores' },
+    pt: { nav: (n) => '🏃 Meus ganhos: ' + n + ' $BATON', nav0: '🏃 Ganhe $BATON: dinheiro real', more: 'Como funciona ›', ttl: 'Meus $BATON no Daily Score', rows: { m: '⚽ Palpites', w: '🏆 Concurso semanal', f: '👥 Amigos convidados', t: '🎯 Tarefas' }, how: 'Como ganhar', lines: ['⚽ Cada palpite: +2.000 placar exato · +500 resultado certo · +100 errado', '🎬 x2 em um jogo com um vídeo', '⭐ Jogo do dia: pontos e $BATON x2 (até +4.000)', '🏆 Concurso semanal: 400.000 / 200.000 / 100.000 no pódio, 40.000 do 4º ao 10º, 4.000 para todos os classificados', '👥 Cada amigo convidado que joga: +10.000', '🎁 Após cada jogo, resgate seus $BATON com um vídeo'], money: '💵 Os $BATON são dinheiro real: vão para o Pass The Baton, nosso outro jogo, onde você troca por USDT.', btn: '🏃 Abrir Pass The Baton', close: 'Fechar', all: (n) => '🌍 ' + n + ' $BATON já ganhos pelos jogadores' },
+    de: { nav: (n) => '🏃 Meine Gewinne: ' + n + ' $BATON', nav0: '🏃 Gewinne $BATON: echtes Geld', more: 'So funktioniert es ›', ttl: 'Meine $BATON auf Daily Score', rows: { m: '⚽ Tipps', w: '🏆 Wochenwettbewerb', f: '👥 Eingeladene Freunde', t: '🎯 Aufgaben' }, how: 'So gewinnst du', lines: ['⚽ Jeder Tipp: +2.000 exaktes Ergebnis · +500 Tendenz · +100 daneben', '🎬 x2 auf ein Spiel mit einem Video', '⭐ Spiel des Tages: Punkte und $BATON x2 (bis +4.000)', '🏆 Wochenwettbewerb: 400.000 / 200.000 / 100.000 auf dem Podium, 40.000 für Platz 4 bis 10, 4.000 für alle in der Wertung', '👥 Jeder eingeladene Freund, der spielt: +10.000', '🎁 Nach jedem Spiel holst du deine $BATON mit einem Video ab'], money: '💵 $BATON sind echtes Geld: Sie landen in Pass The Baton, unserem anderen Spiel, wo du sie gegen USDT tauschst.', btn: '🏃 Pass The Baton öffnen', close: 'Schließen', all: (n) => '🌍 ' + n + ' $BATON schon von den Spielern gewonnen' },
+    it: { nav: (n) => '🏃 I miei guadagni: ' + n + ' $BATON', nav0: '🏃 Vinci $BATON: soldi veri', more: 'Come funziona ›', ttl: 'I miei $BATON su Daily Score', rows: { m: '⚽ Pronostici', w: '🏆 Concorso settimanale', f: '👥 Amici invitati', t: '🎯 Compiti' }, how: 'Come vincerli', lines: ['⚽ Ogni pronostico: +2.000 risultato esatto · +500 esito giusto · +100 sbagliato', '🎬 x2 su una partita con un video', '⭐ Partita del giorno: punti e $BATON x2 (fino a +4.000)', '🏆 Concorso settimanale: 400.000 / 200.000 / 100.000 sul podio, 40.000 dal 4° al 10°, 4.000 a tutti i classificati', '👥 Ogni amico invitato che gioca: +10.000', '🎁 Dopo ogni partita, riscuoti i tuoi $BATON con un video'], money: '💵 I $BATON sono soldi veri: vanno su Pass The Baton, il nostro altro gioco, dove li cambi in USDT.', btn: '🏃 Apri Pass The Baton', close: 'Chiudi', all: (n) => '🌍 ' + n + ' $BATON già vinti dai giocatori' },
+    ar: { nav: (n) => '🏃 أرباحي: ' + n + ' $BATON', nav0: '🏃 اربح $BATON: مال حقيقي', more: 'كيف تعمل ›', ttl: '$BATON الخاصة بي في Daily Score', rows: { m: '⚽ التوقعات', w: '🏆 مسابقة الأسبوع', f: '👥 الأصدقاء المدعوون', t: '🎯 المهام' }, how: 'كيف تربح', lines: ['⚽ كل توقع: ‎+2,000 للنتيجة الدقيقة · ‎+500 للنتيجة الصحيحة · ‎+100 للخطأ', '🎬 ×2 على مباراة مع فيديو', '⭐ مباراة اليوم: النقاط و$BATON ×2 (حتى ‎+4,000)', '🏆 مسابقة الأسبوع: 400,000 / 200,000 / 100,000 للمراكز الثلاثة، 40,000 من الرابع إلى العاشر، 4,000 لكل المصنّفين', '👥 كل صديق مدعو يلعب: ‎+10,000', '🎁 بعد كل مباراة، استلم $BATON بفيديو'], money: '💵 $BATON مال حقيقي: تذهب إلى Pass The Baton، لعبتنا الأخرى، حيث تستبدلها بـ USDT.', btn: '🏃 افتح Pass The Baton', close: 'إغلاق', all: (n) => '🌍 ' + n + ' $BATON ربحها اللاعبون' },
+    tr: { nav: (n) => '🏃 Kazançlarım: ' + n + ' $BATON', nav0: '🏃 $BATON kazan: gerçek para', more: 'Nasıl çalışır ›', ttl: 'Daily Score\'daki $BATON\'larım', rows: { m: '⚽ Tahminler', w: '🏆 Haftalık yarışma', f: '👥 Davet edilen arkadaşlar', t: '🎯 Görevler' }, how: 'Nasıl kazanılır', lines: ['⚽ Her tahmin: tam skor +2.000 · doğru sonuç +500 · yanlış +100', '🎬 Video ile bir maçta x2', '⭐ Günün maçı: puan ve $BATON x2 (+4.000\'e kadar)', '🏆 Haftalık yarışma: podyumda 400.000 / 200.000 / 100.000, 4. ile 10. arası 40.000, tüm sıralananlara 4.000', '👥 Oynayan her davetli arkadaş: +10.000', '🎁 Her maçtan sonra $BATON\'larını video ile al'], money: '💵 $BATON gerçek paradır: diğer oyunumuz Pass The Baton\'a gider, orada USDT ile değiştirirsin.', btn: '🏃 Pass The Baton\'ı aç', close: 'Kapat', all: (n) => '🌍 Oyuncular şimdiden ' + n + ' $BATON kazandı' },
+    ru: { nav: (n) => '🏃 Мои выигрыши: ' + n + ' $BATON', nav0: '🏃 Выигрывай $BATON: реальные деньги', more: 'Как это работает ›', ttl: 'Мои $BATON в Daily Score', rows: { m: '⚽ Прогнозы', w: '🏆 Конкурс недели', f: '👥 Приглашённые друзья', t: '🎯 Задания' }, how: 'Как выиграть', lines: ['⚽ Каждый прогноз: +2 000 точный счёт · +500 исход · +100 мимо', '🎬 x2 на матч за видео', '⭐ Матч дня: очки и $BATON x2 (до +4 000)', '🏆 Конкурс недели: 400 000 / 200 000 / 100 000 на пьедестале, 40 000 с 4-го по 10-е, 4 000 всем в рейтинге', '👥 Каждый приглашённый друг, который играет: +10 000', '🎁 После каждого матча забирай свои $BATON за видео'], money: '💵 $BATON — это реальные деньги: они попадают в Pass The Baton, нашу другую игру, где их можно обменять на USDT.', btn: '🏃 Открыть Pass The Baton', close: 'Закрыть', all: (n) => '🌍 Игроки уже выиграли ' + n + ' $BATON' },
+  };
+  const S2 = () => SH[lg()] || SH.en;
+  const nf2 = (n) => Number(n || 0).toLocaleString(lg());
+  const goBaton = () => { const u = 'https://t.me/PassTheBatonBot/play?startapp=src_dsnav'; try { tw.openTelegramLink(u); } catch (x) { location.href = u; } };
+  function openSheet() {
+    hap(); const s = S2(), bk = (D && D.dsbk) || {}, tot = Number((D && D.dsbt) || 0);
+    let o = document.getElementById('mmSheet'); if (o) o.remove();
+    o = document.createElement('div'); o.id = 'mmSheet';
+    o.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center';
+    const rows = ['m', 'w', 'f', 't'].filter((k) => Number(bk[k]) > 0).map((k) => '<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line,rgba(255,255,255,.09))"><span>' + ec(s.rows[k]) + '</span><b>' + nf2(bk[k]) + '</b></div>').join('');
+    o.innerHTML = '<div style="width:100%;max-width:480px;max-height:88vh;overflow:auto;background:var(--card,#13241a);border:1px solid var(--line,rgba(255,255,255,.09));border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));color:var(--ink,#f2f7f3)">'
+      + '<div class="label" style="margin-bottom:6px">🏃 ' + ec(s.ttl) + '</div>'
+      + '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:800;font-size:40px;color:var(--lime,#c6ff3d);line-height:1.1">' + nf2(tot) + ' $BATON</div>'
+      + (rows ? '<div style="margin:10px 0 4px;font-size:14px">' + rows + '</div>' : '')
+      + '<div style="margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,200,61,.10);border:1px solid rgba(255,200,61,.35);font-size:14px;line-height:1.45">' + ec(s.money) + '</div>'
+      + '<div class="label" style="margin:16px 0 6px">' + ec(s.how) + '</div>'
+      + s.lines.map((l) => '<div style="font-size:14px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.09))">' + ec(l) + '</div>').join('')
+      + (D && D.dsall > 0 ? '<div class="note" style="margin-top:10px;color:var(--lime,#c6ff3d)">' + ec(s.all(nf2(D.dsall))) + '</div>' : '')
+      + '<button class="btn gold" id="mmShGo" style="margin-top:14px">' + ec(s.btn) + '</button>'
+      + '<button class="btn ghost" id="mmShX" style="margin-top:8px">' + ec(s.close) + '</button></div>';
+    document.body.appendChild(o);
+    o.onclick = (e) => { if (e.target === o) o.remove(); };
+    document.getElementById('mmShX').onclick = () => o.remove();
+    document.getElementById('mmShGo').onclick = () => { hap(); goBaton(); };
+  }
+  window.dsOpenBatonSheet = openSheet;
+  // the banner above the menu, put back after every redraw of the menu
+  function navBan() {
+    const nav = document.getElementById('nav'); if (!nav || !D) return;
+    const inn = nav.querySelector('.nav-in'); if (!inn) return;
+    const s = S2(), tot = Number(D.dsbt || 0), k = tot + lg();
+    let b = document.getElementById('mmNavBan');
+    if (!b || !b.isConnected) {
+      b = document.createElement('div'); b.id = 'mmNavBan'; b.className = 'igban';
+      b.style.cssText = 'cursor:pointer;background:linear-gradient(135deg,rgba(47,141,255,.30),rgba(30,90,200,.14));border-color:rgba(80,160,255,.6)';
+      b.onclick = openSheet;
+      inn.insertAdjacentElement('beforebegin', b);
+      try { fitNav(); } catch (x) {}
+    }
+    if (b.dataset.k !== k) { b.dataset.k = k; b.innerHTML = '<div style="min-width:0"><b>' + ec(tot > 0 ? s.nav(nf2(tot)) : s.nav0) + '</b></div><span class="iggo">' + ec(s.more) + '</span>'; try { fitNav(); } catch (x) {} }
+  }
+  setInterval(navBan, 700);
 })();
