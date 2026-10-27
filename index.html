@@ -538,7 +538,7 @@ async function googleButton() {
 }
 // Email sign-in: name + email, then a 6-digit code received by email
 // Guest accounts: a name and play; an account key (DS-XXXX-XXXX-XXXX) to get the account back anywhere
-function guestView() {
+function guestView() { return tgOnly();  // 27 oct 2026: no more web guest accounts
   document.getElementById('app').innerHTML = `<div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b></div></div>
   <div class="card"><div class="label">${esc(t('gPlay'))}</div>
     <input id="gn" maxlength="20" autocomplete="given-name" placeholder="${esc(t('gName'))}" style="${inputCss}">
@@ -697,7 +697,7 @@ function nmVoteHtml() {
 }
 // the visitor taps a match: the vote is kept, a guest account is made (name only), then the vote is cast
 function nmVoteSignup(id) {
-  haptic('medium'); try { localStorage.setItem('ds_pend_vote', String(id)); } catch (e) {}
+  haptic('medium'); return tgOnly();  // 27 oct 2026: new players go to Telegram try { localStorage.setItem('ds_pend_vote', String(id)); } catch (e) {}
   const d = document.createElement('div'); d.className = 'sheet';
   d.innerHTML = `<div class="card"><div class="label">${esc(t('pvT'))}</div><p style="margin:0 0 8px">${esc(t('pvP'))}</p><input id="pvn" maxlength="20" autocomplete="given-name" placeholder="${esc(t('gName'))}" style="${inputCss}"><button class="btn go" id="pvgo">${esc(t('pvGo'))}</button><div class="note" id="pvsso" style="cursor:pointer;text-decoration:underline">${esc(t('pvOther'))}</div></div>`;
   d.onclick = (e) => { if (e.target === d) d.remove(); };
@@ -727,7 +727,7 @@ function noMatchView() {
   document.querySelectorAll('[data-nmv]').forEach((b) => b.onclick = () => nmVoteSignup(b.dataset.nmv));
 }
 function pvSignup() {
-  haptic('medium');
+  haptic('medium'); return tgOnly();  // 27 oct 2026: new players go to Telegram
   try { localStorage.setItem('ds_pend_pick', JSON.stringify({ day: pv.m.day, home: pv.home, away: pv.away, next: !!pv.m.next })); } catch (e) {}
   const d = document.createElement('div'); d.className = 'sheet';
   d.innerHTML = `<div class="card"><div class="label">${esc(t('pvT'))}</div>
@@ -763,6 +763,29 @@ async function applyPendingPick() {
   const k = pendingKey; pendingKey = null;
   try { localStorage.removeItem('ds_cc'); } catch (e) {}
 }
+// 27 oct 2026 (Jeremy): new players play only on Telegram. Outside Telegram, signing up (guest, Google, GitHub, email) opens the game in
+// Telegram instead; players who already have a web account still log in below (the server refuses any new web account, ds_users trigger).
+const TGO = {
+  en: { h: "⚽ Daily Score is played on Telegram", p: "New players now play only in Telegram: free, no sign-up, and your prediction is ready in 10 seconds.", b: "▶️ Play on Telegram", have: "Already have an account? Log in" },
+  fr: { h: "⚽ Daily Score se joue sur Telegram", p: "Les nouveaux joueurs jouent maintenant uniquement dans Telegram : c'est gratuit, sans inscription, et ton prono est prêt en 10 secondes.", b: "▶️ Jouer sur Telegram", have: "Déjà un compte ? Connecte-toi" },
+  es: { h: "⚽ Daily Score se juega en Telegram", p: "Los nuevos jugadores ahora juegan solo en Telegram: gratis, sin registro, y tu pronóstico está listo en 10 segundos.", b: "▶️ Jugar en Telegram", have: "¿Ya tienes cuenta? Inicia sesión" },
+  pt: { h: "⚽ Daily Score se joga no Telegram", p: "Novos jogadores agora jogam só no Telegram: grátis, sem cadastro, e seu palpite fica pronto em 10 segundos.", b: "▶️ Jogar no Telegram", have: "Já tem conta? Entre" },
+  de: { h: "⚽ Daily Score wird auf Telegram gespielt", p: "Neue Spieler spielen jetzt nur noch in Telegram: kostenlos, ohne Anmeldung, und dein Tipp ist in 10 Sekunden fertig.", b: "▶️ Auf Telegram spielen", have: "Schon ein Konto? Anmelden" },
+  it: { h: "⚽ Daily Score si gioca su Telegram", p: "I nuovi giocatori ora giocano solo su Telegram: gratis, senza registrazione, e il tuo pronostico è pronto in 10 secondi.", b: "▶️ Gioca su Telegram", have: "Hai già un account? Accedi" },
+  tr: { h: "⚽ Daily Score Telegram'da oynanır", p: "Yeni oyuncular artık sadece Telegram'da oynuyor: ücretsiz, kayıt yok, tahminin 10 saniyede hazır.", b: "▶️ Telegram'da oyna", have: "Zaten hesabın var mı? Giriş yap" },
+  ru: { h: "⚽ В Daily Score играют в Telegram", p: "Новые игроки теперь играют только в Telegram: бесплатно, без регистрации, прогноз готов за 10 секунд.", b: "▶️ Играть в Telegram", have: "Уже есть аккаунт? Войти" },
+  ar: { h: "⚽ يُلعب Daily Score على تيليغرام", p: "اللاعبون الجدد يلعبون الآن على تيليغرام فقط: مجانًا، دون تسجيل، وتوقعك جاهز في 10 ثوانٍ.", b: "▶️ العب على تيليغرام", have: "لديك حساب بالفعل؟ سجّل الدخول" },
+};
+const tgoT = () => TGO[lang] || TGO.en;
+function tgOpen() { haptic(); try { api('ev', { k: 'web_to_tg' }).catch(() => {}); } catch (e) {} window.open('https://t.me/' + BOT + '?startapp=src_web', '_blank'); }
+function tgOnly() {
+  const T = tgoT(), d = document.createElement('div'); d.className = 'sheet';
+  d.innerHTML = `<div class="card center"><div class="label">${esc(T.h)}</div><p style="margin:0 0 12px">${esc(T.p)}</p><button class="btn go" id="tgogo">${esc(T.b)}</button><div class="note" id="tgohave" style="cursor:pointer;text-decoration:underline">${esc(T.have)}</div></div>`;
+  d.onclick = (e) => { if (e.target === d) d.remove(); };
+  document.body.appendChild(d);
+  d.querySelector('#tgogo').onclick = () => { d.remove(); tgOpen(); };
+  d.querySelector('#tgohave').onclick = () => { d.remove(); loginView(); };
+}
 function loginView() {
   hideNav();
   const nl = prefLang(); lang = S[nl] ? nl : 'en'; applyLang();
@@ -771,11 +794,12 @@ function loginView() {
   <div class="card center"><img src="https://dailyscoreapp.com/icon-512.png" alt="Daily Score" style="width:150px;height:150px;display:block;margin:4px auto 10px">
     <p class="muted" style="margin:0 0 6px">${esc(t('wText'))}</p>
     <p class="muted" style="margin:0 0 10px;font-size:13px">${esc(t('rules'))}</p>
-    <button class="btn go" id="gplay" style="margin-top:12px">${esc(t('gPlay'))}</button>
+    <button class="btn go" id="gplay" style="margin-top:12px">${esc(tgoT().b)}</button>
+    <p class="muted" style="margin:10px 0 0;font-size:13px">${esc(tgoT().p)}</p>
+    <p style="margin:18px 0 0;font-weight:800;font-size:14px">${esc(tgoT().have)}</p>
     <div id="gbtn" style="display:flex;justify-content:center;margin-top:14px;min-height:44px"></div>
     <button class="sso" id="gh"><span class="ic">${GH_ICON.replace('#f2f7f3', '#181717').replace(/width="13" height="13"/, 'width="20" height="20"')}</span><span class="tx">${esc(t('wGh'))}</span></button>
     ${ON_ANDROID_WEB ? `<a class="sso" href="${APK_PAGE}"><span class="ic" style="font-size:19px">📲</span><span class="tx">${esc(t('apkBtn'))}</span></a>` : ''}
-    <button class="sso" id="tgp"><span class="ic">${TG_ICON.replace(/width="13" height="13"/, 'width="22" height="22"')}</span><span class="tx">${esc(t('wTg'))}</span></button>
     ${EMAIL_ON ? `<button class="sso" id="emp"><span class="ic" style="font-size:19px">📧</span><span class="tx">${esc(t('emBtn'))}</span></button>` : ''}
     <div class="note" id="ghave" style="cursor:pointer;text-decoration:underline;margin-top:12px">${esc(t('gHave'))}</div>
     <p class="muted" style="margin:16px 0 0;font-size:12px">by <a href="https://t.me/jeremstyke" style="color:var(--lime)">@jeremstyke</a> · <a href="https://dailyscoreapp.com/privacy.html" style="color:var(--mute)">Privacy</a></p>
@@ -784,9 +808,9 @@ function loginView() {
   try { if (localStorage.getItem('ds_lnk')) toast(t('lnkHint')); } catch (e) {}
   document.getElementById('gh').onclick = () => { location.href = API + '/ds/gh/login?lang=' + lang; };
   googleButton();
-  document.getElementById('tgp').onclick = () => { window.open('https://t.me/' + BOT + '?start=src_web', '_blank'); };
+  const tgp = document.getElementById('tgp'); if (tgp) tgp.onclick = tgOpen;
   const emp = document.getElementById('emp'); if (emp) emp.onclick = () => emailView();
-  document.getElementById('gplay').onclick = guestView;
+  document.getElementById('gplay').onclick = tgOpen;
   document.getElementById('ghave').onclick = keyLoginView;
 }
 function hideNav() { const n = document.getElementById('nav'); if (n) n.remove(); }
