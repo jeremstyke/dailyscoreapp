@@ -101,7 +101,8 @@
     // the extra matches go after the match of the day AND its trend + AI card (the card whose label starts with 📊)
     const nx = (n) => { let x = n.nextElementSibling; if (x === c) x = x.nextElementSibling; return x; };
     let at = anchor;
-    while (nx(at) && nx(at).classList.contains('card') && /^📊/.test(((nx(at).querySelector('.label') || {}).textContent || '').trim())) at = nx(at);
+    // also its stats card (details.pre) and the vote for tomorrow's match of the day (🗳️)
+    while (nx(at) && nx(at).classList.contains('card') && (nx(at).classList.contains('pre') || /^(📊|🗳)/.test(((nx(at).querySelector('.label') || {}).textContent || '').trim()))) at = nx(at);
     if (c.previousElementSibling !== at) at.insertAdjacentElement('afterend', c);
     // the match of the day is worth double: a small gold line on its card
     if (!anchor.querySelector('.mdx')) { const x = document.createElement('div'); x.className = 'mdx'; x.style.cssText = 'position:relative;z-index:1;margin:-4px 0 10px;font-size:13px;font-weight:800;color:var(--gold,#ffc83d)'; x.textContent = T().mdx; const lb = anchor.querySelector('.label'); if (lb) lb.insertAdjacentElement('afterend', x); else anchor.prepend(x); }
