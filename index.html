@@ -777,7 +777,7 @@ const TGO = {
   ar: { h: "⚽ يُلعب Daily Score على تيليغرام", p: "اللاعبون الجدد يلعبون الآن على تيليغرام فقط: مجانًا، دون تسجيل، وتوقعك جاهز في 10 ثوانٍ.", b: "▶️ العب على تيليغرام", have: "لديك حساب بالفعل؟ سجّل الدخول" },
 };
 const tgoT = () => TGO[lang] || TGO.en;
-function tgOpen() { haptic(); try { api('ev', { k: 'web_to_tg' }).catch(() => {}); } catch (e) {} window.open('https://t.me/' + BOT + '?startapp=src_web', '_blank'); }
+function tgOpen() { haptic(); window.open('https://t.me/' + BOT + '?startapp=src_web', '_blank'); }
 function tgOnly() {
   const T = tgoT(), d = document.createElement('div'); d.className = 'sheet';
   d.innerHTML = `<div class="card center"><div class="label">${esc(T.h)}</div><p style="margin:0 0 12px">${esc(T.p)}</p><button class="btn go" id="tgogo">${esc(T.b)}</button><div class="note" id="tgohave" style="cursor:pointer;text-decoration:underline">${esc(T.have)}</div></div>`;
