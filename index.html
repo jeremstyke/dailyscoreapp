@@ -1369,6 +1369,8 @@ async function watchRewarded() {
     const r = await window.Adsgram.init({ blockId: DS_REWARD }).show();
     if (gotIt) return;
     if (r && r.done === false) return toast(t('rwSkip')); // closed before the end: no reward
+    // 27 oct 2026 (18h25, Jeremy): Adsgram's server confirmation stopped arriving (none since 25 oct): the game confirms the watched video itself
+    try { await fetch('https://txvrlvcxfnylnrpdrxtt.supabase.co/functions/v1/ds-multi', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ initData: Telegram.WebApp.initData, action: 'trend_ok' }) }); const s3 = await api('state'); if (s3.trendPaid) { gotIt = true; st = s3; await loadTrend(); render(); return; } } catch (e) {}
     toast(t('rwWait'));
     // Adsgram confirms the reward to the server, sometimes after a delay: up to 40 seconds here, then quietly for 3 minutes
     const check = async () => { try { const s2 = await api('state'); if (s2.trendPaid) { st = s2; await loadTrend(); render(); return true; } } catch (e) {} return false; };
@@ -2420,6 +2422,6 @@ if (!IN_TG && 'serviceWorker' in navigator && (location.hostname === 'dailyscore
 if (!IN_TG) document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && TOKEN && isWebOnly()) load(); });
 </script>
 <!-- games.js: loaded in <head> -->
-<script src="https://dailyscoreapp.com/mm.js?v=2"></script>
+<script src="https://dailyscoreapp.com/mm.js?v=3"></script>
 </body>
 </html>
