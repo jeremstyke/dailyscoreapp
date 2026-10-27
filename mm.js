@@ -32,7 +32,7 @@
   }
   async function load() {
     if (busy) return; busy = true;
-    const r = await call('list'); busy = false; lastLoad = Date.now();
+    const r = await call('list'); busy = false; lastLoad = Date.now(); if (r && r.dstLeft != null) window.mmDstLeft = r.dstLeft;
     if (r && r.ok) { D = r; draw(); }
   }
 
@@ -247,4 +247,5 @@
     if (b.dataset.k !== k) { b.dataset.k = k; b.innerHTML = '<div style="min-width:0"><b>' + ec(tot > 0 ? s.nav(nf2(tot)) : s.nav0) + '</b></div><span class="iggo">' + ec(s.more) + '</span>'; try { fitNav(); } catch (x) {} }
   }
   setInterval(navBan, 700);
+  window.mmReload = () => load();  // 27 oct 2026: called after a Task, so the gains banner shows the new $BATON
 })();
