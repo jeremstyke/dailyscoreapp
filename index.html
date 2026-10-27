@@ -1025,7 +1025,7 @@ function openTease(pid, name, left) {
 const TADS_ID = 12429;
 const TADS_DEBUG = () => false; // set to the owner's id check to get TADS test ads and no daily limit on that account
 let tadsNode = null, tadsState = 'idle', taskRetry = null;
-function adSlot() { return TASK_ON && IN_TG && st && st.me && !st.me.premium && tadsState !== 'none' ? '<div id="adslot" style="max-width:480px;margin:0 auto 6px;max-height:140px;overflow:hidden"></div>' : ''; }
+function adSlot() { return TASK_ON && window.mmDstLeft !== 0 && IN_TG && st && st.me && !st.me.premium && tadsState !== 'none' ? '<div id="adslot" style="max-width:480px;margin:0 auto 6px;max-height:140px;overflow:hidden"></div>' : ''; }
 function fitNav() {
   if (!IN_TG) return;
   const n = document.getElementById('nav'), a = document.getElementById('app');
@@ -1076,7 +1076,7 @@ function placeAd() {
   let lastTaskGift = 0;
   const onTaskGift = () => {
     if (Date.now() - lastTaskGift < 3000) return; lastTaskGift = Date.now();
-    api('ev', { k: 'ad_task_reward' }).catch(() => {});
+    api('ev', { k: 'ad_task_reward' }).catch(() => {}); [4000, 15000].forEach((ms) => setTimeout(() => { if (window.mmReload) window.mmReload(); }, ms));
     celebrate('🏃', '+3 000 $BATON', 'Baton 🏃'); return;  // 25 oct 2026 (Jeremy): added on Baton (kept there if he has no Baton account yet)
     const waiting = st && st.taskNext && new Date(st.taskNext).getTime() > Date.now();
     if (waiting) celebrate('⏳', taskLabel(), t('celWait'));
@@ -2265,7 +2265,7 @@ function render() {
   document.getElementById('app').innerHTML = `
   <div class="top"><div class="brand"><img class="blogo" src="https://dailyscoreapp.com/logo-96.png" alt="">Daily <b>Score</b><span class="beta">BETA</span></div>
     <div class="chips"><div class="chip fire" id="hfire" style="cursor:pointer">🔥 ${st.me.streak || 0}</div><div class="chip" id="htrophy" style="cursor:pointer">🏆 ${st.me.points}</div></div></div>
-  ${view === 'match' ? notifCard() + guardCard() + pushCard() + installCard(false) + tgLinkCard() + tonBanner() + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + (liveNow() ? '' : voteCard()) + lastCard() + vsAiCard() + jskBtn() + blogLink() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard() + jskBtn() + blogLink() + (IN_TG ? '' : `<div class="note" style="margin:-8px 0 18px;font-size:12px"><span data-legal="privacy.html" style="cursor:pointer;text-decoration:underline">${esc(t('legPriv'))}</span> · <span data-legal="terms.html" style="cursor:pointer;text-decoration:underline">${esc(t('legTerms'))}</span></div>`)}`;
+  ${view === 'match' ? notifCard() + guardCard() + pushCard() + installCard(false) + tgLinkCard() + tonBanner() + (prevCard() ? prevCard() + `<div class="note" style="margin:4px 0 14px">${esc(t('nextAfter'))}</div>` : matchCard() + preCard() + trendCard()) + voteCard() + lastCard() + vsAiCard() + jskBtn() + blogLink() : view === 'rank' ? rankingCard() : view === 'leagues' ? leaguesCard() + friendsCard() + inviteCard() : profileCard() + premiumCard() + installCard(true) + streakCard() + badgesCard() + tipCard() + jskBtn() + blogLink() + (IN_TG ? '' : `<div class="note" style="margin:-8px 0 18px;font-size:12px"><span data-legal="privacy.html" style="cursor:pointer;text-decoration:underline">${esc(t('legPriv'))}</span> · <span data-legal="terms.html" style="cursor:pointer;text-decoration:underline">${esc(t('legTerms'))}</span></div>`)}`;
   navBar();
   bind();
   askWriteAccess();
@@ -2422,6 +2422,6 @@ if (!IN_TG && 'serviceWorker' in navigator && (location.hostname === 'dailyscore
 if (!IN_TG) document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && TOKEN && isWebOnly()) load(); });
 </script>
 <!-- games.js: loaded in <head> -->
-<script src="https://dailyscoreapp.com/mm.js?v=19"></script>
+<script src="https://dailyscoreapp.com/mm.js?v=20"></script>
 </body>
 </html>
