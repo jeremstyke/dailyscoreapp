@@ -117,6 +117,29 @@
         bx.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:14px">' + ec(bt0.bo1) + '</b><b style="font-family:\'Barlow Condensed\',sans-serif;font-size:26px;color:var(--gold,#ffc83d)">x' + f(mu) + '</b></div>'
           + '<div class="note" style="margin:4px 0 0;text-align:left">' + ec(bt0.bo4) + '</div>'
           + (mu < 4 ? '<button class="btn gold" data-bo="1" style="margin-top:10px">' + ec(bt0.bo2(f(nx2))) + '</button>' : '<div style="margin-top:8px;font-weight:800;color:var(--gold,#ffc83d)">' + ec(bt0.bo3) + '</div>'); } }
+    // 27 oct 2026 (23h27, Jeremy): "Invite a friend" with what it pays, right under the bonus of the match of the day
+    const IV = { en: ['👥 Invite a friend: +10,000 $BATON', 'when he makes his first prediction', '📣 Invite a friend', 'Guess the score of the match of the day with me and win $BATON (real money) ⚽'],
+      fr: ['👥 Invite un ami : +10 000 $BATON', 'dès qu\'il fait son premier prono', '📣 Inviter un ami', 'Devine le score du match du jour avec moi et gagne des $BATON (de l\'argent réel) ⚽'],
+      es: ['👥 Invita a un amigo: +10.000 $BATON', 'cuando haga su primer pronóstico', '📣 Invitar a un amigo', 'Adivina el resultado del partido del día conmigo y gana $BATON (dinero real) ⚽'],
+      pt: ['👥 Convide um amigo: +10.000 $BATON', 'quando ele fizer o primeiro palpite', '📣 Convidar um amigo', 'Adivinhe o placar do jogo do dia comigo e ganhe $BATON (dinheiro real) ⚽'],
+      de: ['👥 Lade einen Freund ein: +10.000 $BATON', 'sobald er seinen ersten Tipp abgibt', '📣 Freund einladen', 'Tippe mit mir das Ergebnis des Spiels des Tages und gewinne $BATON (echtes Geld) ⚽'],
+      it: ['👥 Invita un amico: +10.000 $BATON', 'quando fa il suo primo pronostico', '📣 Invita un amico', 'Indovina il risultato della partita del giorno con me e vinci $BATON (soldi veri) ⚽'],
+      ar: ['👥 ادعُ صديقًا: \u200e+10,000 $BATON', 'عندما يقدّم توقعه الأول', '📣 ادعُ صديقًا', 'خمّن نتيجة مباراة اليوم معي واربح $BATON (مال حقيقي) ⚽'],
+      tr: ['👥 Bir arkadaşını davet et: +10.000 $BATON', 'ilk tahminini yaptığında', '📣 Arkadaş davet et', 'Günün maçının skorunu benimle tahmin et ve $BATON kazan (gerçek para) ⚽'],
+      ru: ['👥 Пригласи друга: +10 000 $BATON', 'когда он сделает первый прогноз', '📣 Пригласить друга', 'Угадай счёт матча дня вместе со мной и выигрывай $BATON (реальные деньги) ⚽'] };
+    let iv = document.getElementById('mmInv');
+    if (!iv || !iv.isConnected) {
+      iv = document.createElement('div'); iv.id = 'mmInv';
+      iv.style.cssText = 'position:relative;z-index:1;margin-top:10px;padding:12px;border-radius:14px;background:rgba(47,141,255,.12);border:1px solid rgba(80,160,255,.45)';
+      anchor.appendChild(iv);
+    }
+    const ivx = IV[lg()] || IV.en;
+    if (iv.dataset.k !== lg()) { iv.dataset.k = lg();
+      iv.innerHTML = '<b style="font-size:14px">' + ec(ivx[0]) + '</b><div class="note" style="margin:2px 0 0;text-align:left">' + ec(ivx[1]) + '</div><button class="btn go" type="button" style="margin-top:10px">' + ec(ivx[2]) + '</button>';
+      iv.querySelector('button').onclick = (e) => { e.stopPropagation(); hap();
+        const uid = tw.initDataUnsafe && tw.initDataUnsafe.user && tw.initDataUnsafe.user.id; if (!uid) return;
+        const u = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/DailyScorefootbot?start=ref_' + uid) + '&text=' + encodeURIComponent(ivx[3]);
+        try { tw.openTelegramLink(u); } catch (x) { location.href = u; } }; }
     // the match of the day is worth double: a small gold line on its card
     if (!anchor.querySelector('.mdx')) { const x = document.createElement('div'); x.className = 'mdx'; x.style.cssText = 'position:relative;z-index:1;margin:-4px 0 10px;font-size:13px;font-weight:800;color:var(--gold,#ffc83d)'; x.textContent = T().mdx; const lb = anchor.querySelector('.label'); if (lb) lb.insertAdjacentElement('afterend', x); else anchor.prepend(x); }
     c.innerHTML = html();
