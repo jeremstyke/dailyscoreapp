@@ -99,7 +99,7 @@
     const tomorrowOnly = ms.every((m) => m.day !== today);
     return (ms.length ? '<div class="mmh"><span>' + (tomorrowOnly ? t.h2 : t.h) + '</span>' + (D.today_pts > 0 ? '<span>' + t.day(D.today_pts) + '</span>' : '') + '</div>' : '<div style="height:6px"></div>')
       + ban()
-      + mn.map((x) => '<div class="card prem"><div class="label">' + t.md + '</div><div class="teams"><div class="tname" style="text-align:center">' + ec(x.home) + '</div><div class="res">' + (x.hg == null ? '-' : x.hg) + ' - ' + (x.ag == null ? '-' : x.ag) + '</div><div class="tname" style="text-align:center">' + ec(x.away) + '</div></div>'
+      + [].map((x) => '<div class="card prem"><div class="label">' + t.md + '</div><div class="teams"><div class="tname" style="text-align:center">' + ec(x.home) + '</div><div class="res">' + (x.hg == null ? '-' : x.hg) + ' - ' + (x.ag == null ? '-' : x.ag) + '</div><div class="tname" style="text-align:center">' + ec(x.away) + '</div></div>'
         + '<div class="sub">' + t.yours + ' ' + x.ph + '-' + x.pa + ' · <span class="pp' + (x.pts > 0 ? ' g' : '') + '">+' + x.pts + ' ' + t.pts + '</span></div>'
         + (x.cl ? '<div class="sub" style="color:var(--lime,#c6ff3d);font-weight:800">' + t.got(x.bt) + '</div>' : '<button class="btn gold" data-cm="' + x.day + '">' + t.claim(x.bt) + '</button>') + '</div>').join('')
       + ms.map(row).join('') + '<div class="note" style="margin:0 8px 14px">' + ec(String(t.rules).split(' · 🎬')[0]) + '</div>';  /* 28 oct 2026 (16h57, Jeremy): no more x2 on the match of the day, and no $BATON on the extra matches */
