@@ -267,7 +267,11 @@
     ar: ['🎯 مهمة مموّلة: +1000 $BATON', 'المهمة التالية بعد', 'لا توجد مهام الآن، عد لاحقاً'],
     tr: ['🎯 Sponsorlu görev: +1.000 $BATON', 'Sonraki görev', 'Şu an görev yok, sonra tekrar gel'],
     ru: ['🎯 Спонсорское задание: +1 000 $BATON', 'Следующее задание через', 'Сейчас нет заданий, загляни позже'] };
-  let tkNode = null, tkI = 0, tkNone = 0;
+  const TKA = { en: '🎯 Sponsored task available: +1,000 $BATON', fr: '🎯 Tâche dispo : +1 000 $BATON', es: '🎯 Tarea disponible: +1.000 $BATON', pt: '🎯 Tarefa disponível: +1.000 $BATON', de: '🎯 Aufgabe verfügbar: +1.000 $BATON', it: '🎯 Compito disponibile: +1.000 $BATON', ar: '🎯 مهمة متاحة: +1000 $BATON', tr: '🎯 Görev hazır: +1.000 $BATON', ru: '🎯 Задание доступно: +1 000 $BATON' };
+  let tkNode = null, tkI = 0, tkNone = 0, tkPoll = 0;
+  // 28 oct 2026 (17h30): back from the sponsor's page, the server says when the next task comes (the countdown shows even if the widget gave no event)
+  const tkSync = () => { try { Promise.resolve(load()).then(() => { if (document.getElementById('mmTask') && tkNext() > Date.now()) mountTask(); }); } catch (e) {} };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && document.getElementById('mmTask')) tkSync(); });
   const tkAt = () => { try { return Number(localStorage.getItem('dsTaskAt') || 0); } catch (x) { return 0; } };
   const tkNext = () => Math.max(Number((D && D.taskNext) || 0), tkAt() + 300000);
   function mountTask() {
@@ -281,6 +285,7 @@
       clearInterval(tkI);
       if (Date.now() - tkNone < 120000) { box.innerHTML = card('<div style="font-size:14px;opacity:.85">' + ec(x[2]) + '</div>'); return; }
       box.innerHTML = card('<div id="mmTaskIn"></div>');
+      clearInterval(tkPoll); tkPoll = setInterval(() => { if (!box.isConnected) { clearInterval(tkPoll); return; } tkSync(); }, 10000);
       const put = () => {
         const inn = document.getElementById('mmTaskIn'); if (!inn) return;
         if (!tkNode) {
@@ -304,7 +309,7 @@
       };
       if (typeof loadTads === 'function') loadTads(put, () => { tkNone = Date.now(); mountTask(); }); else put();
     };
-    draw(); if (tkNext() > Date.now()) tkI = setInterval(draw, 1000);
+    clearInterval(tkPoll); draw(); if (tkNext() > Date.now()) tkI = setInterval(draw, 1000);
   }
   function openSheet() {
     hap(); const s = S2(), bk = (D && D.dsbk) || {}, tot = Number((D && D.dsbt) || 0);
@@ -335,7 +340,10 @@
     const nav = document.getElementById('nav'); if (!nav || !D) return;
     if (D.ban_on === false) { const ob = document.getElementById('mmNavBan'); if (ob) { ob.remove(); try { fitNav(); } catch (x) {} } return; }  // 28 oct 2026: no more $BATON on Daily Score
     const inn = nav.querySelector('.nav-in'); if (!inn) return;
-    const s = S2(), tot = Number(D.dsbt || 0), k = tot + lg();
+    // 28 oct 2026 (17h30, Jeremy): the countdown to the next sponsored task right on the banner
+    const tw0 = Math.ceil((tkNext() - Date.now()) / 1000), tx0 = TK[lg()] || TK.en;
+    const sub0 = tw0 > 0 ? '⏳ ' + tx0[1] + ' ' + Math.floor(tw0 / 60) + ':' + String(tw0 % 60).padStart(2, '0') : (TKA[lg()] || TKA.en);
+    const s = S2(), tot = Number(D.dsbt || 0), k = tot + lg() + sub0;
     let b = document.getElementById('mmNavBan');
     if (!b || !b.isConnected) {
       b = document.createElement('div'); b.id = 'mmNavBan'; b.className = 'igban';
@@ -344,7 +352,7 @@
       inn.insertAdjacentElement('beforebegin', b);
       try { fitNav(); } catch (x) {}
     }
-    if (b.dataset.k !== k) { b.dataset.k = k; b.innerHTML = '<div style="min-width:0"><b>' + ec(tot > 0 ? s.nav(nf2(tot)) : s.nav0) + '</b></div><span class="iggo">' + ec(s.more) + '</span>'; try { fitNav(); } catch (x) {} }
+    if (b.dataset.k !== k) { b.dataset.k = k; b.innerHTML = '<div style="min-width:0"><b>' + ec(tot > 0 ? s.nav(nf2(tot)) : s.nav0) + '</b><small style="display:block;font-variant-numeric:tabular-nums">' + ec(sub0) + '</small></div><span class="iggo">' + ec(s.more) + '</span>'; try { fitNav(); } catch (x) {} }
   }
   setInterval(navBan, 700);
   window.mmReload = () => load();  // 27 oct 2026: called after a Task, so the gains banner shows the new $BATON
