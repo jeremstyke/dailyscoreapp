@@ -277,7 +277,7 @@
   function mountTask() {
     const box = document.getElementById('mmTask'); if (!box) return;
     clearInterval(tkI);
-    const x = TK[lg()] || TK.en, card = (h) => '<div style="padding:12px;border-radius:14px;background:rgba(47,141,255,.14);border:1px solid rgba(80,160,255,.5)"><div style="font-weight:800;font-size:14px;margin-bottom:6px">' + ec(x[0]) + '</div>' + h + '</div>';
+    const x = TK[lg()] || TK.en, card = (h) => '<div style="padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.2)"><div style="font-weight:800;font-size:14px;margin-bottom:6px">' + ec(x[0]) + '</div>' + h + '</div>';
     const draw = () => {
       if (!box.isConnected) { clearInterval(tkI); return; }
       const w = Math.ceil((tkNext() - Date.now()) / 1000);
@@ -352,9 +352,12 @@
       try { fitNav(); } catch (x) {}
     }
     // 28 oct 2026 (21h27, Jeremy): the sponsored Task (or its countdown) right above the blue banner
+    // 28 oct 2026 (23h39, Jeremy): the Task goes inside the blue banner (the top line opens the sheet, the Task stays below it)
+    let top = b.querySelector('.mmTop');
+    if (!top) { b.onclick = null; b.style.flexWrap = 'wrap'; b.style.cursor = 'default'; b.innerHTML = ''; top = document.createElement('div'); top.className = 'mmTop'; top.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0;cursor:pointer'; top.onclick = openSheet; b.appendChild(top); b.dataset.k = ''; }
     let tb = document.getElementById('mmTask');
-    if (!tb || !tb.isConnected || tb.nextElementSibling !== b) { if (tb) tb.remove(); tb = document.createElement('div'); tb.id = 'mmTask'; tb.style.cssText = 'margin:0 0 6px'; b.insertAdjacentElement('beforebegin', tb); mountTask(); try { fitNav(); } catch (x) {} }
-    if (b.dataset.k !== k) { b.dataset.k = k; b.innerHTML = '<div style="min-width:0"><b>' + ec(tot > 0 ? s.nav(nf2(tot)) : s.nav0) + '</b><small style="display:block;font-variant-numeric:tabular-nums">' + ec(sub0) + '</small></div><span class="iggo">' + ec(s.more) + '</span>'; try { fitNav(); } catch (x) {} }
+    if (!tb || tb.parentNode !== b) { if (tb) tb.remove(); tb = document.createElement('div'); tb.id = 'mmTask'; tb.style.cssText = 'flex-basis:100%;width:100%;min-width:0;margin-top:8px'; b.appendChild(tb); mountTask(); try { fitNav(); } catch (x) {} }
+    if (b.dataset.k !== k) { b.dataset.k = k; top.innerHTML = '<div style="min-width:0"><b>' + ec(tot > 0 ? s.nav(nf2(tot)) : s.nav0) + '</b></div><span class="iggo">' + ec(s.more) + '</span>'; try { fitNav(); } catch (x) {} }
   }
   setInterval(navBan, 700);
   window.mmReload = () => load();  // 27 oct 2026: called after a Task, so the gains banner shows the new $BATON
