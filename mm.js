@@ -285,7 +285,7 @@
       clearInterval(tkI);
       if (Date.now() - tkNone < 120000) { box.innerHTML = card('<div style="font-size:14px;opacity:.85">' + ec(x[2]) + '</div>'); return; }
       box.innerHTML = card('<div id="mmTaskIn"></div>');
-      clearInterval(tkPoll); tkPoll = setInterval(() => { if (!box.isConnected) { clearInterval(tkPoll); return; } tkSync(); }, 10000);
+      clearInterval(tkPoll); tkPoll = setInterval(() => { if (!box.isConnected) { clearInterval(tkPoll); return; } tkSync(); }, 60000);
       const put = () => {
         const inn = document.getElementById('mmTaskIn'); if (!inn) return;
         if (!tkNode) {
@@ -323,7 +323,7 @@
       + (rows ? '<div style="margin:10px 0 4px;font-size:14px">' + rows + '</div>' : '')
       + '<div style="margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,200,61,.10);border:1px solid rgba(255,200,61,.35);font-size:14px;line-height:1.45">' + ec(s.money) + '</div>'
       + '<div class="label" style="margin:16px 0 6px">' + ec(s.how) + '</div>'
-      + '<div id="mmTask" style="margin-top:12px"></div>'
+      /* 28 oct 2026 (21h27, Jeremy): the Task is now above the banner, not in the sheet */
       + (NL[lg()] || NL.en).concat([IVL[lg()] || IVL.en]).map((l) => '<div style="font-size:14px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.09))">' + ec(l) + '</div>').join('')
       + (D && D.dsall > 0 ? '<div class="note" style="margin-top:10px;color:var(--lime,#c6ff3d)">' + ec(s.all(nf2(D.dsall))) + '</div>' : '')
       + '<button class="btn gold" id="mmShGo" style="margin-top:14px">' + ec(s.btn) + '</button>'
@@ -332,13 +332,12 @@
     o.onclick = (e) => { if (e.target === o) o.remove(); };
     document.getElementById('mmShX').onclick = () => o.remove();
     document.getElementById('mmShGo').onclick = () => { hap(); goBaton(); };
-    mountTask();
   }
   window.dsOpenBatonSheet = openSheet;
   // the banner above the menu, put back after every redraw of the menu
   function navBan() {
     const nav = document.getElementById('nav'); if (!nav || !D) return;
-    if (D.ban_on === false) { const ob = document.getElementById('mmNavBan'); if (ob) { ob.remove(); try { fitNav(); } catch (x) {} } return; }  // 28 oct 2026: no more $BATON on Daily Score
+    if (D.ban_on === false) { const ot = document.getElementById('mmTask'); if (ot) ot.remove(); const ob = document.getElementById('mmNavBan'); if (ob) { ob.remove(); try { fitNav(); } catch (x) {} } return; }  // 28 oct 2026: no more $BATON on Daily Score
     const inn = nav.querySelector('.nav-in'); if (!inn) return;
     // 28 oct 2026 (17h30, Jeremy): the countdown to the next sponsored task right on the banner
     const tw0 = Math.ceil((tkNext() - Date.now()) / 1000), tx0 = TK[lg()] || TK.en;
@@ -352,6 +351,9 @@
       inn.insertAdjacentElement('beforebegin', b);
       try { fitNav(); } catch (x) {}
     }
+    // 28 oct 2026 (21h27, Jeremy): the sponsored Task (or its countdown) right above the blue banner
+    let tb = document.getElementById('mmTask');
+    if (!tb || !tb.isConnected || tb.nextElementSibling !== b) { if (tb) tb.remove(); tb = document.createElement('div'); tb.id = 'mmTask'; tb.style.cssText = 'margin:0 0 6px'; b.insertAdjacentElement('beforebegin', tb); mountTask(); try { fitNav(); } catch (x) {} }
     if (b.dataset.k !== k) { b.dataset.k = k; b.innerHTML = '<div style="min-width:0"><b>' + ec(tot > 0 ? s.nav(nf2(tot)) : s.nav0) + '</b><small style="display:block;font-variant-numeric:tabular-nums">' + ec(sub0) + '</small></div><span class="iggo">' + ec(s.more) + '</span>'; try { fitNav(); } catch (x) {} }
   }
   setInterval(navBan, 700);
