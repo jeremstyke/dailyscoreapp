@@ -102,7 +102,7 @@
       + mn.map((x) => '<div class="card prem"><div class="label">' + t.md + ' · x2</div><div class="teams"><div class="tname" style="text-align:center">' + ec(x.home) + '</div><div class="res">' + (x.hg == null ? '-' : x.hg) + ' - ' + (x.ag == null ? '-' : x.ag) + '</div><div class="tname" style="text-align:center">' + ec(x.away) + '</div></div>'
         + '<div class="sub">' + t.yours + ' ' + x.ph + '-' + x.pa + ' · <span class="pp' + (x.pts > 0 ? ' g' : '') + '">+' + x.pts + ' ' + t.pts + '</span></div>'
         + (x.cl ? '<div class="sub" style="color:var(--lime,#c6ff3d);font-weight:800">' + t.got(x.bt) + '</div>' : '<button class="btn gold" data-cm="' + x.day + '">' + t.claim(x.bt) + '</button>') + '</div>').join('')
-      + ms.map(row).join('') + '<div class="note" style="margin:0 8px 14px">' + ec(t.mdx) + '<br>' + ec(t.rules) + '<br>' + ec(t.btr) + '</div>';
+      + ms.map(row).join('') + '<div class="note" style="margin:0 8px 14px">' + ec(t.rules) + '</div>';  /* 28 oct 2026 (16h57, Jeremy): no more x2 on the match of the day, and no $BATON on the extra matches */
   }
   function draw() {
     const app = document.getElementById('app'); if (!app) return;
@@ -153,7 +153,7 @@
         try { tw.openTelegramLink(u); } catch (x) { location.href = u; } }; }
     }
     // the match of the day is worth double: a small gold line on its card
-    if (!anchor.querySelector('.mdx')) { const x = document.createElement('div'); x.className = 'mdx'; x.style.cssText = 'position:relative;z-index:1;margin:-4px 0 10px;font-size:13px;font-weight:800;color:var(--gold,#ffc83d)'; x.textContent = T().mdx; const lb = anchor.querySelector('.label'); if (lb) lb.insertAdjacentElement('afterend', x); else anchor.prepend(x); }
+    { const om = anchor.querySelector('.mdx'); if (om) om.remove(); } if (false) { const x = document.createElement('div'); x.className = 'mdx'; x.style.cssText = 'position:relative;z-index:1;margin:-4px 0 10px;font-size:13px;font-weight:800;color:var(--gold,#ffc83d)'; x.textContent = T().mdx; const lb = anchor.querySelector('.label'); if (lb) lb.insertAdjacentElement('afterend', x); else anchor.prepend(x); }
     c.innerHTML = html();
   }
   // the game redraws the screen often: the card comes back right after
@@ -244,6 +244,67 @@
   const S2 = () => SH[lg()] || SH.en;
   const nf2 = (n) => Number(n || 0).toLocaleString(lg());
   const goBaton = () => { const u = 'https://t.me/PassTheBatonBot/play?startapp=src_dsnav'; try { tw.openTelegramLink(u); } catch (x) { location.href = u; } };
+  // 28 oct 2026 (16h49, Jeremy): the banner is back with the new rules, and the sponsored Task (Adsgram task-51752) sits inside the sheet:
+  // +1 000 $BATON on Pass The Baton (server ds_task_baton), 5 minutes between two Tasks (countdown here, the server refuses earlier ones)
+  const NL = {
+    en: ['⚽ Match of the day: +5,000 exact score · +1,000 right result · +500 for playing', '🏆 Weekly contest: 10,000 / 5,000 / 2,500 on the podium, 1,000 from 4th to 10th', '🎯 Sponsored task: +1,000, every 5 minutes', '🎁 Added automatically on Pass The Baton'],
+    fr: ['⚽ Match du jour : +5 000 score exact · +1 000 bon résultat · +500 pronostic fait', '🏆 Concours de la semaine : 10 000 / 5 000 / 2 500 sur le podium, 1 000 du 4e au 10e', '🎯 Tâche sponsorisée : +1 000, toutes les 5 minutes', '🎁 Ajoutés automatiquement sur Pass The Baton'],
+    es: ['⚽ Partido del día: +5.000 resultado exacto · +1.000 buen resultado · +500 por jugar', '🏆 Concurso semanal: 10.000 / 5.000 / 2.500 en el podio, 1.000 del 4.º al 10.º', '🎯 Tarea patrocinada: +1.000, cada 5 minutos', '🎁 Añadidos automáticamente en Pass The Baton'],
+    pt: ['⚽ Jogo do dia: +5.000 placar exato · +1.000 resultado certo · +500 por jogar', '🏆 Concurso semanal: 10.000 / 5.000 / 2.500 no pódio, 1.000 do 4º ao 10º', '🎯 Tarefa patrocinada: +1.000, a cada 5 minutos', '🎁 Adicionados automaticamente no Pass The Baton'],
+    de: ['⚽ Spiel des Tages: +5.000 exaktes Ergebnis · +1.000 richtige Tendenz · +500 fürs Mitspielen', '🏆 Wochenwettbewerb: 10.000 / 5.000 / 2.500 auf dem Podium, 1.000 von Platz 4 bis 10', '🎯 Gesponserte Aufgabe: +1.000, alle 5 Minuten', '🎁 Automatisch in Pass The Baton gutgeschrieben'],
+    it: ['⚽ Partita del giorno: +5.000 risultato esatto · +1.000 esito giusto · +500 per aver giocato', '🏆 Concorso settimanale: 10.000 / 5.000 / 2.500 sul podio, 1.000 dal 4º al 10º', '🎯 Compito sponsorizzato: +1.000, ogni 5 minuti', '🎁 Aggiunti automaticamente su Pass The Baton'],
+    ar: ['⚽ مباراة اليوم: +5000 للنتيجة الدقيقة · +1000 للنتيجة الصحيحة · +500 للمشاركة', '🏆 مسابقة الأسبوع: 10000 / 5000 / 2500 للمراكز الثلاثة الأولى، 1000 من الرابع إلى العاشر', '🎯 مهمة مموّلة: +1000 كل 5 دقائق', '🎁 تُضاف تلقائياً في Pass The Baton'],
+    tr: ['⚽ Günün maçı: +5.000 tam skor · +1.000 doğru sonuç · +500 tahmin yapınca', '🏆 Haftalık yarışma: podyumda 10.000 / 5.000 / 2.500, 4. ile 10. arası 1.000', '🎯 Sponsorlu görev: +1.000, her 5 dakikada', '🎁 Pass The Baton\'a otomatik eklenir'],
+    ru: ['⚽ Матч дня: +5 000 точный счёт · +1 000 исход · +500 за прогноз', '🏆 Конкурс недели: 10 000 / 5 000 / 2 500 на пьедестале, 1 000 с 4-го по 10-е', '🎯 Спонсорское задание: +1 000, каждые 5 минут', '🎁 Начисляются автоматически в Pass The Baton'] };
+  const TK = {
+    en: ['🎯 Sponsored task: +1,000 $BATON', 'Next task in', 'No task available, come back later'],
+    fr: ['🎯 Tâche sponsorisée : +1 000 $BATON', 'Prochaine tâche dans', 'Pas de tâche disponible, reviens plus tard'],
+    es: ['🎯 Tarea patrocinada: +1.000 $BATON', 'Próxima tarea en', 'No hay tareas disponibles, vuelve más tarde'],
+    pt: ['🎯 Tarefa patrocinada: +1.000 $BATON', 'Próxima tarefa em', 'Nenhuma tarefa disponível, volte mais tarde'],
+    de: ['🎯 Gesponserte Aufgabe: +1.000 $BATON', 'Nächste Aufgabe in', 'Gerade keine Aufgabe, komm später wieder'],
+    it: ['🎯 Compito sponsorizzato: +1.000 $BATON', 'Prossimo compito tra', 'Nessun compito disponibile, torna più tardi'],
+    ar: ['🎯 مهمة مموّلة: +1000 $BATON', 'المهمة التالية بعد', 'لا توجد مهام الآن، عد لاحقاً'],
+    tr: ['🎯 Sponsorlu görev: +1.000 $BATON', 'Sonraki görev', 'Şu an görev yok, sonra tekrar gel'],
+    ru: ['🎯 Спонсорское задание: +1 000 $BATON', 'Следующее задание через', 'Сейчас нет заданий, загляни позже'] };
+  let tkNode = null, tkI = 0, tkNone = 0;
+  const tkAt = () => { try { return Number(localStorage.getItem('dsTaskAt') || 0); } catch (x) { return 0; } };
+  const tkNext = () => Math.max(Number((D && D.taskNext) || 0), tkAt() + 300000);
+  function mountTask() {
+    const box = document.getElementById('mmTask'); if (!box) return;
+    clearInterval(tkI);
+    const x = TK[lg()] || TK.en, card = (h) => '<div style="padding:12px;border-radius:14px;background:rgba(47,141,255,.14);border:1px solid rgba(80,160,255,.5)"><div style="font-weight:800;font-size:14px;margin-bottom:6px">' + ec(x[0]) + '</div>' + h + '</div>';
+    const draw = () => {
+      if (!box.isConnected) { clearInterval(tkI); return; }
+      const w = Math.ceil((tkNext() - Date.now()) / 1000);
+      if (w > 0) { if (tkNode && tkNode.isConnected) tkNode.remove(); box.innerHTML = card('<div style="font-size:14px;font-weight:700">⏳ ' + ec(x[1]) + ' <b style="font-variant-numeric:tabular-nums">' + Math.floor(w / 60) + ':' + String(w % 60).padStart(2, '0') + '</b></div>'); return; }
+      clearInterval(tkI);
+      if (Date.now() - tkNone < 120000) { box.innerHTML = card('<div style="font-size:14px;opacity:.85">' + ec(x[2]) + '</div>'); return; }
+      box.innerHTML = card('<div id="mmTaskIn"></div>');
+      const put = () => {
+        const inn = document.getElementById('mmTaskIn'); if (!inn) return;
+        if (!tkNode) {
+          const wr = document.createElement('div');
+          wr.innerHTML = '<adsgram-task data-block-id="task-51752" class="dstask"><span slot="reward">+1 000 $BATON</span><div slot="button" class="dstask-btn">▶</div><div slot="claim" class="dstask-btn">🎁</div><div slot="done" class="dstask-btn">✓</div></adsgram-task>';
+          tkNode = wr.firstChild; let last = 0;
+          const onR = () => {
+            if (Date.now() - last < 3000) return; last = Date.now();
+            try { localStorage.setItem('dsTaskAt', String(Date.now())); } catch (e) {}
+            try { api('ev', { k: 'ad_task_reward' }).catch(() => {}); } catch (e) {}
+            try { celebrate('🏃', '+1 000 $BATON', 'Pass The Baton 🏃'); } catch (e) {}
+            [4000, 15000].forEach((ms) => setTimeout(() => load(), ms));
+            tkNode = null; mountTask();
+          };
+          const none = (k) => { try { api('ev', { k: 'ad_task_' + k }).catch(() => {}); } catch (e) {} tkNone = Date.now(); if (tkNode) tkNode.remove(); tkNode = null; mountTask(); };
+          tkNode.addEventListener('reward', onR); tkNode.addEventListener('onReward', onR);
+          tkNode.addEventListener('onBannerNotFound', () => none('none')); tkNode.addEventListener('onError', () => none('err')); tkNode.addEventListener('onTooLongSession', () => none('long'));
+          try { api('ev', { k: 'ad_task' }).catch(() => {}); } catch (e) {}
+        }
+        inn.appendChild(tkNode);
+      };
+      if (typeof loadTads === 'function') loadTads(put, () => { tkNone = Date.now(); mountTask(); }); else put();
+    };
+    draw(); if (tkNext() > Date.now()) tkI = setInterval(draw, 1000);
+  }
   function openSheet() {
     hap(); const s = S2(), bk = (D && D.dsbk) || {}, tot = Number((D && D.dsbt) || 0);
     let o = document.getElementById('mmSheet'); if (o) o.remove();
@@ -256,7 +317,8 @@
       + (rows ? '<div style="margin:10px 0 4px;font-size:14px">' + rows + '</div>' : '')
       + '<div style="margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,200,61,.10);border:1px solid rgba(255,200,61,.35);font-size:14px;line-height:1.45">' + ec(s.money) + '</div>'
       + '<div class="label" style="margin:16px 0 6px">' + ec(s.how) + '</div>'
-      + s.lines.map((l) => '<div style="font-size:14px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.09))">' + ec(l) + '</div>').join('')
+      + '<div id="mmTask" style="margin-top:12px"></div>'
+      + (NL[lg()] || NL.en).map((l) => '<div style="font-size:14px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.09))">' + ec(l) + '</div>').join('')
       + (D && D.dsall > 0 ? '<div class="note" style="margin-top:10px;color:var(--lime,#c6ff3d)">' + ec(s.all(nf2(D.dsall))) + '</div>' : '')
       + '<button class="btn gold" id="mmShGo" style="margin-top:14px">' + ec(s.btn) + '</button>'
       + '<button class="btn ghost" id="mmShX" style="margin-top:8px">' + ec(s.close) + '</button></div>';
@@ -264,12 +326,13 @@
     o.onclick = (e) => { if (e.target === o) o.remove(); };
     document.getElementById('mmShX').onclick = () => o.remove();
     document.getElementById('mmShGo').onclick = () => { hap(); goBaton(); };
+    mountTask();
   }
   window.dsOpenBatonSheet = openSheet;
   // the banner above the menu, put back after every redraw of the menu
   function navBan() {
     const nav = document.getElementById('nav'); if (!nav || !D) return;
-    if (D.gains_on === false) { const ob = document.getElementById('mmNavBan'); if (ob) { ob.remove(); try { fitNav(); } catch (x) {} } return; }  // 28 oct 2026: no more $BATON on Daily Score
+    if (D.ban_on === false) { const ob = document.getElementById('mmNavBan'); if (ob) { ob.remove(); try { fitNav(); } catch (x) {} } return; }  // 28 oct 2026: no more $BATON on Daily Score
     const inn = nav.querySelector('.nav-in'); if (!inn) return;
     const s = S2(), tot = Number(D.dsbt || 0), k = tot + lg();
     let b = document.getElementById('mmNavBan');
