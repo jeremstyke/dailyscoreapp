@@ -19,7 +19,17 @@
     ru: { h: '⚽ Ещё матчи сегодня', h2: '⚽ Ещё матчи завтра', rules: '3 очка за точный счёт · 1 очко за исход · 🎬 x2 на каждый матч за видео', save: 'Сохранено ✅', joker: '🃏 x2', jokerOn: '🃏 Джокер x2', jokerAsk: 'Посмотреть короткое видео, чтобы поставить Джокер (x2) на этот матч?', live: 'LIVE', ft: 'Финал', yours: 'Ты', pts: 'очк.', closed: 'Начался', err: 'Ошибка, попробуй ещё', started: 'Матч уже начался', nopick: 'Сначала сделай прогноз', jokerused: 'Джокер уже стоит на начавшемся матче', vid: 'Сейчас нет видео, попробуй позже', all: (n) => '🌍 ' + n.toLocaleString(lg()) + ' $BATON уже выиграли все игроки', won: (n) => n.toLocaleString(lg()) + ' $BATON выиграно в Daily Score', bl1: 'Твои $BATON стоят реальных денег', bl2: '⚽ Точный счёт +1 000 · ⭐ Матч дня x2 · 🏆 Конкурс недели до 100 000 · 👥 Друг +10 000. Обменяй их на USDT в Pass The Baton', bl3: 'Открыть', bo1: '🎬 Бонус очков + $BATON', bo2: (n) => 'Посмотри видео: x' + n + '', bo3: '🔥 Максимальный бонус x4', bo4: 'Твои очки и $BATON за матч дня умножаются, до x4', md: '⭐ Матч дня', mdx: '⭐ Матч дня: очки и $BATON x2', val: '✅ Подтвердить прогноз', edit: '✏️ Изменить прогноз', done: '✅ Прогноз сохранён', tr: '📊 Тенденция + прогноз · 🎬', trN: 'Что выбрали все, и прогноз по коэффициентам', pr: '🤖 Прогноз', fav: (t, p) => '' + t + ' фаворит (' + p + '%)', tight: 'Равный матч', goals: (g) => '~' + g + ' гола ожидается', draw: 'Ничья', nb: 'игроков', claim: (n) => '🎬 Забрать +' + n.toLocaleString(lg()) + ' $BATON', got: (n) => '+' + n.toLocaleString(lg()) + ' $BATON получено ✅', claimed: 'Уже получено', btr: '💰 $BATON за каждый матч: 1 000 точный счёт · 250 исход · 50 мимо', day: (n) => '+' + n + ' очк. сегодня' },
   };
   const lg = () => { let l = 'en'; try { l = String(lang || 'en').slice(0, 2); } catch (e) {} return L[l] ? l : 'en'; };
-  const T = () => L[lg()];
+  // 28 oct 2026 (7h21, Jeremy): no more $BATON on Daily Score (server ds_gains_on): the texts without $BATON
+  const NOB = { en: { bo1: '🎬 Points bonus', bo4: 'Your points on the match of the day are multiplied, up to x4', mdx: '⭐ Match of the day: points x2' },
+    fr: { bo1: '🎬 Bonus de points', bo4: 'Tes points sur le match du jour sont multipliés, jusqu\'à x4', mdx: '⭐ Match du jour : points x2' },
+    es: { bo1: '🎬 Bonus de puntos', bo4: 'Tus puntos en el partido del día se multiplican, hasta x4', mdx: '⭐ Partido del día: puntos x2' },
+    pt: { bo1: '🎬 Bônus de pontos', bo4: 'Seus pontos no jogo do dia são multiplicados, até x4', mdx: '⭐ Jogo do dia: pontos x2' },
+    de: { bo1: '🎬 Punktebonus', bo4: 'Deine Punkte im Spiel des Tages werden multipliziert, bis x4', mdx: '⭐ Spiel des Tages: Punkte x2' },
+    it: { bo1: '🎬 Bonus punti', bo4: 'I tuoi punti sulla partita del giorno sono moltiplicati, fino a x4', mdx: '⭐ Partita del giorno: punti x2' },
+    ar: { bo1: '🎬 مكافأة النقاط', bo4: 'تتضاعف نقاطك في مباراة اليوم حتى ×4', mdx: '⭐ مباراة اليوم: النقاط ×2' },
+    tr: { bo1: '🎬 Puan bonusu', bo4: 'Günün maçındaki puanların çarpılır, x4\'e kadar', mdx: '⭐ Günün maçı: puanlar x2' },
+    ru: { bo1: '🎬 Бонус очков', bo4: 'Твои очки за матч дня умножаются, до x4', mdx: '⭐ Матч дня: очки x2' } };
+  const T = () => (D && D.gains_on === false) ? Object.assign({}, L[lg()], NOB[lg()] || NOB.en) : L[lg()];
   const ec = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const hap = (k) => { try { k ? tw.HapticFeedback.notificationOccurred(k) : tw.HapticFeedback.impactOccurred('light'); } catch (e) {} };
   const say = (m) => { try { toast(m); } catch (e) { try { tw.showAlert(m); } catch (x) {} } };
@@ -83,7 +93,7 @@
     const t = T(), ms = (D && D.matches) || [];
     const mn = (D && D.main) || [];
     // 27 oct 2026 (19h49, Jeremy): the small Baton banner, with the $BATON won on Daily Score, links to Pass The Baton (always shown)
-    const ban = () => (D.dsall > 0 ? '<div class="igban" data-sh="1" style="cursor:pointer;padding:6px 10px 6px 12px;background:linear-gradient(135deg,rgba(47,141,255,.22),rgba(30,90,200,.10));border-color:rgba(80,160,255,.5)"><div style="min-width:0"><b style="font-size:13px">' + ec(S2().all(Number(D.dsall).toLocaleString(lg()))) + '</b></div><span class="iggo" style="padding:4px 10px">›</span></div>' : '');
+    const ban = () => (D.gains_on !== false && D.dsall > 0 ? '<div class="igban" data-sh="1" style="cursor:pointer;padding:6px 10px 6px 12px;background:linear-gradient(135deg,rgba(47,141,255,.22),rgba(30,90,200,.10));border-color:rgba(80,160,255,.5)"><div style="min-width:0"><b style="font-size:13px">' + ec(S2().all(Number(D.dsall).toLocaleString(lg()))) + '</b></div><span class="iggo" style="padding:4px 10px">›</span></div>' : '');
     if (!ms.length && !mn.length) return '<div style="margin:6px 0 14px">' + ban() + '</div>';
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' });
     const tomorrowOnly = ms.every((m) => m.day !== today);
@@ -127,6 +137,7 @@
       ar: ['👥 ادعُ صديقًا: \u200e+10,000 $BATON', 'عندما يقدّم توقعه الأول', '📣 ادعُ صديقًا', 'خمّن نتيجة مباراة اليوم معي واربح $BATON (مال حقيقي) ⚽'],
       tr: ['👥 Bir arkadaşını davet et: +10.000 $BATON', 'ilk tahminini yaptığında', '📣 Arkadaş davet et', 'Günün maçının skorunu benimle tahmin et ve $BATON kazan (gerçek para) ⚽'],
       ru: ['👥 Пригласи друга: +10 000 $BATON', 'когда он сделает первый прогноз', '📣 Пригласить друга', 'Угадай счёт матча дня вместе со мной и выигрывай $BATON (реальные деньги) ⚽'] };
+    if (D.gains_on === false) { const o = document.getElementById('mmInv'); if (o) o.remove(); } else {  // 28 oct 2026: no reward to show
     let iv = document.getElementById('mmInv');
     if (!iv || !iv.isConnected) {
       iv = document.createElement('div'); iv.id = 'mmInv';
@@ -140,6 +151,7 @@
         const uid = tw.initDataUnsafe && tw.initDataUnsafe.user && tw.initDataUnsafe.user.id; if (!uid) return;
         const u = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/DailyScorefootbot?start=ref_' + uid) + '&text=' + encodeURIComponent(ivx[3]);
         try { tw.openTelegramLink(u); } catch (x) { location.href = u; } }; }
+    }
     // the match of the day is worth double: a small gold line on its card
     if (!anchor.querySelector('.mdx')) { const x = document.createElement('div'); x.className = 'mdx'; x.style.cssText = 'position:relative;z-index:1;margin:-4px 0 10px;font-size:13px;font-weight:800;color:var(--gold,#ffc83d)'; x.textContent = T().mdx; const lb = anchor.querySelector('.label'); if (lb) lb.insertAdjacentElement('afterend', x); else anchor.prepend(x); }
     c.innerHTML = html();
@@ -257,6 +269,7 @@
   // the banner above the menu, put back after every redraw of the menu
   function navBan() {
     const nav = document.getElementById('nav'); if (!nav || !D) return;
+    if (D.gains_on === false) { const ob = document.getElementById('mmNavBan'); if (ob) { ob.remove(); try { fitNav(); } catch (x) {} } return; }  // 28 oct 2026: no more $BATON on Daily Score
     const inn = nav.querySelector('.nav-in'); if (!inn) return;
     const s = S2(), tot = Number(D.dsbt || 0), k = tot + lg();
     let b = document.getElementById('mmNavBan');
