@@ -70,9 +70,9 @@
       o += '<div class="teams" style="margin-top:12px">' + stp('h', h) + '<div></div>' + stp('a', a) + '</div>';
       const dirty = !p || (loc && (loc.h !== p.h || loc.a !== p.a));
       o += dirty ? '<button class="btn go" data-val="' + m.id + '">' + (p ? t.edit : t.val) + '</button>' : '<div class="sub" style="color:var(--lime,#c6ff3d);font-weight:800">' + t.done + '</div>';
-      o += '<button class="btn ' + (p && p.joker ? 'gold' : 'ghost') + '" data-jk="' + m.id + '">' + (p && p.joker ? '✅ x2' : '🎬 x2') + '</button>';
+      /* 28 oct 2026 (17h, Jeremy): no more Joker x2 */
     } else if (p) {
-      o += '<div class="sub">' + t.yours + ' ' + p.h + '-' + p.a + (p.joker ? ' (x2)' : '') + (p.pts != null ? ' · <span class="pp' + (p.pts > 0 ? ' g' : '') + '">+' + p.pts + ' ' + t.pts + '</span>' : '') + '</div>';
+      o += '<div class="sub">' + t.yours + ' ' + p.h + '-' + p.a + '' + (p.pts != null ? ' · <span class="pp' + (p.pts > 0 ? ' g' : '') + '">+' + p.pts + ' ' + t.pts + '</span>' : '') + '</div>';
       if (p.bt > 0) o += p.cl ? '<div class="sub" style="color:var(--lime,#c6ff3d);font-weight:800">' + t.got(p.bt) + '</div>' : '<button class="btn gold" data-cl="' + m.id + '">' + t.claim(p.bt) + '</button>';
     }
     if (m.tr) {
@@ -102,7 +102,7 @@
       + mn.map((x) => '<div class="card prem"><div class="label">' + t.md + ' · x2</div><div class="teams"><div class="tname" style="text-align:center">' + ec(x.home) + '</div><div class="res">' + (x.hg == null ? '-' : x.hg) + ' - ' + (x.ag == null ? '-' : x.ag) + '</div><div class="tname" style="text-align:center">' + ec(x.away) + '</div></div>'
         + '<div class="sub">' + t.yours + ' ' + x.ph + '-' + x.pa + ' · <span class="pp' + (x.pts > 0 ? ' g' : '') + '">+' + x.pts + ' ' + t.pts + '</span></div>'
         + (x.cl ? '<div class="sub" style="color:var(--lime,#c6ff3d);font-weight:800">' + t.got(x.bt) + '</div>' : '<button class="btn gold" data-cm="' + x.day + '">' + t.claim(x.bt) + '</button>') + '</div>').join('')
-      + ms.map(row).join('') + '<div class="note" style="margin:0 8px 14px">' + ec(t.rules) + '</div>';  /* 28 oct 2026 (16h57, Jeremy): no more x2 on the match of the day, and no $BATON on the extra matches */
+      + ms.map(row).join('') + '<div class="note" style="margin:0 8px 14px">' + ec(String(t.rules).split(' · 🎬')[0]) + '</div>';  /* 28 oct 2026 (16h57, Jeremy): no more x2 on the match of the day, and no $BATON on the extra matches */
   }
   function draw() {
     const app = document.getElementById('app'); if (!app) return;
@@ -118,7 +118,7 @@
     while (nx(at) && nx(at).classList.contains('card') && (nx(at).classList.contains('pre') || /^(📊|🗳)/.test(((nx(at).querySelector('.label') || {}).textContent || '').trim()))) at = nx(at);
     if (c.previousElementSibling !== at) at.insertAdjacentElement('afterend', c);
     // 27 oct 2026 (20h53, Jeremy): the video bonus of the match of the day (x1.5, x2 ... up to x4) at the bottom of its card
-    const bo = D.boost, bt0 = T();
+    const bo = null /* 28 oct 2026 (17h, Jeremy): no more video bonus */, bt0 = T();
     let bx = document.getElementById('mmBoost');
     if (bo && !bx) { bx = document.createElement('div'); bx.id = 'mmBoost'; bx.style.cssText = 'position:relative;z-index:1;margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,200,61,.10);border:1px solid rgba(255,200,61,.35)'; anchor.appendChild(bx); }
     if (!bo && bx) bx.remove();
@@ -128,16 +128,16 @@
           + '<div class="note" style="margin:4px 0 0;text-align:left">' + ec(bt0.bo4) + '</div>'
           + (mu < 4 ? '<button class="btn gold" data-bo="1" style="margin-top:10px">' + ec(bt0.bo2(f(nx2))) + '</button>' : '<div style="margin-top:8px;font-weight:800;color:var(--gold,#ffc83d)">' + ec(bt0.bo3) + '</div>'); } }
     // 27 oct 2026 (23h27, Jeremy): "Invite a friend" with what it pays, right under the bonus of the match of the day
-    const IV = { en: ['👥 Invite a friend: +10,000 $BATON', 'when he makes his first prediction', '📣 Invite a friend', 'Guess the score of the match of the day with me and win $BATON (real money) ⚽'],
-      fr: ['👥 Invite un ami : +10 000 $BATON', 'dès qu\'il fait son premier prono', '📣 Inviter un ami', 'Devine le score du match du jour avec moi et gagne des $BATON (de l\'argent réel) ⚽'],
-      es: ['👥 Invita a un amigo: +10.000 $BATON', 'cuando haga su primer pronóstico', '📣 Invitar a un amigo', 'Adivina el resultado del partido del día conmigo y gana $BATON (dinero real) ⚽'],
-      pt: ['👥 Convide um amigo: +10.000 $BATON', 'quando ele fizer o primeiro palpite', '📣 Convidar um amigo', 'Adivinhe o placar do jogo do dia comigo e ganhe $BATON (dinheiro real) ⚽'],
-      de: ['👥 Lade einen Freund ein: +10.000 $BATON', 'sobald er seinen ersten Tipp abgibt', '📣 Freund einladen', 'Tippe mit mir das Ergebnis des Spiels des Tages und gewinne $BATON (echtes Geld) ⚽'],
-      it: ['👥 Invita un amico: +10.000 $BATON', 'quando fa il suo primo pronostico', '📣 Invita un amico', 'Indovina il risultato della partita del giorno con me e vinci $BATON (soldi veri) ⚽'],
-      ar: ['👥 ادعُ صديقًا: \u200e+10,000 $BATON', 'عندما يقدّم توقعه الأول', '📣 ادعُ صديقًا', 'خمّن نتيجة مباراة اليوم معي واربح $BATON (مال حقيقي) ⚽'],
-      tr: ['👥 Bir arkadaşını davet et: +10.000 $BATON', 'ilk tahminini yaptığında', '📣 Arkadaş davet et', 'Günün maçının skorunu benimle tahmin et ve $BATON kazan (gerçek para) ⚽'],
-      ru: ['👥 Пригласи друга: +10 000 $BATON', 'когда он сделает первый прогноз', '📣 Пригласить друга', 'Угадай счёт матча дня вместе со мной и выигрывай $BATON (реальные деньги) ⚽'] };
-    if (D.gains_on === false) { const o = document.getElementById('mmInv'); if (o) o.remove(); } else {  // 28 oct 2026: no reward to show
+    const IV = { en: ['👥 Invite a friend: +3,000 $BATON', 'when he makes his first prediction', '📣 Invite a friend', 'Guess the score of the match of the day with me and win $BATON (real money) ⚽'],
+      fr: ['👥 Invite un ami : +3 000 $BATON', 'dès qu\'il fait son premier prono', '📣 Inviter un ami', 'Devine le score du match du jour avec moi et gagne des $BATON (de l\'argent réel) ⚽'],
+      es: ['👥 Invita a un amigo: +3.000 $BATON', 'cuando haga su primer pronóstico', '📣 Invitar a un amigo', 'Adivina el resultado del partido del día conmigo y gana $BATON (dinero real) ⚽'],
+      pt: ['👥 Convide um amigo: +3.000 $BATON', 'quando ele fizer o primeiro palpite', '📣 Convidar um amigo', 'Adivinhe o placar do jogo do dia comigo e ganhe $BATON (dinheiro real) ⚽'],
+      de: ['👥 Lade einen Freund ein: +3.000 $BATON', 'sobald er seinen ersten Tipp abgibt', '📣 Freund einladen', 'Tippe mit mir das Ergebnis des Spiels des Tages und gewinne $BATON (echtes Geld) ⚽'],
+      it: ['👥 Invita un amico: +3.000 $BATON', 'quando fa il suo primo pronostico', '📣 Invita un amico', 'Indovina il risultato della partita del giorno con me e vinci $BATON (soldi veri) ⚽'],
+      ar: ['👥 ادعُ صديقًا: \u200e+3,000 $BATON', 'عندما يقدّم توقعه الأول', '📣 ادعُ صديقًا', 'خمّن نتيجة مباراة اليوم معي واربح $BATON (مال حقيقي) ⚽'],
+      tr: ['👥 Bir arkadaşını davet et: +3.000 $BATON', 'ilk tahminini yaptığında', '📣 Arkadaş davet et', 'Günün maçının skorunu benimle tahmin et ve $BATON kazan (gerçek para) ⚽'],
+      ru: ['👥 Пригласи друга: +3 000 $BATON', 'когда он сделает первый прогноз', '📣 Пригласить друга', 'Угадай счёт матча дня вместе со мной и выигрывай $BATON (реальные деньги) ⚽'] };
+    if (D.ban_on === false) { const o = document.getElementById('mmInv');  /* 28 oct 2026 (16h59, Jeremy): invited friend = 3 000 $BATON */ if (o) o.remove(); } else {  // 28 oct 2026: no reward to show
     let iv = document.getElementById('mmInv');
     if (!iv || !iv.isConnected) {
       iv = document.createElement('div'); iv.id = 'mmInv';
@@ -256,6 +256,7 @@
     ar: ['⚽ مباراة اليوم: +5000 للنتيجة الدقيقة · +1000 للنتيجة الصحيحة · +500 للمشاركة', '🏆 مسابقة الأسبوع: 10000 / 5000 / 2500 للمراكز الثلاثة الأولى، 1000 من الرابع إلى العاشر', '🎯 مهمة مموّلة: +1000 كل 5 دقائق', '🎁 تُضاف تلقائياً في Pass The Baton'],
     tr: ['⚽ Günün maçı: +5.000 tam skor · +1.000 doğru sonuç · +500 tahmin yapınca', '🏆 Haftalık yarışma: podyumda 10.000 / 5.000 / 2.500, 4. ile 10. arası 1.000', '🎯 Sponsorlu görev: +1.000, her 5 dakikada', '🎁 Pass The Baton\'a otomatik eklenir'],
     ru: ['⚽ Матч дня: +5 000 точный счёт · +1 000 исход · +500 за прогноз', '🏆 Конкурс недели: 10 000 / 5 000 / 2 500 на пьедестале, 1 000 с 4-го по 10-е', '🎯 Спонсорское задание: +1 000, каждые 5 минут', '🎁 Начисляются автоматически в Pass The Baton'] };
+  const IVL = { en: '👥 Invited friend: +3,000 as soon as he makes his first prediction', fr: '👥 Ami invité : +3 000 dès son premier prono', es: '👥 Amigo invitado: +3.000 en cuanto haga su primer pronóstico', pt: '👥 Amigo convidado: +3.000 assim que fizer o primeiro palpite', de: '👥 Eingeladener Freund: +3.000, sobald er seinen ersten Tipp abgibt', it: '👥 Amico invitato: +3.000 appena fa il primo pronostico', ar: '👥 صديق مدعو: +3000 عند أول توقع له', tr: '👥 Davet edilen arkadaş: ilk tahmininde +3.000', ru: '👥 Приглашённый друг: +3 000 после его первого прогноза' };
   const TK = {
     en: ['🎯 Sponsored task: +1,000 $BATON', 'Next task in', 'No task available, come back later'],
     fr: ['🎯 Tâche sponsorisée : +1 000 $BATON', 'Prochaine tâche dans', 'Pas de tâche disponible, reviens plus tard'],
@@ -318,7 +319,7 @@
       + '<div style="margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,200,61,.10);border:1px solid rgba(255,200,61,.35);font-size:14px;line-height:1.45">' + ec(s.money) + '</div>'
       + '<div class="label" style="margin:16px 0 6px">' + ec(s.how) + '</div>'
       + '<div id="mmTask" style="margin-top:12px"></div>'
-      + (NL[lg()] || NL.en).map((l) => '<div style="font-size:14px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.09))">' + ec(l) + '</div>').join('')
+      + (NL[lg()] || NL.en).concat([IVL[lg()] || IVL.en]).map((l) => '<div style="font-size:14px;line-height:1.4;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.09))">' + ec(l) + '</div>').join('')
       + (D && D.dsall > 0 ? '<div class="note" style="margin-top:10px;color:var(--lime,#c6ff3d)">' + ec(s.all(nf2(D.dsall))) + '</div>' : '')
       + '<button class="btn gold" id="mmShGo" style="margin-top:14px">' + ec(s.btn) + '</button>'
       + '<button class="btn ghost" id="mmShX" style="margin-top:8px">' + ec(s.close) + '</button></div>';
