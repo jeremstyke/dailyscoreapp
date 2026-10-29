@@ -364,7 +364,7 @@ async function showInter(why) {
       if (!window.Adsgram) { api('ev', { k: 'ad_inter_noload' }).catch(() => {}); return false; }
       try { await window.Adsgram.init({ blockId: DS_INTER }).show(); api('ev', { k: 'ad_inter' }).catch(() => {}); return true; } catch (e) { api('ev', { k: 'ad_inter_none' }).catch(() => {}); return false; }
     };
-    if (n % 2 === 1) { if (!(await mtgInter())) await ag(); }
+    if (Math.random() < 0.5) { if (!(await mtgInter())) await ag(); }  // 29 oct 2026 (15h19, Jeremy): 1 out of 2 at random (was alternating)
     else if (!(await ag())) await mtgInter();
   } catch (e) {}
 }
