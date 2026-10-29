@@ -332,16 +332,16 @@ function igInter() {
     api('ev', { k: 'ig_inter' }).catch(() => {});
   } catch (e) {}
 }
-// 29 oct 2026 (10h40, Jeremy): Monetag (zone 12146165) as the fallback interstitial when Adsgram has no ad (same rules: 1 an hour, not on the first visit, not for Premium)
+// 29 oct 2026 (10h40, Jeremy): Monetag (zone 12146165) interstitial, one in two with Adsgram (same rules: 1 an hour, not on the first visit, not for Premium); true when shown
 const MTG_ZONE = 12146165;
 async function mtgInter() {
   try {
     const fn = 'show_' + MTG_ZONE;
     if (!window[fn]) await new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'https://libtl.com/sdk.js'; s.setAttribute('data-zone', String(MTG_ZONE)); s.setAttribute('data-sdk', fn); s.onload = ok; s.onerror = ko; document.head.appendChild(s); setTimeout(ko, 10000); });
-    if (!window[fn]) return;
+    if (!window[fn]) return false;
     await window[fn]({ ymid: String((tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || '') });
-    api('ev', { k: 'ad_inter_mtg' }).catch(() => {});
-  } catch (e) { api('ev', { k: 'ad_inter_mtg_none' }).catch(() => {}); }
+    api('ev', { k: 'ad_inter_mtg' }).catch(() => {}); return true;
+  } catch (e) { api('ev', { k: 'ad_inter_mtg_none' }).catch(() => {}); return false; }
 }
 async function showInter(why) {
   if (!IN_TG) { if (why === 'pick') igInter(); return; }
@@ -357,9 +357,15 @@ async function showInter(why) {
     INTER_AT = Date.now();
     // 15 oct 2026: the Adsgram script may not be loaded yet 1 second after opening: wait for it (10 s at most), and log each step
     api('ev', { k: 'ad_inter_try' + (why ? '_' + why : '') }).catch(() => {});
-    let w = 0; while (!window.Adsgram && w < 20) { await new Promise((ok) => setTimeout(ok, 500)); w++; }
-    if (!window.Adsgram) { api('ev', { k: 'ad_inter_noload' }).catch(() => {}); return mtgInter(); }
-    window.Adsgram.init({ blockId: DS_INTER }).show().then(() => api('ev', { k: 'ad_inter' }).catch(() => {})).catch(() => { api('ev', { k: 'ad_inter_none' }).catch(() => {}); mtgInter(); });
+    // 29 oct 2026 (10h37, Jeremy): one interstitial in two from Monetag, the other from Adsgram (each one falls back on the other when it has no ad)
+    let n = 0; try { n = Number(localStorage.getItem('ds_int_n') || 0) + 1; localStorage.setItem('ds_int_n', String(n)); } catch (e) {}
+    const ag = async () => {
+      let w = 0; while (!window.Adsgram && w < 20) { await new Promise((ok) => setTimeout(ok, 500)); w++; }
+      if (!window.Adsgram) { api('ev', { k: 'ad_inter_noload' }).catch(() => {}); return false; }
+      try { await window.Adsgram.init({ blockId: DS_INTER }).show(); api('ev', { k: 'ad_inter' }).catch(() => {}); return true; } catch (e) { api('ev', { k: 'ad_inter_none' }).catch(() => {}); return false; }
+    };
+    if (n % 2 === 1) { if (!(await mtgInter())) await ag(); }
+    else if (!(await ag())) await mtgInter();
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
