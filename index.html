@@ -352,7 +352,7 @@ async function showInter(why) {
     // 24 oct 2026 (10h19, Jeremy): one hour at least between two interstitials, even after closing the app
     let lastInt = 0; try { lastInt = Number(localStorage.getItem('ds_int_at') || 0); } catch (e) {}
     if (!lastInt) { try { localStorage.setItem('ds_int_at', String(Date.now())); } catch (e) {} return; }  // never on the first visit
-    if (Date.now() - lastInt < 3600000) return;
+    /* 30 oct 2026 (19h23, Jeremy): at every opening again (was once an hour) */
     try { localStorage.setItem('ds_int_at', String(Date.now())); } catch (e) {}
     INTER_AT = Date.now();
     // 15 oct 2026: the Adsgram script may not be loaded yet 1 second after opening: wait for it (10 s at most), and log each step
@@ -364,8 +364,7 @@ async function showInter(why) {
       if (!window.Adsgram) { api('ev', { k: 'ad_inter_noload' }).catch(() => {}); return false; }
       try { await window.Adsgram.init({ blockId: DS_INTER }).show(); api('ev', { k: 'ad_inter' }).catch(() => {}); return true; } catch (e) { api('ev', { k: 'ad_inter_none' }).catch(() => {}); return false; }
     };
-    if (Math.random() < 0.5) { if (!(await mtgInter())) await ag(); }  // 29 oct 2026 (15h19, Jeremy): 1 out of 2 at random (was alternating)
-    else if (!(await ag())) await mtgInter();
+    await ag();  // 30 oct 2026 (19h23, Jeremy): Adsgram only (no more Monetag)
   } catch (e) {}
 }
 const APK_PAGE = 'https://dailyscoreapp.com/android.html';
